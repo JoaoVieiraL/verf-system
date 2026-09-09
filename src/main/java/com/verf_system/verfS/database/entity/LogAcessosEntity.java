@@ -17,7 +17,6 @@ package com.verf_system.verfS.database.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -48,7 +47,6 @@ public class LogAcessosEntity {
     @Column(nullable = false, length = 120)
     private String emailUsado;
 
-    @NotBlank
     @Column(nullable = false)
     private boolean sucesso;
 

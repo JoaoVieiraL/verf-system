@@ -9,9 +9,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 //CREATE TABLE tintas (
 //!   id_tinta             SERIAL PRIMARY KEY, !!
 //   codigo               VARCHAR(20) NOT NULL UNIQUE, !!
@@ -65,8 +62,8 @@ public class TintaEntity {
     private FornecedorEntity fornecedorRef;
 
     //! Realizar a validação desse atributo
-    @NotNull
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private OrigemTinta origemTinta;
 
     @NotNull

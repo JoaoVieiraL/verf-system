@@ -11,7 +11,6 @@ package com.verf_system.verfS.database.entity;
 //);
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Entity
 @Getter
@@ -41,9 +40,9 @@ public class ReceitaEntity {
     @Column(nullable = false)
     private String nome;
 
-    @NotBlank
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tinta")
+    @JoinColumn(name = "id_tinta", nullable = false)
     private TintaEntity tintaResultante;
 
     @ManyToOne(fetch = FetchType.LAZY)

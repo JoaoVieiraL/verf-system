@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -52,7 +51,8 @@ public class MovimentacaoEstoqueEntity {
     @JoinColumn(name = "id_producao")
     private ProducoesEntity producaoRef;
 
-    @Column(name = "Tipo_Movimentacao", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Tipo_Movimentacao", nullable = false, length = 30)
     private TipoMovimentacao tipoMovimentacao;
 
     //!private Motivo motivo; -- criar enum

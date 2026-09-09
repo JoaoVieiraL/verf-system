@@ -10,13 +10,10 @@ package com.verf_system.verfS.database.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.PositiveOrZero;
 
-import javax.management.remote.JMXServerErrorException;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 @Table(name = "tb_estoque")
 public class EstoqueEntity {
     @Id
@@ -36,7 +34,7 @@ public class EstoqueEntity {
     private TintaEntity tinta;
 
     @NotNull(message = "Campo Quantidade nao pode ser nulo.")
-    @Size(min = 1)
+    @PositiveOrZero
     @Column(nullable = false)
     private Integer quantidade;
 
