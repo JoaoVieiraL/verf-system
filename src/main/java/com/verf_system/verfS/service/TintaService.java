@@ -28,7 +28,7 @@ public class TintaService {
     }
     public List<TintaEntity> findAll() {
         List<TintaEntity> tintas = tintaRepository.findAll();
-        if (tintas.isEmpty() || tintas == null) {
+        if (tintas.isEmpty()) {
             throw new RuntimeException("Nenhuma Tinta encontrada");
         }
 
@@ -42,12 +42,9 @@ public class TintaService {
     }
 
     public void inativar(Integer id) {
-        TintaEntity tintaBuscada = tintaRepository.findById(id).get();
-        if (tintaBuscada == null) {
-            throw new RuntimeException("Nenhuma Tinta encontrada");
-        }
+        TintaEntity tintaBuscada = tintaRepository.findById(id).orElseThrow(()-> new RuntimeException("Nenhuma tinta encontrada"));
         tintaBuscada.setAtivo(false);
-
+        tintaRepository.save(tintaBuscada);
     }
 
 }

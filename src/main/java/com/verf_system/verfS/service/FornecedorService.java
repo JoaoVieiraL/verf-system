@@ -3,9 +3,7 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.dto.FornecedorDto;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.ListTokenSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +44,8 @@ public class FornecedorService {
     }
 
     public void inativar(Integer id) {
-        fornecedorrepository.findById(id).get().setAtivo(false);
-
-        fornecedorrepository.save(fornecedorrepository.findById(id).get());
+        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Fornecedor encontrado"));
+        fornecedor.setAtivo(false);
+        fornecedorrepository.save(fornecedor);
     }
 }
