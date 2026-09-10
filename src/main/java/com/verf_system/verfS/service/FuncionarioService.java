@@ -1,0 +1,50 @@
+package com.verf_system.verfS.service;
+
+import com.verf_system.verfS.database.entity.FuncionarioEntity;
+import com.verf_system.verfS.database.repository.IFuncionarioRepository;
+import com.verf_system.verfS.dto.FuncionarioDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class FuncionarioService {
+    private final IFuncionarioRepository funcionarioRepository;
+
+    public void save(FuncionarioDto funcionarioDto) {
+        funcionarioRepository.save(FuncionarioEntity.builder()
+                .nome(funcionarioDto.getNome())
+                .cargo(funcionarioDto.getCargo())
+                .email(funcionarioDto.getEmail())
+                .senha_hash(funcionarioDto.getSenha_hash())
+                .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
+                .ativo(funcionarioDto.isAtivo())
+                .criadoEm(funcionarioDto.getCriadoEm())
+                .atualizadoEm(funcionarioDto.getAtualizadoEm())
+                .build());
+    }
+
+    public List<FuncionarioEntity> findAll() {
+        List<FuncionarioEntity> funcionarios = funcionarioRepository.findAll();
+        if (funcionarios.isEmpty()) {
+            throw new RuntimeException("Nenhum Funcionario encontrado");
+        }
+
+        return funcionarios;
+    }
+
+    public FuncionarioEntity findById(Integer id) {
+        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
+
+        return funcionario;
+    }
+
+    public void inativar(Integer id) {
+        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
+        funcionario.setAtivo(false);
+
+        funcionarioRepository.save(funcionario);
+    }
+}
