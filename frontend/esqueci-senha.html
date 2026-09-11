@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Recuperação de Senha</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-card">
+        <!-- Header de Marca Superior -->
+        <header class="brand-header">
+            <span>VERF SYSTEM</span>
+        </header>
+
+        <div class="card-body">
+            <div class="logo-container">
+                <img src="img_verf/Logo_Verf.png" alt="VERF - Sistema de Gestão de Tintas" class="logo">
+            </div>
+
+            <h2 class="card-title">Recuperar Senha</h2>
+            <p class="subtitle">Informe seu e-mail cadastrado para receber as instruções de redefinição.</p>
+
+            <!-- Div para mensagens de Feedback (Sucesso / Erro) -->
+            <div id="feedback-message" class="feedback-message hidden"></div>
+
+            <form id="recovery-form">
+                <div class="form-group">
+                    <label for="recovery-email">E-mail cadastrado <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="mail" class="input-icon"></i>
+                        <input type="email" id="recovery-email" name="email" placeholder="exemplo@gmail.com" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-recovery" class="btn-submit">
+                    <span>Enviar Link de Recuperação</span>
+                </button>
+
+                <div class="back-to-login">
+                    <a href="index.html"> Voltar para o login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="esqueci-senha.js"></script>
+</body>
+</html>
