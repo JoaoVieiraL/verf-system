@@ -67,12 +67,22 @@ public class FuncionarioEntity {
     boolean ativo;
 
 
-    //!@PrePersist
-    @Column(nullable = false)
+
+    @Column(name = "criado_em", nullable = false, updatable = false)
     LocalDateTime criadoEm;
 
-    //!@PreUpdate
-    @Column(nullable = false)
+    @Column(name = "atualizado_em", nullable = false)
     LocalDateTime atualizadoEm;
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
 
 }

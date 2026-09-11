@@ -58,12 +58,20 @@ public class FornecedorEntity {
     @Column(nullable = false)
     private boolean ativo;
 
-    //! Adicionar @prePersiste para validaçao antes e incluir no banco
-    @Column(nullable = false)
+    @Column(name = "atualizado_em", nullable = false)
     private LocalDateTime atualizadoEm;
 
-    //! Adicionar @PreUpdate  para validação da atualização do item no banco
-    @Column(nullable = false)
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
+    }
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
 
 }

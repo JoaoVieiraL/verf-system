@@ -52,6 +52,11 @@ public class ReceitaEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorPorLitro;
 
-    //! @PrePersist
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
+
+    @PreUpdate
+    private void prePersist(){
+        criadoEm = LocalDateTime.now();
+    }
 }

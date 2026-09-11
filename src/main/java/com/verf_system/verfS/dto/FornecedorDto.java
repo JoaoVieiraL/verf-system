@@ -4,8 +4,6 @@ package com.verf_system.verfS.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -19,6 +17,4 @@ public class FornecedorDto {
     String telefone;
     String email;
     boolean ativo;
-    LocalDateTime atualizadoEm;
-    LocalDateTime criadoEm;
 }

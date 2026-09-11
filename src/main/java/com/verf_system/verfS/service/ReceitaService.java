@@ -19,7 +19,6 @@ public class ReceitaService {
                 .tintaResultante(receitaDto.getTintaResultante())
                 .criadoPor(receitaDto.getCriadoPor())
                 .valorPorLitro(receitaDto.getValorPorLitro())
-                .criadoEm(receitaDto.getCriadoEm())
                 .build());
     }
 

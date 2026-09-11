@@ -5,7 +5,6 @@ import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.entity.OrigemTinta;
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -19,6 +18,4 @@ public class TintaDto {
     private OrigemTinta origem;
     private boolean ativo;
     private FornecedorEntity fornecedorRef;
-    private LocalDateTime criadoEm;
-    private LocalDateTime atualizadoEm;
 }

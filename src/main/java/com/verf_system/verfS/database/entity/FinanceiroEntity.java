@@ -49,6 +49,11 @@ public class FinanceiroEntity {
     @Column(nullable = false)
     Date dataReferencia;
 
-    @Column(nullable = false)
-    private LocalDateTime criado = LocalDateTime.now();
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    private LocalDateTime criadoEm;
+
+    @PrePersist
+    private void prePersist(){
+        criadoEm = LocalDateTime.now();
+    }
 }

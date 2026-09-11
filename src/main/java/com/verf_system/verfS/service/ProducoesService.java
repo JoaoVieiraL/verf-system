@@ -20,7 +20,6 @@ public class ProducoesService {
                 .funcionarioRef(producoesDto.getFuncionarioRef())
                 .volumeProduzido(producoesDto.getVolumeProduzido())
                 .dataProducao(producoesDto.getDataProducao())
-                .criadoEm(LocalDateTime.now())
                 .build());
     }
 

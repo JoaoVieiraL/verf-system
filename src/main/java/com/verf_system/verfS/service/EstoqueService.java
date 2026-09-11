@@ -17,8 +17,6 @@ public class EstoqueService {
         estoqueRepository.save(EstoqueEntity.builder()
                 .tinta(estoqueDto.getTintaRef())
                 .quantidade(estoqueDto.getQuantidade())
-                .criado(estoqueDto.getCriadoEm())
-                .atualizado(estoqueDto.getAtualizadoEm())
                 .build());
     }
 

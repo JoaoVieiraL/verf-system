@@ -25,7 +25,6 @@ public class MovimentacaoEstoqueService {
                 .quantidadePosterior(movimentacaoEstoqueDto.getQuantidadePosterior())
                 .observacao(movimentacaoEstoqueDto.getObservacao())
                 .dataMovimentacao(movimentacaoEstoqueDto.getDataMovimentacao())
-                .registradoEm(LocalDateTime.now())
                 .build());
     }
 

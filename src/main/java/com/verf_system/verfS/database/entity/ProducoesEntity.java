@@ -48,5 +48,11 @@ public class ProducoesEntity {
     @Column(nullable = false)
     private Date dataProducao;
 
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
+
+    @PrePersist
+    private void prePersist(){
+        criadoEm=LocalDateTime.now();
+    }
 }

@@ -38,13 +38,25 @@ public class EstoqueEntity {
     @Column(nullable = false)
     private Integer quantidade;
 
-    //! Colocar o @PrePersist para validação antes de entrar no banco
-    @Column(nullable = false)
-    LocalDateTime criado = LocalDateTime.now();
 
-    //! Colocar o @PreUpdate antes de atualizara o item
-    @Column(nullable = false)
-    LocalDateTime atualizado = criado;
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    LocalDateTime criadoEm;
+
+
+    @Column(name = "atualizado_em", nullable = false)
+    LocalDateTime atualizadoEm;
+
+    @PrePersist
+    public void prePersist() {
+        criadoEm = LocalDateTime.now();
+        atualizadoEm = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        atualizadoEm = LocalDateTime.now();
+
+    }
 
 
 }

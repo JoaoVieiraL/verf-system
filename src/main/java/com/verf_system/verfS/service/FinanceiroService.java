@@ -6,7 +6,6 @@ import com.verf_system.verfS.dto.FinanceiroDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,7 +20,6 @@ public class FinanceiroService {
                 .perdas(financeiroDto.getPerdas())
                 .saldoLiquido(financeiroDto.getSaldoLiquido())
                 .dataReferencia(financeiroDto.getDataReferencia())
-                .criado(LocalDateTime.now())
                 .build());
     }
 

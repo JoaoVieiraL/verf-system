@@ -21,8 +21,6 @@ public class FuncionarioService {
                 .senha_hash(funcionarioDto.getSenha_hash())
                 .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
                 .ativo(funcionarioDto.isAtivo())
-                .criadoEm(funcionarioDto.getCriadoEm())
-                .atualizadoEm(funcionarioDto.getAtualizadoEm())
                 .build());
     }
 

@@ -78,9 +78,13 @@ public class MovimentacaoEstoqueEntity {
     @Column(nullable = false)
     private Date dataMovimentacao;
 
-    @NotNull
-    @Column(nullable = false)
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime registradoEm;
+
+    @PrePersist
+    private void prePersist(){
+        this.registradoEm = LocalDateTime.now();
+    }
 
 
 

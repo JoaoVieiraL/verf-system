@@ -5,7 +5,6 @@ import com.verf_system.verfS.database.entity.TintaEntity;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -17,5 +16,4 @@ public class ReceitaDto {
     private TintaEntity tintaResultante;
     private FuncionarioEntity criadoPor;
     private BigDecimal valorPorLitro;
-    private LocalDateTime criadoEm;
 }

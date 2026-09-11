@@ -21,8 +21,6 @@ public class TintaService {
                         .origemTinta(tintaDto.getOrigem())
                         .ativo(tintaDto.isAtivo())
                         .fornecedorRef(tintaDto.getFornecedorRef())
-                        .criadoEm(tintaDto.getCriadoEm())
-                        .atualizadoEm(tintaDto.getAtualizadoEm())
                 .build());
 
     }
