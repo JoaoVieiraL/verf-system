@@ -39,7 +39,7 @@ public class ProducoesEntity {
 
     //? FK
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_funcinario")
+    @JoinColumn(name = "id_funcionario")
     private FuncionarioEntity funcionarioRef;
 
     @Column(nullable = false, precision = 12, scale = 3)
