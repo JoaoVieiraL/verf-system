@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CNPJ;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 //CREATE TABLE fornecedores (

@@ -10,7 +10,6 @@ package com.verf_system.verfS.database.entity;
 //);
 
 import jakarta.persistence.*;
-import jakarta.xml.bind.annotation.XmlInlineBinaryData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

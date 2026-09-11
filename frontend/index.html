@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VERF - Sistema de Gestão de Tintas</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="login-card">
+<div class="login-card">
+    <!-- Header de Marca Superior -->
+    <header class="brand-header">
+        <span>VERF SYSTEM</span>
+    </header>
+
+    <div class="card-body">
         <div class="logo-container">
-            <!-- Substitua 'logo-verf.png' pelo caminho real da imagem da sua logo -->
             <img src="img_verf/Logo_Verf.png" alt="VERF - Sistema de Gestão de Tintas" class="logo">
         </div>
 
@@ -18,12 +25,18 @@
         <form id="login-form">
             <div class="form-group">
                 <label for="email">Email <span class="required">*</span></label>
-                <input type="email" id="email" placeholder="seu@email.com" required>
+                <div class="input-wrapper">
+                    <i data-lucide="mail" class="input-icon"></i>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="senha">Senha <span class="required">*</span></label>
-                <input type="password" id="senha" placeholder="••••••••" required>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="input-icon"></i>
+                    <input type="password" id="senha" placeholder="••••••••" required>
+                </div>
             </div>
 
             <div class="forgot-password">
@@ -33,7 +46,12 @@
             <button type="submit" class="btn-submit">Entrar</button>
         </form>
     </div>
+</div>
 
-    <script src="script.js"></script>
+<!-- Script para renderizar os ícones -->
+<script>
+    lucide.createIcons();
+</script>
+<script src="app.js"></script>
 </body>
 </html>
