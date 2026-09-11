@@ -30,7 +30,7 @@ public class ItensReceitaService {
         return itens;
     }
 
-    public ItensReceitaEntity findById(Integer id) {
+    public ItensReceitaEntity findById(Long id) {
         ItensReceitaEntity item = itensReceitaRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Item de Receita encontrado"));
 
         return item;

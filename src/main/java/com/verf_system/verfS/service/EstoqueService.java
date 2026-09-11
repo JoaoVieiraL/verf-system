@@ -29,7 +29,7 @@ public class EstoqueService {
         return estoques;
     }
 
-    public EstoqueEntity findById(Integer id) {
+    public EstoqueEntity findById(Long id) {
         EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Estoque encontrado"));
 
         return estoque;

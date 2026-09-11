@@ -24,7 +24,7 @@ public class FuncionarioController {
 
     @GetMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioEntity findById(@PathVariable Integer id) {
+    public FuncionarioEntity findById(@PathVariable Long id) {
         return funcionarioService.findById(id);
     }
 
@@ -36,7 +36,7 @@ public class FuncionarioController {
 
     @DeleteMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativar(@PathVariable Integer id) {
+    public void inativar(@PathVariable Long id) {
         funcionarioService.inativar(id);
     }
 }

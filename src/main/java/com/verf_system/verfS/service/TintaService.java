@@ -33,13 +33,13 @@ public class TintaService {
         return tintas;
     }
 
-    public TintaEntity findById(Integer id) {
+    public TintaEntity findById(Long id) {
     TintaEntity tintaBuscada = tintaRepository.findById(id).orElseThrow(()-> new RuntimeException("nenhuma tinta Encontrada"));
 
         return tintaBuscada;
     }
 
-    public void inativar(Integer id) {
+    public void inativar(Long id) {
         TintaEntity tintaBuscada = tintaRepository.findById(id).orElseThrow(()-> new RuntimeException("Nenhuma tinta encontrada"));
         tintaBuscada.setAtivo(false);
         tintaRepository.save(tintaBuscada);

@@ -40,7 +40,7 @@ import java.time.LocalDateTime;
 public class TintaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Nome da tinta é obrigatótio.")
     @Size(max = 100, message = "Não foi possivel cadastrar a tinta com esse nome.")
@@ -76,6 +76,7 @@ public class TintaEntity {
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
+    @PrePersist
     private void prePersist() {
         criadoEm = LocalDateTime.now();
         this.atualizadoEm = LocalDateTime.now();

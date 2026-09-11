@@ -24,7 +24,7 @@ public class EstoqueController {
 
     @GetMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EstoqueEntity findById(@PathVariable Integer id) {
+    public EstoqueEntity findById(@PathVariable Long id) {
         return estoqueService.findById(id);
     }
 

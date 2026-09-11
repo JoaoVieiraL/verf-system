@@ -33,13 +33,13 @@ public class FuncionarioService {
         return funcionarios;
     }
 
-    public FuncionarioEntity findById(Integer id) {
+    public FuncionarioEntity findById(Long id) {
         FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
 
         return funcionario;
     }
 
-    public void inativar(Integer id) {
+    public void inativar(Long id) {
         FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
         funcionario.setAtivo(false);
 

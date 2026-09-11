@@ -33,7 +33,7 @@ public class FornecedorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="Id")
-    private Integer id;
+    private Long id;
 
     @CNPJ
     @NotBlank(message = "CNPJ do forncedor é obrigatório.")

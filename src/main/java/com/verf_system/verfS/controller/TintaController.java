@@ -24,7 +24,7 @@ public class TintaController {
 
     @GetMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TintaEntity findById(@PathVariable Integer id) {
+    public TintaEntity findById(@PathVariable Long id) {
         return tintaService.findById(id);
     }
 

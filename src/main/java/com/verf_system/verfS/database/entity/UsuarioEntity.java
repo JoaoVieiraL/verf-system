@@ -28,7 +28,7 @@ import java.time.Instant;
 public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     //! Avaliar este atributo
     @NotNull

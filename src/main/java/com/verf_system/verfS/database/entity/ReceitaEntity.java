@@ -55,7 +55,7 @@ public class ReceitaEntity {
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
-    @PreUpdate
+    @PrePersist
     private void prePersist(){
         criadoEm = LocalDateTime.now();
     }

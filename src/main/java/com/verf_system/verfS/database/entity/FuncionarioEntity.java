@@ -37,7 +37,7 @@ public class FuncionarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Campo do funcionário nao pode ser nulo.")
     @Size(max = 150)

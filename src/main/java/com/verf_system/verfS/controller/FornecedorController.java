@@ -23,7 +23,7 @@ public class FornecedorController {
 
     @GetMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FornecedorEntity findById(@PathVariable Integer id) {
+    public FornecedorEntity findById(@PathVariable Long id) {
         return fornecedorService.findById(id);
     }
 
@@ -35,7 +35,7 @@ public class FornecedorController {
 
     @DeleteMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativar(@PathVariable Integer id) {
+    public void inativar(@PathVariable Long id) {
         FornecedorEntity fornecedor = fornecedorService.findById(id);
         fornecedorService.inativar(fornecedor.getId());
 

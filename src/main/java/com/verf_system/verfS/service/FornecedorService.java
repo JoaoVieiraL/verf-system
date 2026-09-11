@@ -24,7 +24,7 @@ public class FornecedorService {
         return fornecedores;
     }
 
-    public FornecedorEntity findById(Integer id) {
+    public FornecedorEntity findById(Long id) {
         FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Fornecedor encontrado"));
 
         return fornecedor;
@@ -40,7 +40,7 @@ public class FornecedorService {
                 .build());
     }
 
-    public void inativar(Integer id) {
+    public void inativar(Long id) {
         FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Fornecedor encontrado"));
         fornecedor.setAtivo(false);
         fornecedorrepository.save(fornecedor);

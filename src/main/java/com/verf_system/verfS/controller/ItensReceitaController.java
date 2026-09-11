@@ -24,7 +24,7 @@ public class ItensReceitaController {
 
     @GetMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ItensReceitaEntity findById(@PathVariable Integer id) {
+    public ItensReceitaEntity findById(@PathVariable Long id) {
         return itensReceitaService.findById(id);
     }
 

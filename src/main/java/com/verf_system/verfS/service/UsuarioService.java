@@ -30,13 +30,13 @@ public class UsuarioService {
         return usuarios;
     }
 
-    public UsuarioEntity findById(Integer id) {
+    public UsuarioEntity findById(Long id) {
         UsuarioEntity usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Usuario encontrado"));
 
         return usuario;
     }
 
-    public void inativar(Integer id) {
+    public void inativar(Long id) {
         UsuarioEntity usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Usuario encontrado"));
         usuario.setAtivo(false);
 

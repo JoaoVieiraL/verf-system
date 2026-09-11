@@ -78,7 +78,7 @@ public class MovimentacaoEstoqueEntity {
     @Column(nullable = false)
     private Date dataMovimentacao;
 
-    @Column(name = "criado_em", nullable = false, updatable = false)
+    @Column(name = "registrado_em", nullable = false, updatable = false)
     private LocalDateTime registradoEm;
 
     @PrePersist
