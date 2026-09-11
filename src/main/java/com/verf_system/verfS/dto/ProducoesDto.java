@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class ProducoesDto {
     private Long idReceita;
-    private Long idDuncionario;
+    private Long idFuncionario;
     private BigDecimal volumeProduzido;
     private Date dataProducao;
 }

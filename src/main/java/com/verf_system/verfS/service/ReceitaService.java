@@ -21,7 +21,7 @@ public class ReceitaService {
 
     public void save(ReceitaDto receitaDto) {
         TintaEntity tinta = tintaRepository.findById(receitaDto.getIdTintaResultante()).orElseThrow(()-> new RuntimeException("Nenhuma tinta Encontrada"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(receitaDto.getIdTintaResultante()).orElseThrow(()-> new RuntimeException("Nenhum funcionario Encontrado"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(receitaDto.getIdCriadoPor()).orElseThrow(()-> new RuntimeException("Nenhum funcionario Encontrado"));
 
         receitaRepository.save(ReceitaEntity.builder()
                 .nome(receitaDto.getNome())

@@ -17,7 +17,7 @@ public class TintaService {
     private final IFornecedorRepository fornecedorRepository;
 
     public void save(TintaDto tintaDto) {
-        FornecedorEntity fornecedor = fornecedorRepository.findById(tintaDto.getIdFornecedor()).orElseThrow(()-> new RuntimeException("Nenhum Fornecedor ecnontrado"));
+        FornecedorEntity fornecedor = fornecedorRepository.findById(tintaDto.getIdFornecedor()).orElseThrow(()-> new RuntimeException("Nenhum Fornecedor encontrado"));
 
         tintaRepository.save(TintaEntity.builder()
                         .nome(tintaDto.getNome())

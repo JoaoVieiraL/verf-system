@@ -23,10 +23,12 @@ public class MovimentacaoEstoqueService {
     private final IProducoesRepository producoesRepository;
 
     public void save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
-        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new RuntimeException("Nenhuma estoque encontrada"));
+        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new RuntimeException("Nenhum estoque encontrado"));
         FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new RuntimeException("Nenhum funcionario encontrado"));
-        ProducoesEntity producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new RuntimeException("Nenhuma produção encontrada"));
-
+        ProducoesEntity producoes = null;
+        if(movimentacaoEstoqueDto.getIdProducao()!= null) {
+            producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new RuntimeException("Nenhuma produção encontrada"));
+        }
         movimentacaoEstoqueRepository.save(MovimentacaoEstoqueEntity.builder()
                 .estoque(estoque)
                 .funcionarioRef(funcionario)
