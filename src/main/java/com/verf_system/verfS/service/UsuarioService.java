@@ -1,6 +1,8 @@
 package com.verf_system.verfS.service;
 
+import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.entity.UsuarioEntity;
+import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IUsuarioRepository;
 import com.verf_system.verfS.dto.UsuarioDto;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioService {
     private final IUsuarioRepository usuarioRepository;
+    private final IFuncionarioRepository funcionarioRepository;
 
     public void save(UsuarioDto usuarioDto) {
+        FuncionarioEntity funcionario = funcionarioRepository.findById(usuarioDto.getIdFuncionario()).orElseThrow(()-> new RuntimeException("Nenhum funcionario Encontrado"));
         usuarioRepository.save(UsuarioEntity.builder()
-                .funcionarioRef(usuarioDto.getFuncionarioRef())
+                .funcionarioRef(funcionario)
                 .ultimoAcesso(usuarioDto.getUltimoAcesso())
                 .ativo(usuarioDto.isAtivo())
                 .build());

@@ -1,8 +1,5 @@
 package com.verf_system.verfS.dto;
 
-import com.verf_system.verfS.database.entity.EstoqueEntity;
-import com.verf_system.verfS.database.entity.FuncionarioEntity;
-import com.verf_system.verfS.database.entity.ProducoesEntity;
 import com.verf_system.verfS.database.entity.TipoMovimentacao;
 import lombok.*;
 
@@ -14,9 +11,9 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimentacaoEstoqueDto {
-    private EstoqueEntity estoque;
-    private FuncionarioEntity funcionarioRef;
-    private ProducoesEntity producaoRef;
+    private Long idEstoque;
+    private Long idFuncionario;
+    private Long idProducao;
     private TipoMovimentacao tipoMovimentacao;
     private Integer quantidadeAnterior;
     private Integer quantidadeMovimentada;

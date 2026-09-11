@@ -1,7 +1,7 @@
 package com.verf_system.verfS.dto;
 
 
-import com.verf_system.verfS.database.entity.FornecedorEntity;
+
 import com.verf_system.verfS.database.entity.OrigemTinta;
 import lombok.*;
 
@@ -17,5 +17,5 @@ public class TintaDto {
     private String codigo;
     private OrigemTinta origem;
     private boolean ativo;
-    private FornecedorEntity fornecedorRef;
+    private Long idFornecedor;
 }

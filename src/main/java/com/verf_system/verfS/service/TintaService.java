@@ -1,6 +1,8 @@
 package com.verf_system.verfS.service;
 
+import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.entity.TintaEntity;
+import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.TintaDto;
 import lombok.RequiredArgsConstructor;
@@ -12,15 +14,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TintaService {
     private final ITintaRepository tintaRepository;
+    private final IFornecedorRepository fornecedorRepository;
 
     public void save(TintaDto tintaDto) {
+        FornecedorEntity fornecedor = fornecedorRepository.findById(tintaDto.getIdFornecedor()).orElseThrow(()-> new RuntimeException("Nenhum Fornecedor ecnontrado"));
+
         tintaRepository.save(TintaEntity.builder()
                         .nome(tintaDto.getNome())
                         .numeroHexadecimal(tintaDto.getNumeroHexadecimal())
                         .codigo(tintaDto.getCodigo())
                         .origemTinta(tintaDto.getOrigem())
                         .ativo(tintaDto.isAtivo())
-                        .fornecedorRef(tintaDto.getFornecedorRef())
+                        .fornecedorRef(fornecedor)
                 .build());
 
     }

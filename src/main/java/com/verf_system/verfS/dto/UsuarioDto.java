@@ -1,6 +1,5 @@
 package com.verf_system.verfS.dto;
 
-import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import lombok.*;
 
 import java.time.Instant;
@@ -11,7 +10,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDto {
-    private FuncionarioEntity funcionarioRef;
+    private Long idFuncionario;
     private Instant ultimoAcesso;
     private boolean ativo;
 }

@@ -1,24 +1,36 @@
 package com.verf_system.verfS.service;
 
+import com.verf_system.verfS.database.entity.EstoqueEntity;
+import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.entity.MovimentacaoEstoqueEntity;
+import com.verf_system.verfS.database.entity.ProducoesEntity;
+import com.verf_system.verfS.database.repository.IEstoqueRepository;
+import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
+import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.dto.MovimentacaoEstoqueDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MovimentacaoEstoqueService {
     private final IMovimentacaoEstoqueRepository movimentacaoEstoqueRepository;
+    private final IEstoqueRepository estoqueRepository;
+    private final IFuncionarioRepository funcionarioRepository;
+    private final IProducoesRepository producoesRepository;
 
     public void save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
+        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new RuntimeException("Nenhuma estoque encontrada"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new RuntimeException("Nenhum funcionario encontrado"));
+        ProducoesEntity producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new RuntimeException("Nenhuma produção encontrada"));
+
         movimentacaoEstoqueRepository.save(MovimentacaoEstoqueEntity.builder()
-                .estoque(movimentacaoEstoqueDto.getEstoque())
-                .funcionarioRef(movimentacaoEstoqueDto.getFuncionarioRef())
-                .producaoRef(movimentacaoEstoqueDto.getProducaoRef())
+                .estoque(estoque)
+                .funcionarioRef(funcionario)
+                .producaoRef(producoes)
                 .tipoMovimentacao(movimentacaoEstoqueDto.getTipoMovimentacao())
                 .quantidadeAnterior(movimentacaoEstoqueDto.getQuantidadeAnterior())
                 .quantidadeMovimentada(movimentacaoEstoqueDto.getQuantidadeMovimentada())
