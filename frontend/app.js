@@ -27,4 +27,18 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         console.error('Erro na autenticação:', error);
         alert('Falha ao conectar com o servidor.');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Redireciona para a tela de módulos após o login
+            window.location.href = 'modulos.html';
+        });
+    }
+});
+
 });

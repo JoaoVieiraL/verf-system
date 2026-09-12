@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Painel de Controle</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-layout">
+
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="img_verf/Verf-azul.jpg" alt="VERF Logo" class="sidebar-logo">
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Navegação Principal</span>
+            <a href="modulos.html" class="nav-item active">
+                <i data-lucide="layout-grid"></i>
+                <span>Módulos</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="box"></i>
+                <span>Estoque</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="flask-conical"></i>
+                <span>Mistura</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Relatórios</span>
+            </a>
+        </nav>
+
+     
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <header class="content-header">
+            <div>
+                <h1>Visão Geral do Sistema</h1>
+                <p>Escolha uma das áreas abaixo para gerenciar a sua operação.</p>
+            </div>
+        </header>
+
+        <section class="modules-flex-grid">
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-blue">
+                    <i data-lucide="layout-grid"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Dashboard</h3>
+                    <p>Métricas principais e indicadores do negócio em tempo real.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <i data-lucide="box"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Estoque</h3>
+                    <p>Controle de tintas, latas, insumos e níveis mínimos.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-green">
+                    <i data-lucide="users"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Fornecedores</h3>
+                    <p>Gestão de parceiros, prazos de entrega e contatos.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-orange">
+                    <i data-lucide="trending-down"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Movimentações</h3>
+                    <p>Registro completo de entradas, saídas e transferências.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-teal">
+                    <i data-lucide="flask-conical"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Mistura de Tintas</h3>
+                    <p>Calculadora e dosador para criação de fórmulas customizadas.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-cyan">
+                    <i data-lucide="history"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Histórico</h3>
+                    <p>Logs de auditoria e rastreabilidade de ações executadas.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-indigo">
+                    <i data-lucide="bar-chart-3"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Relatórios</h3>
+                    <p>Exportação de dados e análise financeira de consumo.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-emerald">
+                    <i data-lucide="wallet"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Financeiro</h3>
+                    <p>Fechamento de caixa, fluxo de vendas e faturamento.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="#" class="app-card">
+                <div class="card-icon-wrapper bg-pink">
+                    <i data-lucide="user-cog"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Usuários</h3>
+                    <p>Níveis de permissão e cadastro de novos operadores.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
