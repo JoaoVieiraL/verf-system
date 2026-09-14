@@ -36,8 +36,7 @@ public class FornecedorController {
     @DeleteMapping(value = "ID/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
-        FornecedorEntity fornecedor = fornecedorService.findById(id);
-        fornecedorService.inativar(fornecedor.getId());
+        fornecedorService.inativar(id);
 
     }
 
