@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table (name = "tb_itens_receita")
+@Table (name = "tb_itens_receita", uniqueConstraints = @UniqueConstraint(columnNames = {"id_receita", "id_tinta"}))
 public class ItensReceitaEntity {
 
     @Id
@@ -36,10 +36,10 @@ public class ItensReceitaEntity {
     private ReceitaEntity receitaRef;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tinta")
+    @JoinColumn(name = "id_tinta", nullable = false)
     private TintaEntity tintaMateriaPrimaRef;
 
-    @Column(precision = 5, scale = 2, nullable = false, unique = true)
+    @Column(precision = 5, scale = 2, nullable = false)
     private BigDecimal proporcaoPercentual;
 
 
