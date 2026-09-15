@@ -1,360 +1,519 @@
-# VERF — Sistema de Gestão de Estoque e Produção de Tintas
+# VERF System
 
-## Contexto do projeto
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.8-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
-O VERF é um projeto acadêmico desenvolvido em grupo como parte da formação em Análise e Desenvolvimento de Sistemas.
+API REST para controle de estoque, receitas e produção de tintas, com rastreabilidade das movimentações.
 
-O sistema tem como objetivo auxiliar no controle de estoque, fornecedores, tintas, receitas, produções e movimentações de estoque, buscando melhorar a rastreabilidade das operações e reduzir perdas relacionadas ao controle manual ou inadequado dos materiais.
+Projeto acadêmico em desenvolvimento (Projeto Integrador). Este README descreve o que existe hoje no código — o planejamento completo está no [ROADMAP.md](ROADMAP.md).
 
-O projeto está sendo desenvolvido de forma incremental. Nesta etapa, o foco principal está na construção e organização da API REST do backend. Posteriormente, será desenvolvido o frontend, que consumirá a API por meio de requisições HTTP e JSON.
+---
 
-A arquitetura planejada é:
+## Sumário
 
-```text
-┌─────────────────────┐
-│      Frontend       │
-│   Interface Web     │
-└──────────┬──────────┘
-           │ HTTP / JSON
-           ▼
-┌─────────────────────┐
-│     VERF API        │
-│    Spring Boot      │
-└──────────┬──────────┘
-           │ JPA / Hibernate
-           ▼
-┌─────────────────────┐
-│     PostgreSQL      │
-│      Database       │
-└─────────────────────┘
+- [O problema](#o-problema)
+- [Domínios do sistema](#domínios-do-sistema)
+- [Funcionalidades disponíveis](#funcionalidades-disponíveis)
+- [Como executar](#como-executar)
+- [API](#api)
+- [Arquitetura](#arquitetura)
+- [Banco de dados](#banco-de-dados)
+- [Estado do projeto](#estado-do-projeto)
+- [Testes](#testes)
+- [Frontend](#frontend)
+- [Roadmap](#roadmap)
+- [Equipe](#equipe)
+- [Convenções do repositório](#convenções-do-repositório)
+- [Licença](#licença)
+
+---
+
+## O problema
+
+Em uma fábrica ou distribuidora de tintas, o controle costuma ser feito em planilha ou no papel. O resultado é sempre o mesmo: ninguém sabe ao certo quanto existe de cada tinta, quem movimentou o quê, qual receita gerou determinada produção, nem quanto se perdeu no caminho.
+
+O VERF centraliza esses registros em um banco único e guarda o histórico de cada operação. A regra de negócio prevista é que **o saldo de estoque não seja editado diretamente**: ele deve existir como consequência das movimentações registradas, e cada movimentação sabe quem a fez, quando, por quê e de qual produção veio.
+
+---
+
+## Domínios do sistema
+
+| Domínio | Responsabilidade |
+|---|---|
+| Fornecedor | Empresas que fornecem as tintas compradas |
+| Tinta | Cadastro de tintas, compradas ou produzidas, com código e cor hexadecimal |
+| Estoque | Saldo atual de cada tinta |
+| Movimentação | Entradas, saídas e ajustes de estoque |
+| Receita | Fórmula que define qual tinta é produzida e seu valor por litro |
+| Itens da receita | Tintas usadas como matéria-prima e sua proporção percentual |
+| Produção | Registro de fabricação a partir de uma receita |
+| Funcionário | Pessoas que operam o sistema, com nível de acesso |
+| Usuário | Vínculo de acesso de um funcionário ao sistema |
+| Log de acessos | Registro de tentativas de acesso |
+| Financeiro | Receita, compras, perdas e saldo informados por data de referência |
+
+---
+
+## Funcionalidades disponíveis
+
+Operações que a API atende hoje:
+
+- Cadastro, listagem, consulta por ID e inativação lógica de **fornecedores**, **funcionários** e **usuários**
+- Cadastro, listagem e consulta de **tintas**, vinculadas a um fornecedor
+- Cadastro, listagem e consulta de **saldos de estoque**, vinculados a uma tinta
+- Registro, listagem e consulta de **movimentações** (entrada, saída, ajuste), vinculadas a estoque, funcionário e, opcionalmente, a uma produção
+- Cadastro, listagem e consulta de **receitas** e de seus **itens**, com proporção percentual
+- Registro, listagem e consulta de **produções**, vinculadas a receita e funcionário
+- Registro, listagem e consulta de **lançamentos financeiros** e de **logs de acesso**
+
+A inativação é lógica (`ativo = false`): nenhum registro é removido do banco, preservando o histórico.
+
+> **Importante:** o registro de movimentação ainda não recalcula o saldo em `tb_estoque`, e a produção ainda não consome matéria-prima automaticamente. Essas regras são o foco atual do desenvolvimento. Veja [Estado do projeto](#estado-do-projeto).
+
+---
+
+## Como executar
+
+**Pré-requisitos:** Java 21, PostgreSQL e Git. O Maven não precisa estar instalado — use o wrapper.
+
+**1. Clone o repositório**
+
+```bash
+git clone https://github.com/JoaoVieiraL/verf-system.git
+cd verf-system
 ```
 
-## Objetivo
+**2. Crie o banco no PostgreSQL**
 
-O VERF busca centralizar e organizar informações relacionadas ao estoque e à produção de tintas, permitindo registrar as operações realizadas e manter um histórico das movimentações.
+```sql
+CREATE DATABASE "dbVerf";
+```
 
-Entre os principais objetivos estão:
+A URL está fixa no `application.yaml` como `jdbc:postgresql://localhost:5432/dbVerf`. Para usar outro host, porta ou nome de banco, é preciso alterar o arquivo.
 
-- Controle de tintas e produtos;
-- Cadastro e gerenciamento de fornecedores;
-- Controle de estoque;
-- Registro de entradas e saídas;
-- Controle de receitas e itens utilizados;
-- Registro de produções;
-- Rastreabilidade das movimentações;
-- Registro de funcionários e usuários;
-- Controle de informações financeiras;
-- Registro de logs de acesso;
-- Evolução futura para autenticação e autorização de usuários.
+**3. Defina as variáveis de ambiente**
 
-## Módulos planejados
+O projeto **não possui biblioteca de leitura de arquivo `.env`**. O `.env.example` serve apenas como referência dos nomes: as variáveis precisam ser exportadas no terminal ou configuradas na run configuration da IDE.
 
-| Módulo | Objetivo |
+Linux e macOS:
+
+```bash
+export DATABASE_USERNAME=postgres
+export DATABASE_PASSWORD=sua_senha
+```
+
+Windows (PowerShell):
+
+```powershell
+$env:DATABASE_USERNAME="postgres"
+$env:DATABASE_PASSWORD="sua_senha"
+```
+
+IntelliJ IDEA: *Edit Configurations* → `VerfSApplication` → campo **Environment variables** → `DATABASE_USERNAME=postgres;DATABASE_PASSWORD=sua_senha`
+
+**4. Execute**
+
+```bash
+./mvnw spring-boot:run
+```
+
+A API sobe em `http://localhost:8090`. Na primeira execução o Hibernate cria as tabelas (`ddl-auto: update`).
+
+**5. Abra a documentação interativa**
+
+- Swagger UI: `http://localhost:8090/swagger-ui/index.html`
+- Especificação OpenAPI: `http://localhost:8090/v3/api-docs`
+
+### Configuração
+
+| Variável | Descrição |
 |---|---|
-| Tintas | Cadastro e consulta das tintas |
-| Fornecedores | Cadastro, consulta e inativação de fornecedores |
-| Estoque | Consulta dos saldos disponíveis |
-| Movimentações | Registro de entradas, saídas e ajustes |
-| Receitas | Definição dos componentes utilizados na produção |
-| Produções | Registro da fabricação de tintas |
-| Funcionários | Gerenciamento dos funcionários |
-| Usuários | Controle dos usuários do sistema |
-| Financeiro | Informações financeiras relacionadas ao sistema |
-| Logs de acesso | Registro das operações e acessos |
+| `DATABASE_USERNAME` | Usuário do PostgreSQL |
+| `DATABASE_PASSWORD` | Senha do PostgreSQL |
 
-## Arquitetura do backend
+Nenhuma credencial real está versionada: o `.env` está no `.gitignore`.
 
-O backend segue uma arquitetura em camadas:
+Outras configurações do `application.yaml`: `server.port: 8090`, `ddl-auto: update`, `show-sql: true` e `format_sql: true`.
+
+---
+
+## API
+
+Base: `http://localhost:8090`
+
+Observações sobre o padrão atual, mantido aqui como está no código:
+
+- Não há prefixo `/api` e todos os endpoints estão abertos
+- Os recursos usam nome no singular com inicial maiúscula
+- `Tinta` está em `/v2`; os demais estão em `/v1`
+- O POST retorna `201 Created` com corpo vazio — não devolve o recurso criado nem o header `Location`
+- Registro inexistente retorna `500`, não `404` (veja [Estado do projeto](#estado-do-projeto))
+
+A padronização das rotas para `/api/v1`, com recursos no plural, é um item do roadmap.
+
+### Fornecedor
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Fornecedor` | Lista fornecedores |
+| GET | `/v1/Fornecedor/{id}` | Busca por ID |
+| POST | `/v1/Fornecedor` | Cadastra |
+| DELETE | `/v1/Fornecedor/{id}` | Inativa (`ativo = false`) |
+
+POST /v1/Fornecedor
+```json
+{
+  "cnpj": "00000000000191",
+  "nome": "Química Exemplo Ltda",
+  "telefone": "11999999999",
+  "email": "contato@exemplo.com",
+  "ativo": true
+}
+```
+
+O CNPJ é validado com `@CNPJ` do Hibernate Validator e é único.
+
+### Funcionário
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Funcionario` | Lista funcionários |
+| GET | `/v1/Funcionario/{id}` | Busca por ID |
+| POST | `/v1/Funcionario` | Cadastra |
+| DELETE | `/v1/Funcionario/{id}` | Inativa |
+
+`nivelDeAcesso` aceita `ADMIN`, `USER_N1` ou `USER_N2`.
+
+### Usuário
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Usuario` | Lista usuários |
+| GET | `/v1/Usuario/{id}` | Busca por ID |
+| POST | `/v1/Usuario` | Vincula um funcionário como usuário (`idFuncionario`) |
+| DELETE | `/v1/Usuario/{id}` | Inativa |
+
+### Tinta
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v2/Tinta` | Lista tintas |
+| GET | `/v2/Tinta/{id}` | Busca por ID |
+| POST | `/v2/Tinta` | Cadastra |
+
+
+POST "/v2/Tinta"
+```json
+{
+  "nome": "Azul Royal",
+  "numeroHexadecimal": "#1E3A8A",
+  "codigo": "TNT-0001",
+  "origem": "COMPRADA",
+  "ativo": true,
+  "idFornecedor": 1
+}
+```
+
+`origem` aceita `COMPRADA` ou `PRODUZIDA`. O `TintaService` possui o método `inativar`, mas ele ainda não está exposto em nenhum endpoint.
+
+### Estoque
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Estoque` | Lista saldos |
+| GET | `/v1/Estoque/{id}` | Busca por ID |
+| POST | `/v1/Estoque` | Cria o saldo de uma tinta |
+
+POST /v1/Estoque
+```json
+{ "idTinta": 1, "quantidade": 100 }
+```
+
+Este POST existe em caráter temporário, para permitir os testes enquanto a regra de movimentação não está implementada. A intenção é removê-lo: o saldo deve mudar apenas como consequência de uma movimentação.
+
+### Movimentação de estoque
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/MovimentacaoEstoque` | Lista movimentações |
+| GET | `/v1/MovimentacaoEstoque/{id}` | Busca por ID |
+| POST | `/v1/MovimentacaoEstoque` | Registra uma movimentação |
+
+POST /v1/MovimentacaoEstoque
+```json
+{
+  "idEstoque": 1,
+  "idFuncionario": 1,
+  "idProducao": null,
+  "tipoMovimentacao": "ENTRADA",
+  "quantidadeAnterior": 0,
+  "quantidadeMovimentada": 100,
+  "quantidadePosterior": 100,
+  "observacao": "Compra inicial",
+  "dataMovimentacao": "2026-09-14"
+}
+```
+
+`tipoMovimentacao` aceita `ENTRADA`, `SAIDA` ou `AJUSTE`. `idProducao` é opcional.
+
+As três quantidades são gravadas exatamente como enviadas e o saldo em estoque **não** é alterado pela aplicação. A implementação prevista remove `quantidadeAnterior` e `quantidadePosterior` do corpo da requisição e passa a calculá-las no service.
+
+### Receita e itens da receita
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Receita` | Lista receitas |
+| GET | `/v1/Receita/{id}` | Busca por ID |
+| POST | `/v1/Receita` | Cadastra (`idTintaResultante`, `idCriadoPor`) |
+| GET | `/v1/ItensReceita` | Lista itens |
+| GET | `/v1/ItensReceita/{id}` | Busca por ID |
+| POST | `/v1/ItensReceita` | Cadastra (`idReceita`, `idTintaMateriaPrima`, `proporcaoPercentual`) |
+
+A soma das proporções de uma receita ainda não é validada.
+
+### Produção
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Producoes` | Lista produções |
+| GET | `/v1/Producoes/{id}` | Busca por ID |
+| POST | `/v1/Producoes` | Registra (`idReceita`, `idFuncionario`, `volumeProduzido`, `dataProducao`) |
+
+### Financeiro e log de acessos
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/v1/Financeiro` | Lista lançamentos |
+| GET | `/v1/Financeiro/{id}` | Busca por ID |
+| POST | `/v1/Financeiro` | Registra lançamento |
+| GET | `/v1/LogAcessos` | Lista logs |
+| GET | `/v1/LogAcessos/{id}` | Busca por ID |
+| POST | `/v1/LogAcessos` | Registra log (data/hora preenchida pelo servidor) |
+
+O `LogAcessosDto` é o único DTO que ainda recebe a entidade `UsuarioEntity` aninhada em vez do ID. Ele será refeito junto com a geração automática do log a partir do evento de autenticação.
+
+---
+
+## Arquitetura
 
 ```text
-Controller
+Controller  →  recebe a requisição HTTP e delega
     ↓
-Service
+Service     →  resolve as entidades relacionadas pelo ID e monta a entidade
     ↓
-Repository
+Repository  →  Spring Data JPA (JpaRepository)
     ↓
 PostgreSQL
 ```
 
-### Controller
+Decisões da implementação atual:
 
-Responsável por receber as requisições HTTP, validar entradas simples e encaminhar as operações para a camada de serviço.
+- **Injeção por construtor**, com `@RequiredArgsConstructor` do Lombok
+- **DTOs de entrada por recurso.** Relacionamentos chegam como ID (`idTinta`, `idFornecedor`, `idReceita`) e são resolvidos no service com `findById`, o que garante que o registro referenciado existe antes de gravar. A única exceção é o `LogAcessosDto`
+- **Auditoria automática.** `criadoEm` e `atualizadoEm` são preenchidos por `@PrePersist` e `@PreUpdate`, nunca pelo cliente
+- **Chaves primárias padronizadas** como `Long` em todas as entidades
+- **Sem DTO de saída.** As respostas serializam as entidades JPA diretamente, o que expõe campos internos — inclusive o `senha_hash` do funcionário
+- **Sem tratamento de erro.** Os services lançam `RuntimeException` quando não encontram o registro; sem handler global, isso vira HTTP 500
 
-### Service
-
-Responsável pelas regras de negócio do sistema.
-
-É nessa camada que devem ficar decisões como:
-
-- Verificar se uma entidade existe;
-- Impedir operações inválidas;
-- Validar regras relacionadas ao estoque;
-- Controlar movimentações;
-- Verificar relacionamentos entre entidades;
-- Garantir a consistência das operações.
-
-### Repository
-
-Responsável pela comunicação com o banco de dados utilizando Spring Data JPA.
-
-### Banco de dados
-
-O PostgreSQL é utilizado para persistência das informações.
-
-## Regra importante de estoque
-
-O estoque não deve ser tratado simplesmente como uma tabela em que qualquer usuário altera diretamente a quantidade disponível.
-
-A ideia do sistema é manter a rastreabilidade:
+### Estrutura de pastas
 
 ```text
-Movimentação
-      ↓
-MovimentacaoService
-      ↓
-Regras de negócio
-      ↓
-Atualização do estoque
+verf-system/
+├── frontend/                       # páginas estáticas, ainda não integradas
+├── src/
+│   ├── main/
+│   │   ├── java/com/verf_system/verfS/
+│   │   │   ├── VerfSApplication.java
+│   │   │   ├── configuration/      # SecurityConfig
+│   │   │   ├── controller/         # 11 REST controllers
+│   │   │   ├── database/
+│   │   │   │   ├── entity/         # entidades JPA e enums
+│   │   │   │   └── repository/     # interfaces JpaRepository
+│   │   │   ├── dto/                # DTOs de entrada
+│   │   │   └── service/            # regras de aplicação
+│   │   └── resources/
+│   │       └── application.yaml
+│   └── test/
+│       └── java/com/verf_system/verfS/VerfSApplicationTests.java
+├── .env.example
+├── pom.xml
+├── README.md
+└── ROADMAP.md
 ```
 
-Da mesma forma, uma produção poderá futuramente gerar operações como:
+### Tecnologias
+
+Confirmadas no `pom.xml`:
+
+| | |
+|---|---|
+| Linguagem | Java 21 |
+| Framework | Spring Boot 4.0.8 |
+| Web | Spring Web MVC (`spring-boot-starter-webmvc`) |
+| Persistência | Spring Data JPA / Hibernate |
+| Banco | PostgreSQL |
+| Validação | Bean Validation (`spring-boot-starter-validation`) |
+| Segurança | Spring Security (presente, sem autenticação implementada) |
+| Documentação | springdoc-openapi 3.1.0 |
+| Utilitários | Lombok, Spring Boot DevTools |
+| Build | Maven, com wrapper `mvnw` |
+
+O `spring-boot-starter-batch` está declarado no `pom.xml` mas **não possui nenhum job implementado**. A remoção da dependência está no roadmap.
+
+---
+
+## Banco de dados
+
+PostgreSQL, acessado via Spring Data JPA. O schema é gerado pelo Hibernate com `ddl-auto: update` — **não há migrations** (Flyway ou Liquibase) no projeto. A adoção do Flyway está no roadmap.
+
+Tabelas: `tb_fornecedor`, `tb_tinta`, `tb_estoque`, `tb_movimentacao`, `tb_receita`, `tb_itens_receita`, `tb_producoes`, `tb_funcionario`, `tb_usuario`, `tb_log_acessos`, `tb_financeiro`.
+
+### Relacionamentos
 
 ```text
-Produção
-   ↓
-Consumo de matéria-prima
-   ↓
-Movimentações
-   ↓
-Entrada do produto produzido
-   ↓
-Estoque
+Fornecedor   1 ──── N  Tinta
+Tinta        1 ──── 1  Estoque
+Tinta        1 ──── N  Receita           (tinta resultante)
+Receita      1 ──── N  ItensReceita
+ItensReceita N ──── 1  Tinta             (matéria-prima)
+Receita      1 ──── N  Producoes
+Producoes    N ──── 1  Funcionario
+Estoque      1 ──── N  Movimentacao
+Movimentacao N ──── 1  Funcionario
+Movimentacao N ──── 1  Producoes         (opcional)
+Funcionario  1 ──── 1  Usuario
+Usuario      1 ──── N  LogAcessos
 ```
 
-Isso permite identificar de onde veio cada alteração no estoque.
+`tb_itens_receita` possui constraint de unicidade em (`id_receita`, `id_tinta`), impedindo a mesma matéria-prima repetida na mesma receita.
 
-## Backend
 
-O backend está sendo desenvolvido utilizando:
+---
 
-- Java 21;
-- Spring Boot;
-- Spring Web MVC;
-- Spring Data JPA;
-- Hibernate;
-- Spring Security;
-- Spring Batch;
-- PostgreSQL;
-- Lombok;
-- Maven;
-- Springdoc OpenAPI / Swagger;
-- JPA.
+## Estado do projeto
+
+Esta seção existe para que ninguém precise ler o código para saber o que funciona.
+
+### Implementado
+
+- Estrutura em camadas Controller → Service → Repository para os 11 domínios
+- Entidades JPA com relacionamentos, enums e auditoria automática de datas
+- Listagem, busca por ID e cadastro em todos os recursos
+- Resolução das entidades relacionadas pelo ID enviado no DTO
+- Inativação lógica de fornecedor, funcionário e usuário
+- Persistência em PostgreSQL com schema gerado pelo Hibernate
+- springdoc-openapi disponível nos caminhos padrão
+
+### Parcialmente implementado
+
+| Item | Situação |
+|---|---|
+| Validação | As anotações (`@NotBlank`, `@Size`, `@Email`, `@CNPJ`) estão nas entidades, não nos DTOs, e os controllers não usam `@Valid`. A validação só ocorre no flush do Hibernate e a falha retorna erro genérico |
+| Spring Security | O `SecurityConfig` existe, mas libera todas as rotas com `permitAll()`. Não há autenticação |
+| Inativação de tintas | O método existe no service, sem endpoint que o exponha |
+| DTOs por ID | Dez dos onze DTOs recebem ID; o `LogAcessosDto` ainda recebe a entidade |
+| Frontend | Existe, não integrado à API |
+
+### Não implementado
+
+- **Regra de negócio de estoque.** A movimentação é apenas registrada: ela não recalcula nem atualiza a quantidade em `tb_estoque`, e as quantidades anterior e posterior são informadas pelo cliente
+- **Regra de negócio de produção.** A produção não consome matéria-prima nem gera movimentações automaticamente
+- **Atualização de registros.** Não existe nenhum `PUT` ou `PATCH` na aplicação
+- **Tratamento global de exceções.** Sem `@RestControllerAdvice`, exceções de domínio ou respostas de erro padronizadas
+- **DTOs de resposta.** Os controllers retornam as entidades JPA
+- **Hash de senha.** O campo `senha_hash` é gravado exatamente como recebido
+- **Autenticação e autorização** por nível de acesso, e registro automático de log de acesso
+- **Controle transacional explícito** (`@Transactional`)
+- **Paginação e filtros** nas listagens
+- **Testes** além do `contextLoads`
+
+### Aviso de segurança
+
+**A API não está protegida e não deve ser exposta na internet no estado atual.** O `SecurityConfig` desabilita CSRF e aplica `permitAll()` a todas as rotas, de forma intencional e temporária, para permitir os testes dos CRUDs durante o desenvolvimento. Não há `PasswordEncoder`, e como as respostas serializam as entidades, o `GET /v1/Funcionario` devolve o campo `senha_hash`.
+
+---
+
+## Testes
+
+Existe apenas a classe `VerfSApplicationTests`, com o teste `contextLoads`, que verifica se o contexto do Spring sobe. Ele exige um PostgreSQL disponível e as variáveis de ambiente definidas, já que o datasource é o mesmo da aplicação — ou seja, `./mvnw test` falha em uma máquina sem banco local.
+
+As dependências de teste (`spring-boot-starter-webmvc-test`, `spring-boot-starter-data-jpa-test`, `spring-boot-starter-security-test`) já estão no `pom.xml`. A adoção de Testcontainers e a escrita dos testes de service e controller estão no roadmap.
+
+---
 
 ## Frontend
 
-O frontend será desenvolvido posteriormente e terá a responsabilidade de fornecer a interface utilizada pelos usuários do sistema.
+A pasta `frontend/` contém páginas estáticas em HTML, CSS e JavaScript puro — login, recuperação de senha e um menu de módulos — além das imagens da interface.
 
-A comunicação com o backend será realizada por meio da API REST:
+Ela ainda **não funciona com a API**. O `app.js` chama `http://localhost:8080/v2/Usuario/login` e a página de recuperação chama `/api/auth/esqueci-senha`; nenhum desses endpoints existe no backend, e a API roda na porta 8090. A integração depende de três coisas: implementar a autenticação, configurar CORS e alinhar o contrato das rotas.
 
-```text
-Frontend
-   ↓
-HTTP Request
-   ↓
-VERF REST API
-   ↓
-HTTP Response / JSON
-```
+![Tela de módulos](docs/tela-modulos.png)
 
-Enquanto o frontend ainda está em desenvolvimento, a API pode ser testada utilizando ferramentas como Postman.
-
-## Estrutura planejada do projeto
-
-Com a evolução para uma aplicação full-stack, a organização poderá seguir uma estrutura semelhante a:
-
-```text
-VERF/
-├── backend/
-├── frontend/
-├── docs/
-├── README.md
-├── ROADMAP.md
-└── .gitignore
-```
-
-Atualmente, o repositório está concentrado principalmente no backend.
-
-## Integrantes
-
-O projeto é desenvolvido em grupo.
-
-| Integrante | Responsabilidade |
-|---|---|
-| Integrante 1 | Backend / API REST |
-| Integrante 2 | Frontend |
-| Integrante 3 | Banco de dados / documentação |
-| Integrante 4 | Testes / integração |
-
-> Os nomes e responsabilidades podem ser atualizados conforme a divisão real das tarefas do grupo.
-
-## Status atual
-
-O projeto encontra-se em desenvolvimento.
-
-Atualmente, o foco está em:
-
-- Estruturação da API REST;
-- Implementação das entidades;
-- Relacionamentos JPA;
-- Repositories;
-- Services;
-- Controllers;
-- Persistência no PostgreSQL;
-- Padronização das respostas da API;
-- Tratamento de exceções;
-- Validação das regras de negócio.
-
-Alguns recursos, principalmente autenticação, autorização, testes automatizados e observabilidade, ainda estão em evolução.
-
-O projeto não deve ser considerado uma aplicação pronta para produção neste momento.
-
-## Segurança
-
-O Spring Security já está presente no projeto, porém a configuração de autenticação e autorização ainda está em desenvolvimento.
-
-Durante a etapa de desenvolvimento e testes de CRUD, algumas rotas podem permanecer temporariamente liberadas.
-
-A configuração definitiva deverá contemplar:
-
-- Autenticação;
-- Autorização;
-- Perfis e permissões;
-- Senhas armazenadas com hash;
-- Proteção dos endpoints;
-- Possível utilização de JWT.
-
-## Configuração local
-
-As credenciais do banco de dados devem ser fornecidas por variáveis de ambiente.
-
-Exemplo:
-
-```env
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=sua_senha
-```
-
-O arquivo `.env` real não deve ser versionado.
-
-Utilize o `.env.example` apenas como referência.
-
-## Executando o projeto
-
-### Pré-requisitos
-
-- Java 21;
-- Maven;
-- PostgreSQL;
-- Git;
-- IDE de sua preferência.
-
-### Banco de dados
-
-Crie um banco PostgreSQL chamado:
-
-```text
-dbVerf
-```
-
-Configure as variáveis:
-
-```text
-DATABASE_USERNAME
-DATABASE_PASSWORD
-```
-
-Depois execute o projeto pela IDE ou utilizando Maven.
-
-## Testando a API
-
-Durante o desenvolvimento, os endpoints podem ser testados com Postman ou Swagger/OpenAPI.
-
-Exemplo de fluxo:
-
-```text
-Postman
-   ↓ HTTP
-Controller
-   ↓
-Service
-   ↓
-Repository
-   ↓
-PostgreSQL
-```
-
-## Documentação
-
-O projeto possui um roadmap de evolução em:
-
-`ROADMAP.md`
-
-A documentação deve acompanhar a evolução do sistema e registrar decisões importantes de arquitetura, regras de negócio e melhorias futuras.
-
-## Objetivos de aprendizado
-
-Além de entregar o sistema acadêmico, o projeto está sendo utilizado como prática de desenvolvimento backend com Java.
-
-Os principais conhecimentos trabalhados incluem:
-
-- Java;
-- Orientação a objetos;
-- Collections;
-- Exceptions;
-- Optional;
-- SQL;
-- JPA;
-- Hibernate;
-- Spring Boot;
-- Spring Data JPA;
-- APIs REST;
-- HTTP;
-- DTOs;
-- Validação;
-- Tratamento global de exceções;
-- Spring Security;
-- Testes automatizados;
-- Git e GitHub;
-- Docker;
-- Integração entre frontend e backend.
+---
 
 ## Roadmap
 
-A evolução planejada do projeto está documentada em `ROADMAP.md`.
+O [ROADMAP.md](ROADMAP.md) traz o planejamento técnico completo, em 12 blocos priorizados. Resumo da ordem de execução:
 
-Entre as próximas etapas estão:
+**Em andamento**
 
-1. Tratamento global de exceções;
-2. DTOs de entrada e saída;
-3. Padronização dos endpoints;
-4. Implementação das regras de negócio;
-5. Rastreabilidade das movimentações;
-6. Auditoria de datas;
-7. Segurança e autenticação;
-8. Testes automatizados;
-9. Documentação da API;
-10. Docker;
-11. CI/CD;
-12. Desenvolvimento e integração do frontend.
+1. Correções de modelagem e persistência que impedem operações básicas
+2. Exceções de domínio, `@RestControllerAdvice` e `@Valid` nos DTOs
 
-## Projeto acadêmico e portfólio
+**Próximos**
 
-Por ser um projeto acadêmico desenvolvido em grupo, o VERF também tem como objetivo demonstrar a aplicação prática dos conhecimentos adquiridos durante a formação.
+3. Regra de estoque: movimentação como única via de alteração de saldo, com `@Transactional` e bloqueio de saída maior que o saldo
+4. Produção consumindo matéria-prima e gerando movimentações, em transação única
+5. DTOs de resposta, retirando `senha_hash` e as entidades JPA do contrato
+6. Padronização REST: prefixo `/api/v1`, recursos no plural, e endpoints de atualização
 
-A intenção é evoluir o sistema de forma incremental, documentando as decisões e melhorias realizadas ao longo do desenvolvimento.
+**Depois**
 
-O projeto também poderá ser utilizado como material de portfólio para demonstrar conhecimentos em desenvolvimento backend, APIs REST, banco de dados, arquitetura em camadas, Git/GitHub e, futuramente, integração full-stack.
+7. Autenticação, autorização por nível de acesso e hash de senha
+8. Flyway, índices e correção dos N+1
+9. Testes automatizados de service e controller
+10. Docker, CI/CD e observabilidade
+11. Integração do frontend com a API
+
+---
+
+## Equipe
+
+| Integrante                                                 | Responsabilidade                             |
+|------------------------------------------------------------|----------------------------------------------|
+| [João Antonio Vieira Lima](https://github.com/JoaoVieiraL) | Backend — modelagem, API e regras de negócio |
+| *Alison Mariano*                                           | *Backend — modelagem, API e regras de negócio*                                           |
+| Renan Miranda                                              | Frontend — interface e integração            |
+| *Daniel Caitano*                                           | *Frontend — interface e integração*          |
+| *Ricardo Jhony*                                            | *Frontend — interface e integração*          |
+
+
+---
+
+## Convenções do repositório
+
+Os commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), com escopo indicando a parte do projeto:
+
+```text
+fix(backend): preencher datas de auditoria via callbacks JPA
+refactor(backend): padronizar o tipo das chaves primárias como Long
+feat(frontend): ajusta ícone do estoque e estilos da sidebar
+chore(backend): remover código morto da classe principal
+```
+
+Tipos em uso: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`.
+
+O trabalho acontece diretamente na branch `main`, com os dois integrantes sincronizando por `pull` antes de cada sessão. A adoção de branches por feature e Pull Requests está prevista junto com o CI.
+
+O acompanhamento das tarefas é feito no Jira, com um épico por bloco do roadmap.
+
+---
 
 ## Licença
 
-Projeto desenvolvido para fins acadêmicos e de aprendizado.
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
+
+Projeto desenvolvido para fins acadêmicos, como Projeto Integrador.
+
