@@ -22,7 +22,7 @@ public class ProducoesController {
         return producoesService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProducoesEntity findById(@PathVariable Long id) {
         return producoesService.findById(id);

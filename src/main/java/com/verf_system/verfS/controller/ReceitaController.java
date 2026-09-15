@@ -22,7 +22,7 @@ public class ReceitaController {
         return receitaService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ReceitaEntity findById(@PathVariable Long id) {
         return receitaService.findById(id);

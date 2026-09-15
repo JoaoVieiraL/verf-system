@@ -22,7 +22,7 @@ public class TintaController {
         return tintaService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TintaEntity findById(@PathVariable Long id) {
         return tintaService.findById(id);

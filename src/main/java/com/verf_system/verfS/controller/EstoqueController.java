@@ -22,7 +22,7 @@ public class EstoqueController {
         return estoqueService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public EstoqueEntity findById(@PathVariable Long id) {
         return estoqueService.findById(id);

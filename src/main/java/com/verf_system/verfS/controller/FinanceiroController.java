@@ -22,7 +22,7 @@ public class FinanceiroController {
         return financeiroService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public FinanceiroEntity findById(@PathVariable Long id) {
         return financeiroService.findById(id);

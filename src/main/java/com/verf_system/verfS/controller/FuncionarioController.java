@@ -22,7 +22,7 @@ public class FuncionarioController {
         return funcionarioService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public FuncionarioEntity findById(@PathVariable Long id) {
         return funcionarioService.findById(id);

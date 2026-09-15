@@ -22,7 +22,7 @@ public class ItensReceitaController {
         return itensReceitaService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ItensReceitaEntity findById(@PathVariable Long id) {
         return itensReceitaService.findById(id);

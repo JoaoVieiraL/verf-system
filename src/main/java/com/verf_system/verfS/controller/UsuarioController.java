@@ -22,7 +22,7 @@ public class UsuarioController {
         return usuarioService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UsuarioEntity findById(@PathVariable Long id) {
         return usuarioService.findById(id);
@@ -34,7 +34,7 @@ public class UsuarioController {
         usuarioService.save(usuarioDto);
     }
 
-    @DeleteMapping(value = "ID/{id}")
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
         usuarioService.inativar(id);

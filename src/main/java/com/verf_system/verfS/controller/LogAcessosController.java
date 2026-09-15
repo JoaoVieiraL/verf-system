@@ -22,7 +22,7 @@ public class LogAcessosController {
         return logAcessosService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public LogAcessosEntity findById(@PathVariable Long id) {
         return logAcessosService.findById(id);

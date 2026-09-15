@@ -33,7 +33,7 @@ public class FornecedorController {
         fornecedorService.save(fornecedor);
     }
 
-    @DeleteMapping(value = "ID/{id}")
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
         fornecedorService.inativar(id);
