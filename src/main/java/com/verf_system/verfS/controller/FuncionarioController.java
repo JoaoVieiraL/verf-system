@@ -34,7 +34,7 @@ public class FuncionarioController {
         funcionarioService.save(funcionarioDto);
     }
 
-    @DeleteMapping(value = "ID/{id}")
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
         funcionarioService.inativar(id);

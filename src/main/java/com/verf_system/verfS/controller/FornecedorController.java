@@ -21,7 +21,7 @@ public class FornecedorController {
         return fornecedorService.findAll();
     }
 
-    @GetMapping(value = "ID/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public FornecedorEntity findById(@PathVariable Long id) {
         return fornecedorService.findById(id);
