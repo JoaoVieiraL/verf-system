@@ -1,44 +1,26 @@
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+// Controle de Sessão e Proteção de Páginas
+document.addEventListener('DOMContentLoaded', () => {
+    // Páginas acessíveis sem estar logado
+    const paginasPublicas = ['index.html', 'esqueci-senha.html'];
+    
+    // Obtém o nome da página atual
+    const paginaAtual = window.location.pathname.split('/').pop();
 
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
+    // Valida a sessão em páginas restritas
+    if (!paginasPublicas.includes(paginaAtual) && paginaAtual !== '') {
+        const token = localStorage.getItem('userToken');
 
-    try {
-        const response = await fetch('http://localhost:8080/v2/Usuario/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, senha })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            // Salva o token de acesso caso utilize Spring Security / JWT
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-            }
-            window.location.href = '/dashboard.html';
-        } else {
-            alert('Credenciais inválidas. Verifique seu email e senha.');
+        if (!token) {
+            alert('Sessão inválida ou expirada. Por favor, faça login.');
+            window.location.href = 'index.html';
         }
-    } catch (error) {
-        console.error('Erro na autenticação:', error);
-        alert('Falha ao conectar com o servidor.');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Redireciona para a tela de módulos após o login
-            window.location.href = 'modulos.html';
-        });
     }
 });
 
-});
+// Função Utilitária de Logout (disponível globalmente)
+function fazerLogout() {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
+    window.location.href = 'index.html';
+}

@@ -21,21 +21,27 @@
                 <i data-lucide="layout-grid"></i>
                 <span>Módulos</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="estoque.html" class="nav-item">
                 <i data-lucide="box"></i>
                 <span>Estoque</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="mistura.html" class="nav-item">
                 <i data-lucide="flask-conical"></i>
                 <span>Mistura</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="relatorios.html" class="nav-item">
                 <i data-lucide="bar-chart-3"></i>
                 <span>Relatórios</span>
             </a>
         </nav>
 
-     
+        <!-- Botão de Sair Integrado com a Sessão -->
+        <div class="sidebar-footer" style="padding: 1rem; margin-top: auto;">
+            <button onclick="fazerLogout()" class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: inherit; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
     </aside>
 
     <!-- Opções dos modulos -->
@@ -48,110 +54,111 @@
         </header>
 
         <section class="modules-flex-grid">
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Dashboardimg.jpg" alt="Dashboard" style="width: 40px; height: 40px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Dashboard</h3>
-        <p>Visão geral do sistema com metricas e indicadores.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
-        </a>
-
-
-           <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/iconedeestoque.png" alt="Estoque" style="width: 40px; height: 40px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Estoque</h3>
-        <p>Controle de tintas, latas, insumos e níveis mínimos.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="dashboard.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Dashboardimg.jpg" alt="Dashboard" style="width: 40px; height: 40px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Dashboard</h3>
+                    <p>Visão geral do sistema com métricas e indicadores.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Fornecedoresimg.png" alt="Fornecedores" style="width: 40px; height: 40px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Fornecedores</h3>
-        <p>Gestão de parceiros, prazos de entrega e contatos.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="estoque.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/iconedeestoque.png" alt="Estoque" style="width: 40px; height: 40px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Estoque</h3>
+                    <p>Controle de tintas, latas, insumos e níveis mínimos.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-             <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Movimentacaoimg.png" alt="Movimentacao" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Movimentações</h3>
-        <p>Registro completo de entradas, saídas e transferências.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="fornecedores.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Fornecedoresimg.png" alt="Fornecedores" style="width: 40px; height: 40px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Fornecedores</h3>
+                    <p>Gestão de parceiros, prazos de entrega e contatos.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Mistura_Tintaimg.png" alt="Mistura de Tintas" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Mistura de Tintas</h3>
-        <p>Calculadora e dosador para criação de fórmulas customizadas.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="movimentacoes.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Movimentacaoimg.png" alt="Movimentacao" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Movimentações</h3>
+                    <p>Registro completo de entradas, saídas e transferências.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Historicoimg.png" alt="Histórico" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Histórico</h3>
-        <p>Logs de auditoria e rastreabilidade de ações executadas.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="mistura.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Mistura_Tintaimg.png" alt="Mistura de Tintas" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Mistura de Tintas</h3>
+                    <p>Calculadora e dosador para criação de fórmulas customizadas.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Relatorioimg.png" alt="Relatórios" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Relatórios</h3>
-        <p>Exportação de dados e análise financeira de consumo.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="historico.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Historicoimg.png" alt="Histórico" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Histórico</h3>
+                    <p>Logs de auditoria e rastreabilidade de ações executadas.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Financeiroimg.png" alt="Financeiro" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Financeiro</h3>
-        <p>Fechamento de caixa, fluxo de vendas e faturamento.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="relatorios.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Relatorioimg.png" alt="Relatórios" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Relatórios</h3>
+                    <p>Exportação de dados e análise financeira de consumo.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
 
-            <a href="#" class="app-card">
-    <div class="card-icon-wrapper bg-purple">
-        <img src="img_verf/Usuarioimg.png" alt="Usuários" style="width: 60px; height: 60px; object-fit: contain;">
-    </div>
-    <div class="card-content">
-        <h3>Usuários</h3>
-        <p>Níveis de permissão e cadastro de novos operadores.</p>
-    </div>
-    <i data-lucide="chevron-right" class="arrow-icon"></i>
+            <a href="financeiro.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Financeiroimg.png" alt="Financeiro" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Financeiro</h3>
+                    <p>Fechamento de caixa, fluxo de vendas e faturamento.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
+            </a>
+
+            <a href="usuarios.html" class="app-card">
+                <div class="card-icon-wrapper bg-purple">
+                    <img src="img_verf/Usuarioimg.png" alt="Usuários" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="card-content">
+                    <h3>Usuários</h3>
+                    <p>Níveis de permissão e cadastro de novos operadores.</p>
+                </div>
+                <i data-lucide="chevron-right" class="arrow-icon"></i>
             </a>
         </section>
     </main>
 
+    <!-- Inicialização de Ícones e Script Global de Proteção -->
     <script>
         lucide.createIcons();
     </script>
+    <script src="app.js"></script>
 </body>
 </html>
