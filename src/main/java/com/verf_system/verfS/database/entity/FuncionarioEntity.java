@@ -55,7 +55,7 @@ public class FuncionarioEntity {
     private String email;
 
     //!ESTUDAR ESSE CONTEUDO - Spring Security
-    private String senha_hash;
+    private String senhaHash;
 
     //! ESTUDAR LOGIN SEGURO
     @Enumerated(EnumType.STRING)

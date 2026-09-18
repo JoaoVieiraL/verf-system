@@ -18,7 +18,7 @@ public class FuncionarioService {
                 .nome(funcionarioDto.getNome())
                 .cargo(funcionarioDto.getCargo())
                 .email(funcionarioDto.getEmail())
-                .senha_hash(funcionarioDto.getSenha_hash())
+                .senhaHash(funcionarioDto.getSenhaHash())
                 .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
                 .ativo(funcionarioDto.isAtivo())
                 .build());

@@ -13,7 +13,7 @@ public class FuncionarioDto {
     private String nome;
     private String cargo;
     private String email;
-    private String senha_hash;
+    private String senhaHash;
     private NivelDeAcesso nivelDeAcesso;
     private boolean ativo;
 }

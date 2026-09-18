@@ -15,7 +15,7 @@ public class FinanceiroService {
 
     public void save(FinanceiroDto financeiroDto) {
         financeiroRepository.save(FinanceiroEntity.builder()
-                .receita_total(financeiroDto.getReceita_total())
+                .receitaTotal(financeiroDto.getReceita_total())
                 .compras(financeiroDto.getCompras())
                 .perdas(financeiroDto.getPerdas())
                 .saldoLiquido(financeiroDto.getSaldoLiquido())
