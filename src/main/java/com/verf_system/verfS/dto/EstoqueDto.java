@@ -1,5 +1,7 @@
 package com.verf_system.verfS.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 
@@ -9,6 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EstoqueDto {
+
+    @NotNull
     private Long idTinta;
+    @NotNull
+    @PositiveOrZero
     private Integer quantidade;
 }
