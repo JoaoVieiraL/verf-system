@@ -1,8 +1,7 @@
 package com.verf_system.verfS.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.time.Instant;
 
 @Builder
 @Getter
@@ -10,7 +9,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDto {
+    @NotNull
     private Long idFuncionario;
-    private Instant ultimoAcesso;
-    private boolean ativo;
 }

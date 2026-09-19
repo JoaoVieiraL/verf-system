@@ -20,8 +20,7 @@ public class UsuarioService {
         FuncionarioEntity funcionario = funcionarioRepository.findById(usuarioDto.getIdFuncionario()).orElseThrow(()-> new RuntimeException("Nenhum funcionario Encontrado"));
         usuarioRepository.save(UsuarioEntity.builder()
                 .funcionarioRef(funcionario)
-                .ultimoAcesso(usuarioDto.getUltimoAcesso())
-                .ativo(usuarioDto.isAtivo())
+                .ativo(true)
                 .build());
     }
 
