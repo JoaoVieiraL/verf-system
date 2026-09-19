@@ -70,6 +70,7 @@ public class FornecedorEntity {
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
         this.atualizadoEm = LocalDateTime.now();
+        ativo = true;
     }
     @PreUpdate
     public void preUpdate() {

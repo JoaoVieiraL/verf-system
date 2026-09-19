@@ -36,7 +36,6 @@ public class FornecedorService {
                 .nome(fornecedor.getNome())
                 .telefone(fornecedor.getTelefone())
                 .email(fornecedor.getEmail())
-                .ativo(fornecedor.isAtivo())
                 .build());
     }
 
