@@ -20,7 +20,6 @@ public class FuncionarioService {
                 .email(funcionarioDto.getEmail())
                 .senhaHash(funcionarioDto.getSenhaHash())
                 .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
-                .ativo(funcionarioDto.isAtivo())
                 .build());
     }
 

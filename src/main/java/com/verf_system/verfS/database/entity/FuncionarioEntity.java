@@ -15,6 +15,7 @@ package com.verf_system.verfS.database.entity;
 //);
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -44,13 +45,13 @@ public class FuncionarioEntity {
     @Column(length = 150, nullable = false)
     private String nome;
 
-    //! Transformar Cargo em Enum.
+    @Enumerated(EnumType.STRING)
     @Column(length = 150, nullable = false)
-    private String cargo;
+    private Cargo cargo;
 
 
     @NotNull(message = "Campo email do funcionário não pode ser nulo")
-
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -58,6 +59,7 @@ public class FuncionarioEntity {
     private String senhaHash;
 
     //! ESTUDAR LOGIN SEGURO
+    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private NivelDeAcesso nivelDeAcesso;
@@ -78,6 +80,7 @@ public class FuncionarioEntity {
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
         this.atualizadoEm = LocalDateTime.now();
+        ativo = true;
     }
 
     @PreUpdate

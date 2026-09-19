@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.dto.FuncionarioDto;
 import com.verf_system.verfS.service.FuncionarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class FuncionarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody FuncionarioDto funcionarioDto) {
+    public void save(@Valid @RequestBody FuncionarioDto funcionarioDto) {
         funcionarioService.save(funcionarioDto);
     }
 
