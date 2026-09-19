@@ -33,7 +33,6 @@ public class TintaService {
                 .numeroHexadecimal(tintaDto.getNumeroHexadecimal())
                 .codigo(tintaDto.getCodigo())
                 .origemTinta(tintaDto.getOrigem())
-                .ativo(tintaDto.isAtivo())
                 .fornecedorRef(fornecedor)
                 .build());
 

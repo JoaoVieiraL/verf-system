@@ -80,6 +80,7 @@ public class TintaEntity {
     private void prePersist() {
         criadoEm = LocalDateTime.now();
         this.atualizadoEm = LocalDateTime.now();
+        ativo = true;
     }
 
     @PreUpdate

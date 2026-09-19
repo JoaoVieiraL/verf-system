@@ -4,6 +4,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.dto.TintaDto;
 import com.verf_system.verfS.service.TintaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class TintaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody TintaDto tintaDto) {
+    public void save(@Valid @RequestBody TintaDto tintaDto) {
         tintaService.save(tintaDto);
     }
 
