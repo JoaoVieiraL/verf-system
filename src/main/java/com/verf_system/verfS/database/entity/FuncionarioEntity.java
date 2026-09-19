@@ -59,7 +59,7 @@ public class FuncionarioEntity {
     private String senhaHash;
 
     //! ESTUDAR LOGIN SEGURO
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private NivelDeAcesso nivelDeAcesso;

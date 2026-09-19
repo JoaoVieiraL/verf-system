@@ -1,6 +1,9 @@
 package com.verf_system.verfS.dto;
 
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -13,13 +16,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ReceitaDto {
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String nome;
     @NotNull
     private Long idTintaResultante;
     @NotNull
     private Long idCriadoPor;
-    @Size(max = 200)
+    @NotNull
+    @PositiveOrZero
+    @Digits(integer = 8, fraction = 2)
     private BigDecimal valorPorLitro;
 }
