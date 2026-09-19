@@ -34,11 +34,8 @@ public class MovimentacaoEstoqueService {
                 .funcionarioRef(funcionario)
                 .producaoRef(producoes)
                 .tipoMovimentacao(movimentacaoEstoqueDto.getTipoMovimentacao())
-                .quantidadeAnterior(movimentacaoEstoqueDto.getQuantidadeAnterior())
                 .quantidadeMovimentada(movimentacaoEstoqueDto.getQuantidadeMovimentada())
-                .quantidadePosterior(movimentacaoEstoqueDto.getQuantidadePosterior())
                 .observacao(movimentacaoEstoqueDto.getObservacao())
-                .dataMovimentacao(movimentacaoEstoqueDto.getDataMovimentacao())
                 .build());
     }
 
