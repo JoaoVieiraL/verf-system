@@ -16,9 +16,9 @@ import java.util.List;
 public class TintaService {
     private final ITintaRepository tintaRepository;
     private final IFornecedorRepository fornecedorRepository;
-    FornecedorEntity fornecedor = null;
 
     public void save(TintaDto tintaDto) {
+        FornecedorEntity fornecedor = null;
         if(tintaDto.getOrigem() == OrigemTinta.COMPRADA) {
             if(tintaDto.getIdFornecedor() == null) {
                 throw new RuntimeException ("Nenhum Fornecedor encontrado");
