@@ -1,7 +1,9 @@
 package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.LogAcessosEntity;
+import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.database.repository.ILogAcessosRepository;
+import com.verf_system.verfS.database.repository.IUsuarioRepository;
 import com.verf_system.verfS.dto.LogAcessosDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogAcessosService {
     private final ILogAcessosRepository logAcessosRepository;
+    private final IUsuarioRepository usuarioRepository;
 
     public void save(LogAcessosDto logAcessosDto) {
+        UsuarioEntity usuario = null;
+        if (logAcessosDto.getIdUsuario() != null) {
+            usuario = usuarioRepository.findById(logAcessosDto.getIdUsuario()).orElseThrow(() -> new RuntimeException("Nenhum Usuario encontrado"));
+        }
         logAcessosRepository.save(LogAcessosEntity.builder()
-                .usuario(logAcessosDto.getUsuario())
+                .usuario(usuario)
                 .emailUsado(logAcessosDto.getEmailUsado())
                 .sucesso(logAcessosDto.isSucesso())
                 .ipOrigem(logAcessosDto.getIpOrigem())
