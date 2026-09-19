@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.FinanceiroEntity;
 import com.verf_system.verfS.dto.FinanceiroDto;
 import com.verf_system.verfS.service.FinanceiroService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class FinanceiroController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody FinanceiroDto financeiroDto) {
+    public void save(@Valid @RequestBody FinanceiroDto financeiroDto) {
         financeiroService.save(financeiroDto);
     }
 }
