@@ -63,6 +63,7 @@ public class MovimentacaoEstoqueService {
                 .quantidadePosterior(estoque.getQuantidade())
                 .quantidadeMovimentada(movimentacaoEstoqueDto.getQuantidadeMovimentada())
                 .observacao(movimentacaoEstoqueDto.getObservacao())
+                .motivo(movimentacaoEstoqueDto.getMotivo())
                 .build());
     }
 

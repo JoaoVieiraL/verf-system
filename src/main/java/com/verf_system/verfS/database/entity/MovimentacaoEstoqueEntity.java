@@ -15,7 +15,6 @@ package com.verf_system.verfS.database.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -52,10 +50,14 @@ public class MovimentacaoEstoqueEntity {
     private ProducoesEntity producaoRef;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     @Column(name = "Tipo_Movimentacao", nullable = false, length = 30)
     private TipoMovimentacao tipoMovimentacao;
 
-    //!private Motivo motivo; -- criar enum
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Motivo_da_movimentacao", nullable = false)
+    private MotivoMovimentacao motivo;
 
 
     @NotNull
@@ -70,13 +72,12 @@ public class MovimentacaoEstoqueEntity {
     @Column(nullable = false)
     private Integer quantidadeAnterior;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(name = "observacao")
     private String observacao;
 
     @NotNull
     @Column(nullable = false)
-    private Date dataMovimentacao;
+    private LocalDateTime dataMovimentacao;
 
     @Column(name = "registrado_em", nullable = false, updatable = false)
     private LocalDateTime registradoEm;
@@ -84,6 +85,7 @@ public class MovimentacaoEstoqueEntity {
     @PrePersist
     private void prePersist(){
         this.registradoEm = LocalDateTime.now();
+        this.dataMovimentacao = LocalDateTime.now();
     }
 
 
