@@ -3,6 +3,7 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.dto.FuncionarioDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,20 +27,20 @@ public class FuncionarioService {
     public List<FuncionarioEntity> findAll() {
         List<FuncionarioEntity> funcionarios = funcionarioRepository.findAll();
         if (funcionarios.isEmpty()) {
-            throw new RuntimeException("Nenhum Funcionario encontrado");
+            throw new NaoEncontradoException("Nenhum Funcionario encontrado");
         }
 
         return funcionarios;
     }
 
     public FuncionarioEntity findById(Long id) {
-        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Funcionario encontrado"));
 
         return funcionario;
     }
 
     public void inativar(Long id) {
-        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Funcionario encontrado"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Funcionario encontrado"));
         funcionario.setAtivo(false);
 
         funcionarioRepository.save(funcionario);

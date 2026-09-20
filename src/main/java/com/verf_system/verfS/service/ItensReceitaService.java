@@ -7,6 +7,7 @@ import com.verf_system.verfS.database.repository.IItensReceitaRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.ItensReceitaDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,8 @@ public class ItensReceitaService {
     private final ITintaRepository tintaRepository;
 
     public void save(ItensReceitaDto itensReceitaDto) {
-        ReceitaEntity receita = receitaRepository.findById(itensReceitaDto.getIdReceita()).orElseThrow(()-> new RuntimeException("Nenhuma receita encontrada"));
-        TintaEntity tinta = tintaRepository.findById(itensReceitaDto.getIdTintaMateriaPrima()).orElseThrow(()-> new RuntimeException("Nenhum tinta Encontrada"));
+        ReceitaEntity receita = receitaRepository.findById(itensReceitaDto.getIdReceita()).orElseThrow(()-> new NaoEncontradoException("Nenhuma receita encontrada"));
+        TintaEntity tinta = tintaRepository.findById(itensReceitaDto.getIdTintaMateriaPrima()).orElseThrow(()-> new NaoEncontradoException("Nenhum tinta Encontrada"));
         itensReceitaRepository.save(ItensReceitaEntity.builder()
                 .receitaRef(receita)
                 .tintaMateriaPrimaRef(tinta)
@@ -32,14 +33,14 @@ public class ItensReceitaService {
     public List<ItensReceitaEntity> findAll() {
         List<ItensReceitaEntity> itens = itensReceitaRepository.findAll();
         if (itens.isEmpty()) {
-            throw new RuntimeException("Nenhum Item de Receita encontrado");
+            throw new NaoEncontradoException("Nenhum Item de Receita encontrado");
         }
 
         return itens;
     }
 
     public ItensReceitaEntity findById(Long id) {
-        ItensReceitaEntity item = itensReceitaRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Item de Receita encontrado"));
+        ItensReceitaEntity item = itensReceitaRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Item de Receita encontrado"));
 
         return item;
     }

@@ -3,6 +3,7 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.dto.FornecedorDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ public class FornecedorService {
     public List<FornecedorEntity> findAll() {
         List<FornecedorEntity> fornecedores = fornecedorrepository.findAll();
         if(fornecedores.isEmpty()){
-            throw new EmptyResultDataAccessException("Nenhum Fornecedor encontrado", 1);
+            throw new NaoEncontradoException("Nenhum Fornecedor encontrado");
         }
 
         return fornecedores;
     }
 
     public FornecedorEntity findById(Long id) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Fornecedor encontrado"));
+        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
 
         return fornecedor;
     }
@@ -40,7 +41,7 @@ public class FornecedorService {
     }
 
     public void inativar(Long id) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum Fornecedor encontrado"));
+        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
         fornecedor.setAtivo(false);
         fornecedorrepository.save(fornecedor);
     }

@@ -9,6 +9,7 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.dto.MovimentacaoEstoqueDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,11 @@ public class MovimentacaoEstoqueService {
     private final IProducoesRepository producoesRepository;
 
     public void save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
-        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new RuntimeException("Nenhum estoque encontrado"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new RuntimeException("Nenhum funcionario encontrado"));
+        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new NaoEncontradoException("Nenhum estoque encontrado"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new NaoEncontradoException("Nenhum funcionario encontrado"));
         ProducoesEntity producoes = null;
         if(movimentacaoEstoqueDto.getIdProducao()!= null) {
-            producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new RuntimeException("Nenhuma produção encontrada"));
+            producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new NaoEncontradoException("Nenhuma produção encontrada"));
         }
         movimentacaoEstoqueRepository.save(MovimentacaoEstoqueEntity.builder()
                 .estoque(estoque)
@@ -42,14 +43,14 @@ public class MovimentacaoEstoqueService {
     public List<MovimentacaoEstoqueEntity> findAll() {
         List<MovimentacaoEstoqueEntity> movimentacoes = movimentacaoEstoqueRepository.findAll();
         if (movimentacoes.isEmpty()) {
-            throw new RuntimeException("Nenhuma Movimentacao encontrada");
+            throw new NaoEncontradoException("Nenhuma Movimentacao encontrada");
         }
 
         return movimentacoes;
     }
 
     public MovimentacaoEstoqueEntity findById(Long id) {
-        MovimentacaoEstoqueEntity movimentacao = movimentacaoEstoqueRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhuma Movimentacao encontrada"));
+        MovimentacaoEstoqueEntity movimentacao = movimentacaoEstoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Movimentacao encontrada"));
 
         return movimentacao;
     }
