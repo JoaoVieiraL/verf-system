@@ -30,4 +30,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
+
+    @ExceptionHandler(RegraDeNegocioException.class)
+    public ResponseEntity<ErrorResponse> handleRegraDeNegocioException(RegraDeNegocioException ex){
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
