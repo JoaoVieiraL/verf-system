@@ -35,7 +35,7 @@ public class FinanceiroEntity {
     private Long id;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal receita_total;
+    private BigDecimal receitaTotal;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal compras;

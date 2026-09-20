@@ -1,9 +1,11 @@
 package com.verf_system.verfS.dto;
 
 import com.verf_system.verfS.database.entity.TipoMovimentacao;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.sql.Date;
 
 @Builder
 @Getter
@@ -11,13 +13,21 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimentacaoEstoqueDto {
+    @NotNull
     private Long idEstoque;
+
+    @NotNull
     private Long idFuncionario;
+
     private Long idProducao;
+
+    @NotNull
     private TipoMovimentacao tipoMovimentacao;
-    private Integer quantidadeAnterior;
+
+    @NotNull
+    @Positive
     private Integer quantidadeMovimentada;
-    private Integer quantidadePosterior;
+
+    @Size(max = 255)
     private String observacao;
-    private Date dataMovimentacao;
 }

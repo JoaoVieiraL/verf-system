@@ -1,5 +1,8 @@
 package com.verf_system.verfS.dto;
 
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,9 +14,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinanceiroDto {
-    private BigDecimal receita_total;
+    @NotNull
+    @PositiveOrZero
+    @Digits(integer = 10, fraction = 2)
+    private BigDecimal receitaTotal;
+    @NotNull
+    @PositiveOrZero
+    @Digits(integer = 10, fraction = 2)
     private BigDecimal compras;
+    @NotNull
+    @PositiveOrZero
+    @Digits(integer = 10, fraction = 2)
     private BigDecimal perdas;
-    private BigDecimal saldoLiquido;
+    @NotNull
     private Date dataReferencia;
 }

@@ -3,6 +3,7 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FinanceiroEntity;
 import com.verf_system.verfS.database.repository.IFinanceiroRepository;
 import com.verf_system.verfS.dto.FinanceiroDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,12 @@ public class FinanceiroService {
 
     public void save(FinanceiroDto financeiroDto) {
         financeiroRepository.save(FinanceiroEntity.builder()
-                .receita_total(financeiroDto.getReceita_total())
+                .receitaTotal(financeiroDto.getReceitaTotal())
                 .compras(financeiroDto.getCompras())
                 .perdas(financeiroDto.getPerdas())
-                .saldoLiquido(financeiroDto.getSaldoLiquido())
+                .saldoLiquido(financeiroDto.getReceitaTotal()
+                        .subtract(financeiroDto.getCompras())
+                        .subtract(financeiroDto.getPerdas()))
                 .dataReferencia(financeiroDto.getDataReferencia())
                 .build());
     }
@@ -26,14 +29,14 @@ public class FinanceiroService {
     public List<FinanceiroEntity> findAll() {
         List<FinanceiroEntity> registros = financeiroRepository.findAll();
         if (registros.isEmpty()) {
-            throw new RuntimeException("Nenhum registro Financeiro encontrado");
+            throw new NaoEncontradoException("Nenhum registro Financeiro encontrado");
         }
 
         return registros;
     }
 
     public FinanceiroEntity findById(Long id) {
-        FinanceiroEntity financeiro = financeiroRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhum registro Financeiro encontrado"));
+        FinanceiroEntity financeiro = financeiroRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum registro Financeiro encontrado"));
 
         return financeiro;
     }

@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.dto.FornecedorDto;
 import com.verf_system.verfS.service.FornecedorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class FornecedorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody FornecedorDto fornecedor) {
+    public void save(@Valid @RequestBody FornecedorDto fornecedor) {
         fornecedorService.save(fornecedor);
     }
 

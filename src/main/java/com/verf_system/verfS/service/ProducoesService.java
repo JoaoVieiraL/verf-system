@@ -7,6 +7,7 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.dto.ProducoesDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,8 @@ public class ProducoesService {
     private final IFuncionarioRepository funcionarioRepository;
 
     public void save(ProducoesDto producoesDto) {
-        ReceitaEntity receita = receitaRepository.findById(producoesDto.getIdReceita()).orElseThrow(()-> new RuntimeException("Nenhuma receita encontrada"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(producoesDto.getIdFuncionario()).orElseThrow(()-> new RuntimeException("Nenhum funcionario encontrado"));
+        ReceitaEntity receita = receitaRepository.findById(producoesDto.getIdReceita()).orElseThrow(()-> new NaoEncontradoException("Nenhuma receita encontrada"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(producoesDto.getIdFuncionario()).orElseThrow(()-> new NaoEncontradoException("Nenhum funcionario encontrado"));
 
         producoesRepository.save(ProducoesEntity.builder()
                 .receitaRef(receita)
@@ -34,14 +35,14 @@ public class ProducoesService {
     public List<ProducoesEntity> findAll() {
         List<ProducoesEntity> producoes = producoesRepository.findAll();
         if (producoes.isEmpty()) {
-            throw new RuntimeException("Nenhuma Producao encontrada");
+            throw new NaoEncontradoException("Nenhuma Producao encontrada");
         }
 
         return producoes;
     }
 
     public ProducoesEntity findById(Long id) {
-        ProducoesEntity producao = producoesRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhuma Producao encontrada"));
+        ProducoesEntity producao = producoesRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Producao encontrada"));
 
         return producao;
     }

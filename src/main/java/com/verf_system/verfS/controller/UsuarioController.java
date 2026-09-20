@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.dto.UsuarioDto;
 import com.verf_system.verfS.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody UsuarioDto usuarioDto) {
+    public void save(@Valid @RequestBody UsuarioDto usuarioDto) {
         usuarioService.save(usuarioDto);
     }
 

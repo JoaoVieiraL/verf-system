@@ -7,6 +7,7 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.ReceitaDto;
+import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,8 @@ public class ReceitaService {
     private final IFuncionarioRepository funcionarioRepository;
 
     public void save(ReceitaDto receitaDto) {
-        TintaEntity tinta = tintaRepository.findById(receitaDto.getIdTintaResultante()).orElseThrow(()-> new RuntimeException("Nenhuma tinta Encontrada"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(receitaDto.getIdCriadoPor()).orElseThrow(()-> new RuntimeException("Nenhum funcionario Encontrado"));
+        TintaEntity tinta = tintaRepository.findById(receitaDto.getIdTintaResultante()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta Encontrada"));
+        FuncionarioEntity funcionario = funcionarioRepository.findById(receitaDto.getIdCriadoPor()).orElseThrow(()-> new NaoEncontradoException("Nenhum funcionario Encontrado"));
 
         receitaRepository.save(ReceitaEntity.builder()
                 .nome(receitaDto.getNome())
@@ -34,14 +35,14 @@ public class ReceitaService {
     public List<ReceitaEntity> findAll() {
         List<ReceitaEntity> receitas = receitaRepository.findAll();
         if (receitas.isEmpty()) {
-            throw new RuntimeException("Nenhuma Receita encontrada");
+            throw new NaoEncontradoException("Nenhuma Receita encontrada");
         }
 
         return receitas;
     }
 
     public ReceitaEntity findById(Long id) {
-        ReceitaEntity receita = receitaRepository.findById(id).orElseThrow(() -> new RuntimeException("Nenhuma Receita encontrada"));
+        ReceitaEntity receita = receitaRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Receita encontrada"));
 
         return receita;
     }

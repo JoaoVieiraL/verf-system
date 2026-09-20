@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.LogAcessosEntity;
 import com.verf_system.verfS.dto.LogAcessosDto;
 import com.verf_system.verfS.service.LogAcessosService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class LogAcessosController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody LogAcessosDto logAcessosDto) {
+    public void save(@Valid @RequestBody LogAcessosDto logAcessosDto) {
         logAcessosService.save(logAcessosDto);
     }
 }

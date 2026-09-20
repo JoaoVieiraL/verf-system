@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.ItensReceitaEntity;
 import com.verf_system.verfS.dto.ItensReceitaDto;
 import com.verf_system.verfS.service.ItensReceitaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ItensReceitaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody ItensReceitaDto itensReceitaDto) {
+    public void save(@Valid @RequestBody ItensReceitaDto itensReceitaDto) {
         itensReceitaService.save(itensReceitaDto);
     }
 }

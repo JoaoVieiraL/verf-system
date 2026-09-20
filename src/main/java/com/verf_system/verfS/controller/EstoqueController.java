@@ -3,6 +3,7 @@ package com.verf_system.verfS.controller;
 import com.verf_system.verfS.database.entity.EstoqueEntity;
 import com.verf_system.verfS.dto.EstoqueDto;
 import com.verf_system.verfS.service.EstoqueService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class EstoqueController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody EstoqueDto estoqueDto) {
+    public void save(@Valid  @RequestBody EstoqueDto estoqueDto) {
         estoqueService.save(estoqueDto);
     }
 }

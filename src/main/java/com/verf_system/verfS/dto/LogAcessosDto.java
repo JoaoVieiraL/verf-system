@@ -1,6 +1,7 @@
 package com.verf_system.verfS.dto;
 
-import com.verf_system.verfS.database.entity.UsuarioEntity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Builder
@@ -9,8 +10,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LogAcessosDto {
-    private UsuarioEntity usuario;
+    private Long idUsuario;
+    @NotBlank
+    @Size(max = 120)
     private String emailUsado;
     private boolean sucesso;
+    @NotBlank
+    @Size(max = 40)
     private String ipOrigem;
 }
