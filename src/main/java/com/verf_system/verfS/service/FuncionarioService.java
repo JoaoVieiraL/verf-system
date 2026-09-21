@@ -15,6 +15,9 @@ public class FuncionarioService {
     private final IFuncionarioRepository funcionarioRepository;
 
     public void save(FuncionarioDto funcionarioDto) {
+        if(funcionarioRepository.existsByEmail(funcionarioDto.getEmail())){
+            throw new NaoEncontradoException("Funcionario com email " + funcionarioDto.getEmail() + " já cadastrado");
+        }
         funcionarioRepository.save(FuncionarioEntity.builder()
                 .nome(funcionarioDto.getNome())
                 .cargo(funcionarioDto.getCargo())
