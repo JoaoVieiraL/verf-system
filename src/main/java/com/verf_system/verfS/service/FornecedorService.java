@@ -3,9 +3,9 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.dto.FornecedorDto;
+import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +32,9 @@ public class FornecedorService {
     }
 
     public void save(FornecedorDto fornecedor) {
+        if(fornecedorrepository.existsByCnpj(fornecedor.getCnpj())){
+            throw new DadoDuplicadoException("Fornecedor com CNPJ " + fornecedor.getCnpj() + " já cadastrado");
+        }
         fornecedorrepository.save(FornecedorEntity.builder()
                 .cnpj(fornecedor.getCnpj())
                 .nome(fornecedor.getNome())
