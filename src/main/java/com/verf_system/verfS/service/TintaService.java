@@ -27,6 +27,13 @@ public class TintaService {
             }
             fornecedor = fornecedorRepository.findById(tintaDto.getIdFornecedor()).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
 
+            if (tintaRepository.existsByCodigo(tintaDto.getCodigo())) {
+                throw new RegraDeNegocioException("Código de tinta já cadastrado");
+            }
+            if(tintaRepository.existsByNumeroHexadecimal(tintaDto.getNumeroHexadecimal())) {
+                throw new RegraDeNegocioException("Número hexadecimal de tinta já cadastrado");
+            }
+
         }else if(tintaDto.getIdFornecedor() != null) {
             throw new RegraDeNegocioException("Tinta Produzida nao deve ter Fornecedor");
         }

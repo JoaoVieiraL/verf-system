@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ITintaRepository extends JpaRepository<TintaEntity, Long> {
-
+    public boolean existsByCodigo(String codigo);
+    public boolean existsByNumeroHexadecimal(String numeroHexadecimal);
 
 }
