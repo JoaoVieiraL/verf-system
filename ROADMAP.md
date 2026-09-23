@@ -32,11 +32,11 @@ Fazer com que a API diferencie corretamente erros de entrada, recursos inexisten
 
 ### Tarefas
 
-- [ ] Adicionar `@Valid` aos DTOs recebidos pelos Controllers.
-- [ ] Adicionar validações como `@NotBlank`, `@Size`, `@Positive` e outras adequadas a cada DTO.
-- [ ] Criar exceções específicas para recursos não encontrados.
-- [ ] Criar exceções para regras de negócio.
-- [ ] Criar `@RestControllerAdvice`.
+- ✅ Adicionar `@Valid` aos DTOs recebidos pelos Controllers.
+- ✅ Adicionar validações como `@NotBlank`, `@Size`, `@Positive` e outras adequadas a cada DTO.
+- ✅ Criar exceções específicas para recursos não encontrados.
+- ✅ Criar exceções para regras de negócio.
+- ✅ Criar `@RestControllerAdvice`.
 - [ ] Padronizar respostas de erro.
 - [ ] Utilizar `ProblemDetail` quando fizer sentido.
 - [ ] Evitar retornar stacktrace ou detalhes internos para o cliente.
@@ -97,7 +97,7 @@ Tornar os endpoints previsíveis e consistentes.
 - [ ] Padronizar prefixo `/api/v1`.
 - [ ] Usar nomes de recursos no plural.
 - [ ] Utilizar letras minúsculas nas rotas.
-- [ ] Remover padrões como `ID/{id}`.
+- ✅ Remover padrões como `ID/{id}`.
 - [ ] Revisar o uso atual de `/v1` e `/v2`.
 - [ ] Definir corretamente `POST`, `GET`, `PUT`, `PATCH` e `DELETE`.
 - [ ] Utilizar status HTTP apropriados.
