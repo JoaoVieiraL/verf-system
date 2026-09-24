@@ -128,10 +128,10 @@ Garantir que o estoque seja consequência das operações realizadas e que as mo
 
 ### Tarefas
 
-- [ ] Definir claramente os tipos de movimentação.
-- [ ] Validar quantidade maior que zero.
-- [ ] Impedir saída maior que o estoque disponível.
-- [ ] Registrar cada movimentação.
+- ✅ Definir claramente os tipos de movimentação.
+- ✅ Validar quantidade maior que zero.
+- ✅ Impedir saída maior que o estoque disponível.
+- ✅ Registrar cada movimentação.
 - [ ] Atualizar o estoque a partir da operação de negócio.
 - [ ] Evitar alteração direta e arbitrária do saldo do estoque.
 - [ ] Definir como ajustes manuais serão registrados.
@@ -178,7 +178,7 @@ Manter `criadoEm` e `atualizadoEm` sob responsabilidade do backend.
 
 ### Tarefas
 
-- [ ] Utilizar `@PrePersist` para preencher `criadoEm` e `atualizadoEm`.
+- ✅ Utilizar `@PrePersist` para preencher `criadoEm` e `atualizadoEm`.
 - [ ] Utilizar `@PreUpdate` para atualizar `atualizadoEm`.
 - [ ] Evitar receber essas datas diretamente em DTOs de criação.
 - [ ] Revisar se as datas de movimentação e auditoria representam corretamente o momento da operação.
