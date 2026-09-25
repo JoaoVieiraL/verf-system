@@ -5,7 +5,7 @@ import com.verf_system.verfS.database.entity.OrigemTinta;
 import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
-import com.verf_system.verfS.dto.TintaDto;
+import com.verf_system.verfS.dto.request.TintaDto;
 import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;

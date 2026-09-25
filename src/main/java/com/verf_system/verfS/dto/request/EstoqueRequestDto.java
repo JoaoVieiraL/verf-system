@@ -1,4 +1,4 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EstoqueDto {
+public class EstoqueRequestDto {
 
     @NotNull
     private Long idTinta;

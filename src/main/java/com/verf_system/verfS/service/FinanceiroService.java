@@ -2,7 +2,7 @@ package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.FinanceiroEntity;
 import com.verf_system.verfS.database.repository.IFinanceiroRepository;
-import com.verf_system.verfS.dto.FinanceiroDto;
+import com.verf_system.verfS.dto.request.FinanceiroDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

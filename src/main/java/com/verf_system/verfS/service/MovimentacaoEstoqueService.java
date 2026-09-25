@@ -8,7 +8,7 @@ import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
-import com.verf_system.verfS.dto.MovimentacaoEstoqueDto;
+import com.verf_system.verfS.dto.request.MovimentacaoEstoqueDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;

@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
-import com.verf_system.verfS.dto.FuncionarioDto;
+import com.verf_system.verfS.dto.request.FuncionarioDto;
 import com.verf_system.verfS.service.FuncionarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

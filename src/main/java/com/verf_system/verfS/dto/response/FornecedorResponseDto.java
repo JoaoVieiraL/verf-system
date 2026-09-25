@@ -1,0 +1,28 @@
+package com.verf_system.verfS.dto.response;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class FornecedorResponseDto {
+    private Long idFornecedor;
+
+    private String cnpj;
+
+    private String nome;
+
+    private String telefone;
+
+    private String email;
+
+    private Boolean ativo;
+
+    private LocalDateTime criadoEm;
+
+    private LocalDateTime atualizadoEm;
+}

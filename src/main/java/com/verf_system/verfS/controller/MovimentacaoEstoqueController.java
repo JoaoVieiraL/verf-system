@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.MovimentacaoEstoqueEntity;
-import com.verf_system.verfS.dto.MovimentacaoEstoqueDto;
+import com.verf_system.verfS.dto.request.MovimentacaoEstoqueDto;
 import com.verf_system.verfS.service.MovimentacaoEstoqueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
-import com.verf_system.verfS.dto.FornecedorDto;
+import com.verf_system.verfS.dto.request.FornecedorDto;
 import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;

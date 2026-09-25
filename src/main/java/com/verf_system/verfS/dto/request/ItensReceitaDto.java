@@ -1,26 +1,27 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
-
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProducoesDto {
+public class ItensReceitaDto {
+
     @NotNull
     private Long idReceita;
+
     @NotNull
-    private Long idFuncionario;
+    private Long idTintaMateriaPrima;
+
     @NotNull
     @Positive
-    private BigDecimal volumeProduzido;
-    @NotNull
-    private Date dataProducao;
+    @DecimalMax("100.00")
+    private BigDecimal proporcaoPercentual;
 }

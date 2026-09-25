@@ -2,7 +2,7 @@ package com.verf_system.verfS.controller;
 
 
 import com.verf_system.verfS.database.entity.TintaEntity;
-import com.verf_system.verfS.dto.TintaDto;
+import com.verf_system.verfS.dto.request.TintaDto;
 import com.verf_system.verfS.service.TintaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

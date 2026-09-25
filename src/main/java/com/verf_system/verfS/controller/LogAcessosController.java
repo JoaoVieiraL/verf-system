@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.LogAcessosEntity;
-import com.verf_system.verfS.dto.LogAcessosDto;
+import com.verf_system.verfS.dto.request.LogAcessosDto;
 import com.verf_system.verfS.service.LogAcessosService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
