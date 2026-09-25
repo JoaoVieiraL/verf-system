@@ -2,7 +2,8 @@ package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
-import com.verf_system.verfS.dto.FuncionarioDto;
+import com.verf_system.verfS.dto.request.FuncionarioDto;
+import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ public class FuncionarioService {
     private final IFuncionarioRepository funcionarioRepository;
 
     public void save(FuncionarioDto funcionarioDto) {
+        if(funcionarioRepository.existsByEmail(funcionarioDto.getEmail())){
+            throw new DadoDuplicadoException("Funcionario com email " + funcionarioDto.getEmail() + " já cadastrado");
+        }
         funcionarioRepository.save(FuncionarioEntity.builder()
                 .nome(funcionarioDto.getNome())
                 .cargo(funcionarioDto.getCargo())

@@ -6,7 +6,7 @@ import com.verf_system.verfS.database.entity.ReceitaEntity;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
-import com.verf_system.verfS.dto.ProducoesDto;
+import com.verf_system.verfS.dto.request.ProducoesDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

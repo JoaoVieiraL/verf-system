@@ -1,4 +1,4 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
 import com.verf_system.verfS.database.entity.Cargo;
 import com.verf_system.verfS.database.entity.NivelDeAcesso;

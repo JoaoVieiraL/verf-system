@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.UsuarioEntity;
-import com.verf_system.verfS.dto.UsuarioDto;
+import com.verf_system.verfS.dto.request.UsuarioDto;
 import com.verf_system.verfS.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

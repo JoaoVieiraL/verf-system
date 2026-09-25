@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.ReceitaEntity;
-import com.verf_system.verfS.dto.ReceitaDto;
+import com.verf_system.verfS.dto.request.ReceitaDto;
 import com.verf_system.verfS.service.ReceitaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

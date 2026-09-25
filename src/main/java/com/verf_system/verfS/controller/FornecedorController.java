@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.FornecedorEntity;
-import com.verf_system.verfS.dto.FornecedorDto;
+import com.verf_system.verfS.dto.request.FornecedorDto;
 import com.verf_system.verfS.service.FornecedorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

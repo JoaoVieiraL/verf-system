@@ -4,7 +4,7 @@ import com.verf_system.verfS.database.entity.LogAcessosEntity;
 import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.database.repository.ILogAcessosRepository;
 import com.verf_system.verfS.database.repository.IUsuarioRepository;
-import com.verf_system.verfS.dto.LogAcessosDto;
+import com.verf_system.verfS.dto.request.LogAcessosDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

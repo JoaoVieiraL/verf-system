@@ -5,7 +5,8 @@ import com.verf_system.verfS.database.entity.OrigemTinta;
 import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
-import com.verf_system.verfS.dto.TintaDto;
+import com.verf_system.verfS.dto.request.TintaDto;
+import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,19 @@ public class TintaService {
     private final IFornecedorRepository fornecedorRepository;
 
     public void save(TintaDto tintaDto) {
+
+
+        if (tintaRepository.existsByCodigo(tintaDto.getCodigo())) {
+            throw new DadoDuplicadoException("Código de tinta já cadastrado");
+        }if(tintaRepository.existsByNumeroHexadecimal(tintaDto.getNumeroHexadecimal())) {
+            throw new DadoDuplicadoException("Número hexadecimal de tinta já cadastrado");
+        }
         FornecedorEntity fornecedor = null;
         if(tintaDto.getOrigem() == OrigemTinta.COMPRADA) {
             if(tintaDto.getIdFornecedor() == null) {
                 throw new NaoEncontradoException("Nenhum Fornecedor encontrado");
             }
+
             fornecedor = fornecedorRepository.findById(tintaDto.getIdFornecedor()).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
 
         }else if(tintaDto.getIdFornecedor() != null) {

@@ -1,4 +1,4 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
 //! dar continuidade mais tarde
 

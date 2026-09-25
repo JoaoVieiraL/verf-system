@@ -1,4 +1,4 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;

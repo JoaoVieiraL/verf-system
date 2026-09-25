@@ -1,8 +1,7 @@
-package com.verf_system.verfS.dto;
+package com.verf_system.verfS.dto.request;
 
 import com.verf_system.verfS.database.entity.MotivoMovimentacao;
 import com.verf_system.verfS.database.entity.TipoMovimentacao;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;

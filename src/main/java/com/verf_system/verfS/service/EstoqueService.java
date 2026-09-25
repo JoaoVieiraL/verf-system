@@ -4,7 +4,7 @@ import com.verf_system.verfS.database.entity.EstoqueEntity;
 import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
-import com.verf_system.verfS.dto.EstoqueDto;
+import com.verf_system.verfS.dto.request.EstoqueRequestDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class EstoqueService {
     private final IEstoqueRepository estoqueRepository;
     private final ITintaRepository tintaRepository;
 
-    public void save(EstoqueDto estoqueDto) {
+    public void save(EstoqueRequestDto estoqueDto) {
 
         TintaEntity tinta = tintaRepository.findById(estoqueDto.getIdTinta()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta encontrada"));
 

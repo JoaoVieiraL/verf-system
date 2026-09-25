@@ -2,12 +2,14 @@ package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
-import com.verf_system.verfS.dto.FornecedorDto;
+import com.verf_system.verfS.dto.request.FornecedorDto;
+import com.verf_system.verfS.dto.response.FornecedorResponseDto;
+import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,22 +18,31 @@ public class FornecedorService {
     private final IFornecedorRepository fornecedorrepository;
 
 
-    public List<FornecedorEntity> findAll() {
+    public List<FornecedorResponseDto> findAll() {
         List<FornecedorEntity> fornecedores = fornecedorrepository.findAll();
+        List<FornecedorResponseDto> fornecedorResponses = new ArrayList<>();
+
+        for (FornecedorEntity fornecedor : fornecedores) {
+
+            fornecedorResponses.add(new FornecedorResponseDto(fornecedor));
+        }
         if(fornecedores.isEmpty()){
             throw new NaoEncontradoException("Nenhum Fornecedor encontrado");
         }
 
-        return fornecedores;
+        return fornecedorResponses;
     }
 
-    public FornecedorEntity findById(Long id) {
+    public FornecedorResponseDto findById(Long id) {
         FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
-
-        return fornecedor;
+        FornecedorResponseDto responseDto = new FornecedorResponseDto(fornecedor);
+        return responseDto;
     }
 
     public void save(FornecedorDto fornecedor) {
+        if(fornecedorrepository.existsByCnpj(fornecedor.getCnpj())){
+            throw new DadoDuplicadoException("Fornecedor com CNPJ " + fornecedor.getCnpj() + " já cadastrado");
+        }
         fornecedorrepository.save(FornecedorEntity.builder()
                 .cnpj(fornecedor.getCnpj())
                 .nome(fornecedor.getNome())
