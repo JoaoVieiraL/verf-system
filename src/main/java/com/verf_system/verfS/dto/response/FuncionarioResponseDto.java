@@ -1,5 +1,7 @@
 package com.verf_system.verfS.dto.response;
 
+import com.verf_system.verfS.database.entity.Cargo;
+import com.verf_system.verfS.database.entity.NivelDeAcesso;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,9 +14,9 @@ import java.time.LocalDateTime;
 public class FuncionarioResponseDto {
     private Long id;
     private String nome;
-    private String cargo;
+    private Cargo cargo;
     private String email;
-    private String nivelDeAcesso;
+    private NivelDeAcesso nivelDeAcesso;
     private Boolean ativo;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;

@@ -1,5 +1,6 @@
 package com.verf_system.verfS.dto.response;
 
+import com.verf_system.verfS.database.entity.OrigemTinta;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ public class TintaResponseDto {
     private String nome;
     private String numeroHexadecimal;
     private String codigo;
-    private String origem;
+    private OrigemTinta origem;
     private Long fornecedorId;
     private Integer estoqueMinimo;
     private Boolean ativo;
