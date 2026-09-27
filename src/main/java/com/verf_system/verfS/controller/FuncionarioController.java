@@ -1,6 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
+import com.verf_system.verfS.dto.response.FuncionarioResponseDto;
 import com.verf_system.verfS.service.FuncionarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,13 +18,13 @@ public class FuncionarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FuncionarioEntity> findAll() {
+    public List<FuncionarioResponseDto> findAll() {
         return funcionarioService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioEntity findById(@PathVariable Long id) {
+    public FuncionarioResponseDto findById(@PathVariable Long id) {
         return funcionarioService.findById(id);
     }
 
