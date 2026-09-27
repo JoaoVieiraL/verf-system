@@ -5,11 +5,13 @@ import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.database.repository.ILogAcessosRepository;
 import com.verf_system.verfS.database.repository.IUsuarioRepository;
 import com.verf_system.verfS.dto.request.LogAcessosDto;
+import com.verf_system.verfS.dto.response.LogAcessosResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,18 +34,23 @@ public class LogAcessosService {
                 .build());
     }
 
-    public List<LogAcessosEntity> findAll() {
+    public List<LogAcessosResponseDto> findAll() {
         List<LogAcessosEntity> logs = logAcessosRepository.findAll();
         if (logs.isEmpty()) {
             throw new NaoEncontradoException("Nenhum Log de Acesso encontrado");
         }
 
-        return logs;
+        List<LogAcessosResponseDto> logResponses = new ArrayList<>();
+        for (LogAcessosEntity log : logs) {
+            logResponses.add(new LogAcessosResponseDto(log));
+        }
+
+        return logResponses;
     }
 
-    public LogAcessosEntity findById(Long id) {
+    public LogAcessosResponseDto findById(Long id) {
         LogAcessosEntity log = logAcessosRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Log de Acesso encontrado"));
 
-        return log;
+        return new LogAcessosResponseDto(log);
     }
 }

@@ -1,8 +1,8 @@
 package com.verf_system.verfS.controller;
 
 
-import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.dto.request.TintaDto;
+import com.verf_system.verfS.dto.response.TintaResponseDto;
 import com.verf_system.verfS.service.TintaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class TintaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TintaEntity> findAll() {
+    public List<TintaResponseDto> findAll() {
         return tintaService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TintaEntity findById(@PathVariable Long id) {
+    public TintaResponseDto findById(@PathVariable Long id) {
         return tintaService.findById(id);
     }
 

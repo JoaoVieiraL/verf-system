@@ -3,10 +3,12 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FinanceiroEntity;
 import com.verf_system.verfS.database.repository.IFinanceiroRepository;
 import com.verf_system.verfS.dto.request.FinanceiroDto;
+import com.verf_system.verfS.dto.response.FinanceiroResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,18 +28,23 @@ public class FinanceiroService {
                 .build());
     }
 
-    public List<FinanceiroEntity> findAll() {
+    public List<FinanceiroResponseDto> findAll() {
         List<FinanceiroEntity> registros = financeiroRepository.findAll();
         if (registros.isEmpty()) {
             throw new NaoEncontradoException("Nenhum registro Financeiro encontrado");
         }
 
-        return registros;
+        List<FinanceiroResponseDto> financeiroResponses = new ArrayList<>();
+        for (FinanceiroEntity financeiro : registros) {
+            financeiroResponses.add(new FinanceiroResponseDto(financeiro));
+        }
+
+        return financeiroResponses;
     }
 
-    public FinanceiroEntity findById(Long id) {
+    public FinanceiroResponseDto findById(Long id) {
         FinanceiroEntity financeiro = financeiroRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum registro Financeiro encontrado"));
 
-        return financeiro;
+        return new FinanceiroResponseDto(financeiro);
     }
 }

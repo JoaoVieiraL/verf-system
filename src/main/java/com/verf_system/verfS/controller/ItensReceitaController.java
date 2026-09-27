@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.ItensReceitaEntity;
 import com.verf_system.verfS.dto.request.ItensReceitaDto;
+import com.verf_system.verfS.dto.response.ItensReceitaResponseDto;
 import com.verf_system.verfS.service.ItensReceitaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class ItensReceitaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItensReceitaEntity> findAll() {
+    public List<ItensReceitaResponseDto> findAll() {
         return itensReceitaService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ItensReceitaEntity findById(@PathVariable Long id) {
+    public ItensReceitaResponseDto findById(@PathVariable Long id) {
         return itensReceitaService.findById(id);
     }
 

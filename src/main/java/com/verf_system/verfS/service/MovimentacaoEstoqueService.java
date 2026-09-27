@@ -9,12 +9,14 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.dto.request.MovimentacaoEstoqueDto;
+import com.verf_system.verfS.dto.response.MovimentacaoEstoqueResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,18 +69,23 @@ public class MovimentacaoEstoqueService {
                 .build());
     }
 
-    public List<MovimentacaoEstoqueEntity> findAll() {
+    public List<MovimentacaoEstoqueResponseDto> findAll() {
         List<MovimentacaoEstoqueEntity> movimentacoes = movimentacaoEstoqueRepository.findAll();
         if (movimentacoes.isEmpty()) {
             throw new NaoEncontradoException("Nenhuma Movimentacao encontrada");
         }
 
-        return movimentacoes;
+        List<MovimentacaoEstoqueResponseDto> movimentacaoResponses = new ArrayList<>();
+        for (MovimentacaoEstoqueEntity movimentacao : movimentacoes) {
+            movimentacaoResponses.add(new MovimentacaoEstoqueResponseDto(movimentacao));
+        }
+
+        return movimentacaoResponses;
     }
 
-    public MovimentacaoEstoqueEntity findById(Long id) {
+    public MovimentacaoEstoqueResponseDto findById(Long id) {
         MovimentacaoEstoqueEntity movimentacao = movimentacaoEstoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Movimentacao encontrada"));
 
-        return movimentacao;
+        return new MovimentacaoEstoqueResponseDto(movimentacao);
     }
 }

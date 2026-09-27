@@ -5,10 +5,12 @@ import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IUsuarioRepository;
 import com.verf_system.verfS.dto.request.UsuarioDto;
+import com.verf_system.verfS.dto.response.UsuarioResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,19 +27,24 @@ public class UsuarioService {
                 .build());
     }
 
-    public List<UsuarioEntity> findAll() {
+    public List<UsuarioResponseDto> findAll() {
         List<UsuarioEntity> usuarios = usuarioRepository.findAll();
         if (usuarios.isEmpty()) {
             throw new NaoEncontradoException("Nenhum Usuario encontrado");
         }
 
-        return usuarios;
+        List<UsuarioResponseDto> usuarioResponses = new ArrayList<>();
+        for (UsuarioEntity usuario : usuarios) {
+            usuarioResponses.add(new UsuarioResponseDto(usuario));
+        }
+
+        return usuarioResponses;
     }
 
-    public UsuarioEntity findById(Long id) {
+    public UsuarioResponseDto findById(Long id) {
         UsuarioEntity usuario = usuarioRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Usuario encontrado"));
 
-        return usuario;
+        return new UsuarioResponseDto(usuario);
     }
 
     public void inativar(Long id) {

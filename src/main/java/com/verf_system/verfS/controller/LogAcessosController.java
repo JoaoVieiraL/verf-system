@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.LogAcessosEntity;
 import com.verf_system.verfS.dto.request.LogAcessosDto;
+import com.verf_system.verfS.dto.response.LogAcessosResponseDto;
 import com.verf_system.verfS.service.LogAcessosService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class LogAcessosController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<LogAcessosEntity> findAll() {
+    public List<LogAcessosResponseDto> findAll() {
         return logAcessosService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public LogAcessosEntity findById(@PathVariable Long id) {
+    public LogAcessosResponseDto findById(@PathVariable Long id) {
         return logAcessosService.findById(id);
     }
 

@@ -7,10 +7,12 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.ReceitaDto;
+import com.verf_system.verfS.dto.response.ReceitaResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,18 +34,23 @@ public class ReceitaService {
                 .build());
     }
 
-    public List<ReceitaEntity> findAll() {
+    public List<ReceitaResponseDto> findAll() {
         List<ReceitaEntity> receitas = receitaRepository.findAll();
         if (receitas.isEmpty()) {
             throw new NaoEncontradoException("Nenhuma Receita encontrada");
         }
 
-        return receitas;
+        List<ReceitaResponseDto> receitaResponses = new ArrayList<>();
+        for (ReceitaEntity receita : receitas) {
+            receitaResponses.add(new ReceitaResponseDto(receita));
+        }
+
+        return receitaResponses;
     }
 
-    public ReceitaEntity findById(Long id) {
+    public ReceitaResponseDto findById(Long id) {
         ReceitaEntity receita = receitaRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Receita encontrada"));
 
-        return receita;
+        return new ReceitaResponseDto(receita);
     }
 }

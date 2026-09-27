@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.UsuarioEntity;
 import com.verf_system.verfS.dto.request.UsuarioDto;
+import com.verf_system.verfS.dto.response.UsuarioResponseDto;
 import com.verf_system.verfS.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class UsuarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UsuarioEntity> findAll() {
+    public List<UsuarioResponseDto> findAll() {
         return usuarioService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioEntity findById(@PathVariable Long id) {
+    public UsuarioResponseDto findById(@PathVariable Long id) {
         return usuarioService.findById(id);
     }
 

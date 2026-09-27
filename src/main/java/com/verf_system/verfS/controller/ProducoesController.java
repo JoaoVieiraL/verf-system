@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.ProducoesEntity;
 import com.verf_system.verfS.dto.request.ProducoesDto;
+import com.verf_system.verfS.dto.response.ProducoesResponseDto;
 import com.verf_system.verfS.service.ProducoesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class ProducoesController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProducoesEntity> findAll() {
+    public List<ProducoesResponseDto> findAll() {
         return producoesService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProducoesEntity findById(@PathVariable Long id) {
+    public ProducoesResponseDto findById(@PathVariable Long id) {
         return producoesService.findById(id);
     }
 

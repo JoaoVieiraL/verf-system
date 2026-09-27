@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.MovimentacaoEstoqueEntity;
 import com.verf_system.verfS.dto.request.MovimentacaoEstoqueDto;
+import com.verf_system.verfS.dto.response.MovimentacaoEstoqueResponseDto;
 import com.verf_system.verfS.service.MovimentacaoEstoqueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class MovimentacaoEstoqueController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<MovimentacaoEstoqueEntity> findAll() {
+    public List<MovimentacaoEstoqueResponseDto> findAll() {
         return movimentacaoEstoqueService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MovimentacaoEstoqueEntity findById(@PathVariable Long id) {
+    public MovimentacaoEstoqueResponseDto findById(@PathVariable Long id) {
         return movimentacaoEstoqueService.findById(id);
     }
 

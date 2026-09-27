@@ -7,10 +7,12 @@ import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.dto.request.ProducoesDto;
+import com.verf_system.verfS.dto.response.ProducoesResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,18 +34,23 @@ public class ProducoesService {
                 .build());
     }
 
-    public List<ProducoesEntity> findAll() {
+    public List<ProducoesResponseDto> findAll() {
         List<ProducoesEntity> producoes = producoesRepository.findAll();
         if (producoes.isEmpty()) {
             throw new NaoEncontradoException("Nenhuma Producao encontrada");
         }
 
-        return producoes;
+        List<ProducoesResponseDto> producaoResponses = new ArrayList<>();
+        for (ProducoesEntity producao : producoes) {
+            producaoResponses.add(new ProducoesResponseDto(producao));
+        }
+
+        return producaoResponses;
     }
 
-    public ProducoesEntity findById(Long id) {
+    public ProducoesResponseDto findById(Long id) {
         ProducoesEntity producao = producoesRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhuma Producao encontrada"));
 
-        return producao;
+        return new ProducoesResponseDto(producao);
     }
 }

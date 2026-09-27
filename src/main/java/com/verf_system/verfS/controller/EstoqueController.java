@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.EstoqueEntity;
 import com.verf_system.verfS.dto.request.EstoqueRequestDto;
+import com.verf_system.verfS.dto.response.EstoqueResponseDto;
 import com.verf_system.verfS.service.EstoqueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class EstoqueController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EstoqueEntity> findAll() {
+    public List<EstoqueResponseDto> findAll() {
         return estoqueService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EstoqueEntity findById(@PathVariable Long id) {
+    public EstoqueResponseDto findById(@PathVariable Long id) {
         return estoqueService.findById(id);
     }
 

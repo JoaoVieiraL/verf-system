@@ -7,10 +7,12 @@ import com.verf_system.verfS.database.repository.IItensReceitaRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.ItensReceitaDto;
+import com.verf_system.verfS.dto.response.ItensReceitaResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,18 +32,23 @@ public class ItensReceitaService {
                 .build());
     }
 
-    public List<ItensReceitaEntity> findAll() {
+    public List<ItensReceitaResponseDto> findAll() {
         List<ItensReceitaEntity> itens = itensReceitaRepository.findAll();
         if (itens.isEmpty()) {
             throw new NaoEncontradoException("Nenhum Item de Receita encontrado");
         }
 
-        return itens;
+        List<ItensReceitaResponseDto> itemResponses = new ArrayList<>();
+        for (ItensReceitaEntity item : itens) {
+            itemResponses.add(new ItensReceitaResponseDto(item));
+        }
+
+        return itemResponses;
     }
 
-    public ItensReceitaEntity findById(Long id) {
+    public ItensReceitaResponseDto findById(Long id) {
         ItensReceitaEntity item = itensReceitaRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Item de Receita encontrado"));
 
-        return item;
+        return new ItensReceitaResponseDto(item);
     }
 }

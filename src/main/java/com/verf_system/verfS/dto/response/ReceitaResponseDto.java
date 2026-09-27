@@ -1,6 +1,10 @@
 package com.verf_system.verfS.dto.response;
 
+import com.verf_system.verfS.database.entity.ReceitaEntity;
 import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -14,6 +18,17 @@ public class ReceitaResponseDto {
     private String tintaResultanteNome;
     private Long criadoPorId;
     private String criadoPorNome;
-    private Double valorPorLitro;
-    private String criadoEm;
+    private BigDecimal valorPorLitro;
+    private LocalDateTime criadoEm;
+
+    public ReceitaResponseDto(ReceitaEntity receita) {
+        this.id = receita.getId();
+        this.nome = receita.getNome();
+        this.tintaResultanteId = receita.getTintaResultante().getId();
+        this.tintaResultanteNome = receita.getTintaResultante().getNome();
+        this.criadoPorId = receita.getCriadoPor() != null ? receita.getCriadoPor().getId() : null;
+        this.criadoPorNome = receita.getCriadoPor() != null ? receita.getCriadoPor().getNome() : null;
+        this.valorPorLitro = receita.getValorPorLitro();
+        this.criadoEm = receita.getCriadoEm();
+    }
 }

@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.FinanceiroEntity;
 import com.verf_system.verfS.dto.request.FinanceiroDto;
+import com.verf_system.verfS.dto.response.FinanceiroResponseDto;
 import com.verf_system.verfS.service.FinanceiroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class FinanceiroController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FinanceiroEntity> findAll() {
+    public List<FinanceiroResponseDto> findAll() {
         return financeiroService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FinanceiroEntity findById(@PathVariable Long id) {
+    public FinanceiroResponseDto findById(@PathVariable Long id) {
         return financeiroService.findById(id);
     }
 

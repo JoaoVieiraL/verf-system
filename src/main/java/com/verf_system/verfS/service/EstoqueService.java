@@ -5,10 +5,12 @@ import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.EstoqueRequestDto;
+import com.verf_system.verfS.dto.response.EstoqueResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,18 +29,23 @@ public class EstoqueService {
                 .build());
     }
 
-    public List<EstoqueEntity> findAll() {
+    public List<EstoqueResponseDto> findAll() {
         List<EstoqueEntity> estoques = estoqueRepository.findAll();
         if (estoques.isEmpty()) {
             throw new NaoEncontradoException("Nenhum Estoque encontrado");
         }
 
-        return estoques;
+        List<EstoqueResponseDto> estoqueResponses = new ArrayList<>();
+        for (EstoqueEntity estoque : estoques) {
+            estoqueResponses.add(new EstoqueResponseDto(estoque));
+        }
+
+        return estoqueResponses;
     }
 
-    public EstoqueEntity findById(Long id) {
+    public EstoqueResponseDto findById(Long id) {
         EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
 
-        return estoque;
+        return new EstoqueResponseDto(estoque);
     }
 }

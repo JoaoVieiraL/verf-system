@@ -6,12 +6,14 @@ import com.verf_system.verfS.database.entity.TintaEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.TintaDto;
+import com.verf_system.verfS.dto.response.TintaResponseDto;
 import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,19 +50,24 @@ public class TintaService {
                 .build());
 
     }
-    public List<TintaEntity> findAll() {
+    public List<TintaResponseDto> findAll() {
         List<TintaEntity> tintas = tintaRepository.findAll();
         if (tintas.isEmpty()) {
             throw new NaoEncontradoException("Nenhuma Tinta encontrada");
         }
 
-        return tintas;
+        List<TintaResponseDto> tintaResponses = new ArrayList<>();
+        for (TintaEntity tinta : tintas) {
+            tintaResponses.add(new TintaResponseDto(tinta));
+        }
+
+        return tintaResponses;
     }
 
-    public TintaEntity findById(Long id) {
-    TintaEntity tintaBuscada = tintaRepository.findById(id).orElseThrow(()-> new NaoEncontradoException("nenhuma tinta Encontrada"));
+    public TintaResponseDto findById(Long id) {
+        TintaEntity tintaBuscada = tintaRepository.findById(id).orElseThrow(()-> new NaoEncontradoException("nenhuma tinta Encontrada"));
 
-        return tintaBuscada;
+        return new TintaResponseDto(tintaBuscada);
     }
 
     public void inativar(Long id) {
