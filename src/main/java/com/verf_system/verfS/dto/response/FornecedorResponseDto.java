@@ -11,30 +11,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FornecedorResponseDto {
-    private Long idFornecedor;
 
-    private String cnpj;
+        private Long idFornecedor;
 
-    private String nome;
+        private String cnpj;
 
-    private String telefone;
+        private String nome;
 
-    private String email;
+        private String telefone;
 
-    private Boolean ativo;
+        private String email;
 
-    private LocalDateTime criadoEm;
+        private Boolean ativo;
 
-    private LocalDateTime atualizadoEm;
+        private LocalDateTime criadoEm;
 
-    public FornecedorResponseDto(FornecedorEntity fornecedor) {
-        this.idFornecedor = fornecedor.getId();
-        this.cnpj = fornecedor.getCnpj();
-        this.nome = fornecedor.getNome();
-        this.telefone = fornecedor.getTelefone();
-        this.email = fornecedor.getEmail();
-        this.ativo = fornecedor.isAtivo();
-        this.criadoEm = fornecedor.getCriadoEm();
-        this.atualizadoEm = fornecedor.getAtualizadoEm();
+        private LocalDateTime atualizadoEm;
+
+        public FornecedorResponseDto(FornecedorEntity fornecedor) {
+            this.idFornecedor = fornecedor.getId();
+            this.cnpj = fornecedor.getCnpj();
+            this.nome = fornecedor.getNome();
+            this.telefone = fornecedor.getTelefone();
+            this.email = fornecedor.getEmail();
+            this.ativo = fornecedor.isAtivo();
+            this.criadoEm = fornecedor.getCriadoEm();
+            this.atualizadoEm = fornecedor.getAtualizadoEm();
+        }
     }
-}
+

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthorizationService implements UserDetailsService {
 
-    IFuncionarioRepository funcionarioRepository;
+    private final IFuncionarioRepository funcionarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

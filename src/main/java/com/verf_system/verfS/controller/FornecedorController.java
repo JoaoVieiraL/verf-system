@@ -1,7 +1,7 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.dto.request.FornecedorDto;
+import com.verf_system.verfS.dto.response.FornecedorResponseDto;
 import com.verf_system.verfS.service.FornecedorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ public class FornecedorController {
     private final FornecedorService fornecedorService;
 
     @GetMapping
-    public List<FornecedorEntity> findAll() {
+    public List<FornecedorResponseDto> findAll() {
         return fornecedorService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FornecedorEntity findById(@PathVariable Long id) {
+    public FornecedorResponseDto findById(@PathVariable Long id) {
         return fornecedorService.findById(id);
     }
 
