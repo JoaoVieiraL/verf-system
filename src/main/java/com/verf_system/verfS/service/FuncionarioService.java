@@ -6,6 +6,7 @@ import com.verf_system.verfS.dto.request.FuncionarioDto;
 import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FuncionarioService {
     private final IFuncionarioRepository funcionarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void save(FuncionarioDto funcionarioDto) {
         if(funcionarioRepository.existsByEmail(funcionarioDto.getEmail())){
@@ -23,7 +25,7 @@ public class FuncionarioService {
                 .nome(funcionarioDto.getNome())
                 .cargo(funcionarioDto.getCargo())
                 .email(funcionarioDto.getEmail())
-                .senhaHash(funcionarioDto.getSenhaHash())
+                .senhaHash(passwordEncoder.encode(funcionarioDto.getSenha()))
                 .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
                 .build());
     }

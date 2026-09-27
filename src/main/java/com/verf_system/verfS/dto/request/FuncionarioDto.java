@@ -28,7 +28,10 @@ public class FuncionarioDto {
     @NotBlank(message = "Campo email do funcionário não pode ser vazio")
     @Email
     private String email;
-    private String senhaHash;
+
+    @NotBlank(message = "Senha é obrigatória")
+    @Size(min = 8, max = 100)
+    private String senha;
 
     @NotNull
     private NivelDeAcesso nivelDeAcesso;
