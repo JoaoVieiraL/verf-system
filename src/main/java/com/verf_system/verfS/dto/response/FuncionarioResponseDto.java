@@ -1,6 +1,7 @@
 package com.verf_system.verfS.dto.response;
 
 import com.verf_system.verfS.database.entity.Cargo;
+import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.entity.NivelDeAcesso;
 import lombok.*;
 
@@ -20,4 +21,15 @@ public class FuncionarioResponseDto {
     private Boolean ativo;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
+
+    public FuncionarioResponseDto(FuncionarioEntity funcionarioEntity) {
+        this.id = funcionarioEntity.getId();
+        this.nome = funcionarioEntity.getNome();
+        this.email = funcionarioEntity.getEmail();
+        this.cargo = funcionarioEntity.getCargo();
+        this.nivelDeAcesso = funcionarioEntity.getNivelDeAcesso();
+        this.ativo = funcionarioEntity.isAtivo();
+        this.criadoEm = funcionarioEntity.getCriadoEm();
+        this.atualizadoEm = funcionarioEntity.getAtualizadoEm();
+    }
 }

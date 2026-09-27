@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         jdbc:
@@ -19,3 +19,8 @@ spring:
             non_contextual_creation: true
         format_sql: true
     show-sql: true
+
+api:
+ security:
+  token:
+   secret: ${JWT_SECRET}

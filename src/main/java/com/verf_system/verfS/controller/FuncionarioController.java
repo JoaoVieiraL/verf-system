@@ -1,9 +1,8 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
-import com.verf_system.verfS.dto.request.FuncionarioDto;
+import com.verf_system.verfS.dto.response.FuncionarioResponseDto;
 import com.verf_system.verfS.service.FuncionarioService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +18,14 @@ public class FuncionarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FuncionarioEntity> findAll() {
+    public List<FuncionarioResponseDto> findAll() {
         return funcionarioService.findAll();
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FuncionarioEntity findById(@PathVariable Long id) {
+    public FuncionarioResponseDto findById(@PathVariable Long id) {
         return funcionarioService.findById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody FuncionarioDto funcionarioDto) {
-        funcionarioService.save(funcionarioDto);
     }
 
     @DeleteMapping(value = "/{id}")
