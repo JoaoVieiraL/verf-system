@@ -4,7 +4,7 @@ public enum MotivoMovimentacao {
     AJUSTE (null),
     PERDA (TipoMovimentacao.SAIDA),
     DANO (TipoMovimentacao.SAIDA),
-    VENDA (TipoMovimentacao.ENTRADA),
+    VENDA (TipoMovimentacao.SAIDA),
     COMPRA (TipoMovimentacao.ENTRADA),
     FABRICADA (TipoMovimentacao.ENTRADA);
 
