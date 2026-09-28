@@ -29,6 +29,10 @@ public class MovimentacaoEstoqueService {
 
     @Transactional
     public void save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
+        if(!movimentacaoEstoqueDto.getMotivo().aceita(movimentacaoEstoqueDto.getTipoMovimentacao())){
+            throw new RegraDeNegocioException("Motivo de movimentação não é compatível com o tipo de movimentação");
+        }
+
         EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new NaoEncontradoException("Nenhum estoque encontrado"));
         FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new NaoEncontradoException("Nenhum funcionario encontrado"));
         ProducoesEntity producoes = null;
