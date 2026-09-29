@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll() //! trocar essa parte futuramenete, ela foi inserida apenas para testes
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/Fornecedor").hasAuthority("NIVEL_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/v1/fornecedores").hasAuthority("NIVEL_ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

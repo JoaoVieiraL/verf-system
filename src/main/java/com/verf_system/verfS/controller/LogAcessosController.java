@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/LogAcessos")
+@RequestMapping("/v1/log-acessos")
 @RequiredArgsConstructor
 public class LogAcessosController {
 

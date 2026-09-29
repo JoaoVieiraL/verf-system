@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/Funcionario")
+@RequestMapping("/v1/funcionarios")
 @RequiredArgsConstructor
 public class FuncionarioController {
 

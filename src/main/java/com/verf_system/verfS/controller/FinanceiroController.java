@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/Financeiro")
+@RequestMapping("/v1/financeiro")
 @RequiredArgsConstructor
 public class FinanceiroController {
 
