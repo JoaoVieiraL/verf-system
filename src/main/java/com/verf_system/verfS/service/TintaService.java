@@ -27,7 +27,7 @@ public class TintaService {
 
         if (tintaRepository.existsByCodigo(tintaDto.getCodigo())) {
             throw new DadoDuplicadoException("Código de tinta já cadastrado");
-        }if(tintaRepository.existsByNumeroHexadecimal(tintaDto.getNumeroHexadecimal())) {
+        }if(tintaDto.getNumeroHexadecimal() != null && tintaRepository.existsByNumeroHexadecimal(tintaDto.getNumeroHexadecimal())) {
             throw new DadoDuplicadoException("Número hexadecimal de tinta já cadastrado");
         }
         FornecedorEntity fornecedor = null;
