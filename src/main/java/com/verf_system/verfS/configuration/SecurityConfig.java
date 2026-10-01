@@ -29,7 +29,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll() //! trocar essa parte futuramenete, ela foi inserida apenas para testes
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/fornecedores").hasAuthority("NIVEL_ADMIN")
+                        //! só admin
+                        .requestMatchers("/v1/funcionarios/**", "/v1/usuarios/**", "/v1/log-acessos/**").hasAuthority("NIVEL_ADMIN")
+                        //! gerente
+                        .requestMatchers("/v1/financeiro/**").hasAuthority("NIVEL_GERENTE")
+                        .requestMatchers(HttpMethod.POST, "/v1/fornecedores/**", "/v2/tintas", "/v1/receitas", "/v1/itens-receita").hasAuthority("NIVEL_GERENTE")
+                        //! operador
+                        .requestMatchers(HttpMethod.POST, "/v1/movimentacao-estoque", "/v1/producoes").hasAuthority("NIVEL_OPERADOR")
+                        //! visualizador
+                        .requestMatchers(HttpMethod.GET).hasAuthority("NIVEL_VISUALIZADOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
