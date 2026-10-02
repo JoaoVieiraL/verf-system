@@ -26,9 +26,10 @@ public class SecurityFIlter extends OncePerRequestFilter {
         if (token != null) {
             var email = tokenService.validateToken(token);
             UserDetails funcionario= funcionarioRepository.findByEmail(email);
-
-            var authentication = new UsernamePasswordAuthenticationToken(funcionario, null, funcionario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if(funcionario != null && funcionario.isEnabled()){
+                var authentication = new UsernamePasswordAuthenticationToken(funcionario, null, funcionario.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         filterChain.doFilter(request, response);
     }
