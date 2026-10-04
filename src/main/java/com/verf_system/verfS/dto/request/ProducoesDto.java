@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Builder
@@ -16,7 +15,7 @@ import java.util.Date;
 public class ProducoesDto {
     @NotNull
     private Long idReceita;
-    @NotNull
+
     private Long idFuncionario;
     @NotNull
     @Positive

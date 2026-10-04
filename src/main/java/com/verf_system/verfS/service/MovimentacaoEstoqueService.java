@@ -1,9 +1,6 @@
 package com.verf_system.verfS.service;
 
-import com.verf_system.verfS.database.entity.EstoqueEntity;
-import com.verf_system.verfS.database.entity.FuncionarioEntity;
-import com.verf_system.verfS.database.entity.MovimentacaoEstoqueEntity;
-import com.verf_system.verfS.database.entity.ProducoesEntity;
+import com.verf_system.verfS.database.entity.*;
 import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
@@ -90,4 +87,54 @@ public class MovimentacaoEstoqueService {
 
         return new MovimentacaoEstoqueResponseDto(movimentacao);
     }
+
+    @Transactional
+    public void registrar(
+            EstoqueEntity estoque,
+            TipoMovimentacao tipo,
+            MotivoMovimentacao motivo,
+            Integer quantidade,
+            String observacao,
+            ProducoesEntity producao,
+            FuncionarioEntity funcionario) {
+
+        if (!motivo.aceita(tipo)) {
+            throw new RegraDeNegocioException("Motivo de movimentação não é compatível com o tipo de movimentação");
+        }
+
+        Integer quantidadeAnterior = estoque.getQuantidade();
+
+        Integer quantidadePosterior;
+
+        if (tipo == TipoMovimentacao.ENTRADA) {
+
+            quantidadePosterior = quantidadeAnterior + quantidade;
+
+        } else {
+
+            if (quantidade > quantidadeAnterior) {
+                throw new RegraDeNegocioException("Quantidade movimentada não pode ser maior que a quantidade disponível no estoque");
+            }
+
+            quantidadePosterior = quantidadeAnterior - quantidade;
+        }
+
+        estoque.setQuantidade(quantidadePosterior);
+
+        MovimentacaoEstoqueEntity movimentacao =
+                MovimentacaoEstoqueEntity.builder()
+                        .estoque(estoque)
+                        .funcionarioRef(funcionario)
+                        .producaoRef(producao)
+                        .tipoMovimentacao(tipo)
+                        .motivo(motivo)
+                        .quantidadeAnterior(quantidadeAnterior)
+                        .quantidadeMovimentada(quantidade)
+                        .quantidadePosterior(quantidadePosterior)
+                        .observacao(observacao)
+                        .build();
+
+        movimentacaoEstoqueRepository.save(movimentacao);
+    }
+
 }
