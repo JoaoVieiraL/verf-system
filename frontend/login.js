@@ -1,4 +1,4 @@
-const API_FUNCIONARIOS_URL = 'http://localhost:8090/v1/Funcionario';
+const API_FUNCIONARIOS_URL = 'http://localhost:8090/auth/login';
 
 document.addEventListener('DOMContentLoaded', () => {
     const formLogin = document.getElementById('login-form');
@@ -16,11 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const emailDigitado = emailInput.value.trim();
 
             try {
-                const resposta = await fetch(API_FUNCIONARIOS_URL);
+                const resposta = await fetch(API_FUNCIONARIOS_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: emailDigitado,
+                        senha: senhaInput.value
+                    })
+                });
 
-                if (!resposta.ok) {
-                    throw new Error('Erro ao conectar com o serviço.');
+                 if (!resposta.ok) {
+                    alert('E-mail ou senha inválidos.');
+                    return;
                 }
+ 
+                const { token } = await resposta.json();
+                localStorage.setItem('userToken', token);
+                localStorage.setItem('userName', emailDigitado);
+ 
+                window.location.href = 'modulos.html';
+ 
 
                 const funcionarios = await resposta.json();
 
