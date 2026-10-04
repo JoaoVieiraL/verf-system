@@ -6,7 +6,8 @@ public enum MotivoMovimentacao {
     DANO (TipoMovimentacao.SAIDA),
     VENDA (TipoMovimentacao.SAIDA),
     COMPRA (TipoMovimentacao.ENTRADA),
-    FABRICADA (TipoMovimentacao.ENTRADA);
+    FABRICADA (TipoMovimentacao.ENTRADA),
+    CONSUMIDA(TipoMovimentacao.SAIDA);
 
     private final TipoMovimentacao tipoPermitido;
 

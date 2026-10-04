@@ -73,14 +73,19 @@ public class ProducoesService {
             movimentacaoEstoqueService.registrar(
                     estoque,
                     TipoMovimentacao.SAIDA,
-                    MotivoMovimentacao.FABRICADA,
+                    MotivoMovimentacao.CONSUMIDA,
                     necessario,
                     null,
                     producao,
                     funcionario
             );
 
+
         }
+        EstoqueEntity estoqueProduzido = estoqueRepository.findByTintaId(receita.getTintaResultante().getId())
+                .orElseThrow(() -> new NaoEncontradoException("Sem estoque para a tinta produzida"));
+        movimentacaoEstoqueService.registrar(estoqueProduzido, TipoMovimentacao.ENTRADA,
+                MotivoMovimentacao.FABRICADA, producao.getVolumeProduzido(), null, producao, funcionario);
     }
 
     public List<ProducoesResponseDto> findAll() {
