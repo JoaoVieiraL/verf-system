@@ -34,9 +34,7 @@ public class ItensReceitaService {
 
     public List<ItensReceitaResponseDto> findAll() {
         List<ItensReceitaEntity> itens = itensReceitaRepository.findAll();
-        if (itens.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum Item de Receita encontrado");
-        }
+
 
         List<ItensReceitaResponseDto> itemResponses = new ArrayList<>();
         for (ItensReceitaEntity item : itens) {

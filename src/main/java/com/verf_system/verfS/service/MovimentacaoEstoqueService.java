@@ -75,9 +75,7 @@ public class MovimentacaoEstoqueService {
 
     public List<MovimentacaoEstoqueResponseDto> findAll() {
         List<MovimentacaoEstoqueEntity> movimentacoes = movimentacaoEstoqueRepository.findAll();
-        if (movimentacoes.isEmpty()) {
-            throw new NaoEncontradoException("Nenhuma Movimentacao encontrada");
-        }
+
 
         List<MovimentacaoEstoqueResponseDto> movimentacaoResponses = new ArrayList<>();
         for (MovimentacaoEstoqueEntity movimentacao : movimentacoes) {

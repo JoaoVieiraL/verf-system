@@ -36,9 +36,7 @@ public class ProducoesService {
 
     public List<ProducoesResponseDto> findAll() {
         List<ProducoesEntity> producoes = producoesRepository.findAll();
-        if (producoes.isEmpty()) {
-            throw new NaoEncontradoException("Nenhuma Producao encontrada");
-        }
+
 
         List<ProducoesResponseDto> producaoResponses = new ArrayList<>();
         for (ProducoesEntity producao : producoes) {

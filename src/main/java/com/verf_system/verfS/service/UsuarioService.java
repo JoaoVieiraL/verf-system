@@ -29,9 +29,7 @@ public class UsuarioService {
 
     public List<UsuarioResponseDto> findAll() {
         List<UsuarioEntity> usuarios = usuarioRepository.findAll();
-        if (usuarios.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum Usuario encontrado");
-        }
+
 
         List<UsuarioResponseDto> usuarioResponses = new ArrayList<>();
         for (UsuarioEntity usuario : usuarios) {

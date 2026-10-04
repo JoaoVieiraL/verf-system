@@ -26,9 +26,7 @@ public class FornecedorService {
 
             fornecedorResponses.add(new FornecedorResponseDto(fornecedor));
         }
-        if(fornecedores.isEmpty()){
-            throw new NaoEncontradoException("Nenhum Fornecedor encontrado");
-        }
+
 
         return fornecedorResponses;
     }

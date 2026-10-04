@@ -36,9 +36,7 @@ public class ReceitaService {
 
     public List<ReceitaResponseDto> findAll() {
         List<ReceitaEntity> receitas = receitaRepository.findAll();
-        if (receitas.isEmpty()) {
-            throw new NaoEncontradoException("Nenhuma Receita encontrada");
-        }
+
 
         List<ReceitaResponseDto> receitaResponses = new ArrayList<>();
         for (ReceitaEntity receita : receitas) {

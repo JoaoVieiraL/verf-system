@@ -31,9 +31,6 @@ public class EstoqueService {
 
     public List<EstoqueResponseDto> findAll() {
         List<EstoqueEntity> estoques = estoqueRepository.findAll();
-        if (estoques.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum Estoque encontrado");
-        }
 
         List<EstoqueResponseDto> estoqueResponses = new ArrayList<>();
         for (EstoqueEntity estoque : estoques) {

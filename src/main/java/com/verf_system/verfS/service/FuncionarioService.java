@@ -38,9 +38,7 @@ public class FuncionarioService {
         for (FuncionarioEntity funcionarioEntity : funcionarios) {
             funcionarioResponseDtos.add(new  FuncionarioResponseDto(funcionarioEntity));
         }
-        if (funcionarios.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum Funcionario encontrado");
-        }
+
 
         return funcionarioResponseDtos;
     }

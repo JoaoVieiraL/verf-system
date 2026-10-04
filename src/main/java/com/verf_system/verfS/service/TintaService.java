@@ -52,9 +52,7 @@ public class TintaService {
     }
     public List<TintaResponseDto> findAll() {
         List<TintaEntity> tintas = tintaRepository.findAll();
-        if (tintas.isEmpty()) {
-            throw new NaoEncontradoException("Nenhuma Tinta encontrada");
-        }
+
 
         List<TintaResponseDto> tintaResponses = new ArrayList<>();
         for (TintaEntity tinta : tintas) {

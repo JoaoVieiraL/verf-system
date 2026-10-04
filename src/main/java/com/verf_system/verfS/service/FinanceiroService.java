@@ -30,9 +30,7 @@ public class FinanceiroService {
 
     public List<FinanceiroResponseDto> findAll() {
         List<FinanceiroEntity> registros = financeiroRepository.findAll();
-        if (registros.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum registro Financeiro encontrado");
-        }
+
 
         List<FinanceiroResponseDto> financeiroResponses = new ArrayList<>();
         for (FinanceiroEntity financeiro : registros) {

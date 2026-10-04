@@ -36,9 +36,7 @@ public class LogAcessosService {
 
     public List<LogAcessosResponseDto> findAll() {
         List<LogAcessosEntity> logs = logAcessosRepository.findAll();
-        if (logs.isEmpty()) {
-            throw new NaoEncontradoException("Nenhum Log de Acesso encontrado");
-        }
+
 
         List<LogAcessosResponseDto> logResponses = new ArrayList<>();
         for (LogAcessosEntity log : logs) {
