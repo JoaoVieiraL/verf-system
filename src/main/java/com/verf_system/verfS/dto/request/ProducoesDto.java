@@ -20,7 +20,7 @@ public class ProducoesDto {
     private Long idFuncionario;
     @NotNull
     @Positive
-    private BigDecimal volumeProduzido;
+    private Integer  volumeProduzido;
     @NotNull
     private Date dataProducao;
 }

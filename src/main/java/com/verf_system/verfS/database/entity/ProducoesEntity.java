@@ -43,7 +43,7 @@ public class ProducoesEntity {
     private FuncionarioEntity funcionarioRef;
 
     @Column(nullable = false, precision = 12, scale = 3)
-    private BigDecimal volumeProduzido;
+    private Integer  volumeProduzido;
 
     @Column(nullable = false)
     private Date dataProducao;

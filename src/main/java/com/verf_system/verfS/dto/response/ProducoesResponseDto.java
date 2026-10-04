@@ -16,7 +16,7 @@ public class ProducoesResponseDto {
     private Long id;
     private Long receitaRefId;
     private Long funcionarioRefId;
-    private BigDecimal volumeProduzido;
+    private Integer  volumeProduzido;
     private Date dataProducao;
     private LocalDateTime criadoEm;
 
