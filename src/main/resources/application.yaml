@@ -8,10 +8,13 @@ spring:
     url:  jdbc:postgresql://localhost:5432/dbVerf
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+  web:
+    resources:
+      static-locations: file:frontend/
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         jdbc:
