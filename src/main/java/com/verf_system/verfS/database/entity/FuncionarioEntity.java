@@ -98,9 +98,25 @@ public class FuncionarioEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.nivelDeAcesso == NivelDeAcesso.ADMIN) return List.of(new SimpleGrantedAuthority("NIVEL_ADMIN"), new SimpleGrantedAuthority("NIVEL_GERENTE"),
-                new SimpleGrantedAuthority("NIVEL_VISUALIZADOR"),  new SimpleGrantedAuthority("NIVEL_OPERADOR"));
-        else return  List.of(new SimpleGrantedAuthority("NIVEL_OPERADOR"));
+        if(this.nivelDeAcesso == NivelDeAcesso.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("NIVEL_ADMIN"),
+                    new SimpleGrantedAuthority("NIVEL_GERENTE"),
+                    new SimpleGrantedAuthority("NIVEL_OPERADOR"),
+                    new SimpleGrantedAuthority("NIVEL_VISUALIZADOR")
+            );
+        }else if(this.nivelDeAcesso == NivelDeAcesso.GERENTE) {
+            return List.of(
+                    new SimpleGrantedAuthority("NIVEL_GERENTE"),
+                    new SimpleGrantedAuthority("NIVEL_VISUALIZADOR"),
+                    new SimpleGrantedAuthority("NIVEL_OPERADOR")
+            );
+        }else if(this.nivelDeAcesso == NivelDeAcesso.OPERADOR) {
+            return List.of(
+                new SimpleGrantedAuthority("NIVEL_OPERADOR"),
+                new SimpleGrantedAuthority("NIVEL_VISUALIZADOR"));
+        }
+        else return  List.of(new SimpleGrantedAuthority("NIVEL_VISUALIZADOR"));
     }
 
     @Override
