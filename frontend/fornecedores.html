@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Gestão de Usuários</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Estilos Complementares para Tabela, Busca e Botões (Harmonizados com o styles.css) -->
+    <style>
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn-primary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #154ec1;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #103da1;
+            transform: translateY(-1px);
+        }
+
+        /* Container de Filtros e Busca */
+        .toolbar-card {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .search-container input {
+            padding-left: 42px;
+            height: 42px;
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        /* Tabela Estilizada no Padrão Dashboard */
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table thead {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .custom-table th {
+            padding: 14px 20px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges de Status e Nível de Acesso */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-inactive {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-role {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /* Botões de Ação na Tabela */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background-color: #f1f5f9;
+            color: #154ec1;
+        }
+
+        .btn-icon.danger:hover {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Usuário Info na Tabela */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-table {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #154ec1;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info-text .name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-info-text .email {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body class="app-layout">
+
+    <!-- Barra Lateral (Sidebar Padrão) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="img_verf/Verf-azul.jpg" alt="VERF Logo" class="sidebar-logo">
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Navegação Principal</span>
+            <a href="modulos.html" class="nav-item">
+                <i data-lucide="layout-grid"></i>
+                <span>Módulos</span>
+            </a>
+            <a href="estoque.html" class="nav-item">
+                <i data-lucide="box"></i>
+                <span>Estoque</span>
+            </a>
+            <a href="mistura.html" class="nav-item">
+                <i data-lucide="flask-conical"></i>
+                <span>Mistura</span>
+            </a>
+            <a href="relatorios.html" class="nav-item">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="nav-item active">
+                <i data-lucide="users"></i>
+                <span>Usuários</span>
+            </a>
+        </nav>
+
+        <!-- Botão de Sair Integrado com a Sessão -->
+        <div class="sidebar-footer" style="padding: 1rem; margin-top: auto;">
+            <button onclick="fazerLogout()" class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: inherit; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+
+        <!-- Cabeçalho de Ações -->
+        <div class="header-actions">
+            <header class="content-header" style="margin-bottom: 0;">
+                <h1>Gestão de Usuários</h1>
+                <p style="margin-bottom: 0;">Gerencie os usuários cadastrados e os seus níveis de permissão.</p>
+            </header>
+            <a href="#" class="btn-primary-action">
+                <i data-lucide="user-plus"></i>
+                <span>Novo Usuário</span>
+            </a>
+        </div>
+
+        <!-- Barra de Pesquisa -->
+        <div class="toolbar-card">
+            <div class="search-container">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" placeholder="Buscar por nome, e-mail ou cargo...">
+            </div>
+        </div>
+
+        <!-- Tabela de Usuários -->
+        <div class="table-card">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Cargo</th>
+                        <th>Nível de Acesso</th>
+                        <th>Status</th>
+                        <th>Último Acesso</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-usuarios-body">
+                    <!-- Os registros do banco de dados serão renderizados aqui dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- Inicialização de Ícones Lucide e Script Global -->
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
