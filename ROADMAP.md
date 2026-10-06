@@ -40,7 +40,7 @@ Fazer com que a API diferencie corretamente erros de entrada, recursos inexisten
 - [ ] Padronizar respostas de erro.
 - [ ] Utilizar `ProblemDetail` quando fizer sentido.
 - [ ] Evitar retornar stacktrace ou detalhes internos para o cliente.
-- [ ] Tratar conflitos de integridade do banco, como valores únicos duplicados.
+- ✅ Tratar conflitos de integridade do banco, como valores únicos duplicados.
 
 ### Resultado esperado
 
@@ -66,12 +66,12 @@ Evitar que as entidades JPA sejam utilizadas diretamente como contrato de respos
 
 ### Tarefas
 
-- [ ] Criar Response DTOs para os recursos relevantes.
-- [ ] Criar `FuncionarioResponseDto` sem `senha_hash`.
-- [ ] Separar DTOs de entrada e saída quando necessário.
+- ✅ Criar Response DTOs para os recursos relevantes.
+- ✅ Criar `FuncionarioResponseDto` sem `senha_hash`.
+- ✅ Separar DTOs de entrada e saída quando necessário.
 - [ ] Revisar quais campos realmente devem ser aceitos pelo cliente.
 - [ ] Evitar que campos controlados pelo servidor sejam enviados livremente pelo cliente.
-- [ ] Revisar relacionamentos para evitar recursão na serialização JSON.
+- ✅ Revisar relacionamentos para evitar recursão na serialização JSON. (nenhum Response DTO carrega entidade dentro.)
 - [ ] Avaliar MapStruct depois que o mapeamento manual estiver bem compreendido.
 
 ### Princípio
@@ -96,11 +96,11 @@ Tornar os endpoints previsíveis e consistentes.
 
 - [ ] Padronizar prefixo `/api/v1`.
 - [ ] Usar nomes de recursos no plural.
-- [ ] Utilizar letras minúsculas nas rotas.
+- ✅ Utilizar letras minúsculas nas rotas.
 - ✅ Remover padrões como `ID/{id}`.
-- [ ] Revisar o uso atual de `/v1` e `/v2`.
+- ✅ Revisar o uso atual de `/v1` e `/v2`.
 - [ ] Definir corretamente `POST`, `GET`, `PUT`, `PATCH` e `DELETE`.
-- [ ] Utilizar status HTTP apropriados.
+- ✅ Utilizar status HTTP apropriados.
 - [ ] Adicionar paginação aos endpoints de listagem quando necessário.
 - [ ] Adicionar filtros de consulta relevantes.
 
@@ -132,15 +132,15 @@ Garantir que o estoque seja consequência das operações realizadas e que as mo
 - ✅ Validar quantidade maior que zero.
 - ✅ Impedir saída maior que o estoque disponível.
 - ✅ Registrar cada movimentação.
-- [ ] Atualizar o estoque a partir da operação de negócio.
+- ✅ Atualizar o estoque a partir da operação de negócio.
 - [ ] Evitar alteração direta e arbitrária do saldo do estoque.
-- [ ] Definir como ajustes manuais serão registrados.
-- [ ] Definir o fluxo de produção de tinta.
-- [ ] Validar disponibilidade das matérias-primas antes da produção.
-- [ ] Registrar consumo das matérias-primas.
-- [ ] Registrar entrada do produto produzido.
-- [ ] Garantir consistência entre produção, movimentação e estoque.
-- [ ] Utilizar `@Transactional` nos fluxos que alteram múltiplos registros.
+- ✅ Definir como ajustes manuais serão registrados. (motivo AJUSTE, aceito em entrada e saída)
+- ✅ Definir o fluxo de produção de tinta.
+- ✅ Validar disponibilidade das matérias-primas antes da produção.
+- ✅ Registrar consumo das matérias-primas.
+- ✅ Registrar entrada do produto produzido.
+- ✅ Garantir consistência entre produção, movimentação e estoque.
+- ✅ Utilizar `@Transactional` nos fluxos que alteram múltiplos registros.
 
 ### Princípio
 
@@ -179,8 +179,8 @@ Manter `criadoEm` e `atualizadoEm` sob responsabilidade do backend.
 ### Tarefas
 
 - ✅ Utilizar `@PrePersist` para preencher `criadoEm` e `atualizadoEm`.
-- [ ] Utilizar `@PreUpdate` para atualizar `atualizadoEm`.
-- [ ] Evitar receber essas datas diretamente em DTOs de criação.
+- ✅ Utilizar `@PreUpdate` para atualizar `atualizadoEm`.
+- ✅ Evitar receber essas datas diretamente em DTOs de criação.
 - [ ] Revisar se as datas de movimentação e auditoria representam corretamente o momento da operação.
 
 Exemplo:
@@ -217,14 +217,14 @@ Isso é aceitável durante o desenvolvimento local, mas não deve permanecer em 
 
 ### Tarefas
 
-- [ ] Criar `PasswordEncoder`.
-- [ ] Armazenar senhas somente em formato de hash.
-- [ ] Nunca retornar `senha_hash` em Response DTO.
-- [ ] Criar autenticação.
+- ✅ Criar `PasswordEncoder`.
+- ✅ Armazenar senhas somente em formato de hash.
+- ✅ Nunca retornar `senha_hash` em Response DTO.
+- ✅ Criar autenticação.
 - [ ] Implementar JWT quando a base de autenticação estiver compreendida.
-- [ ] Criar endpoint de login.
-- [ ] Configurar expiração do token.
-- [ ] Implementar autorização por nível de acesso.
+- ✅ Criar endpoint de login.
+- ✅ Configurar expiração do token.
+- ✅ Implementar autorização por nível de acesso.
 - [ ] Utilizar `@PreAuthorize` nos endpoints sensíveis.
 - [ ] Configurar CORS de forma explícita quando houver frontend.
 - [ ] Revisar CSRF de acordo com a estratégia de autenticação adotada.
