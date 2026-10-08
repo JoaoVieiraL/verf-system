@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Movimentações de Estoque</title>
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS BÁSICO E FEITO À MÃO */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- BARRA LATERAL (SIDEBAR) --- */
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .logo-area {
+            padding: 24px 20px 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ESTILO DA IMAGEM DA LOGO */
+        .logo-img {
+            max-height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .divisor {
+            border: 0;
+            border-top: 1px solid #f1f5f9;
+            margin: 8px 0;
+        }
+
+        .menu-title {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-list {
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .menu-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .menu-item.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .menu-item.active i {
+            color: #2563eb;
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+        }
+
+        .user-box {
+            background-color: #eff6ff;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .user-box i {
+            color: #2563eb;
+            font-size: 18px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .user-role {
+            color: #64748b;
+        }
+
+        .btn-sair {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-sair:hover {
+            color: #dc2626;
+        }
+
+        .copyright {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 12px;
+            margin-bottom: 4px;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            padding: 32px 32px 16px 32px;
+        }
+
+        header h2 {
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .container {
+            padding: 0 32px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* --- ABAS (ENTRADA / SAÍDA) --- */
+        .tabs-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            background-color: #e2e8f0;
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: #475569;
+        }
+
+        .tab-btn.active-saida {
+            background-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .tab-btn.active-entrada {
+            background-color: #059669;
+            color: #ffffff;
+        }
+
+        /* --- GRID DO FORMULÁRIO E HISTÓRICO --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 7fr 5fr;
+            gap: 24px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .card-title i.red { color: #ef4444; }
+        .card-title i.green { color: #10b981; }
+
+        /* --- FORMULÁRIO --- */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            background-color: #ffffff;
+            color: #334155;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 70px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn-submit.blue { background-color: #2563eb; }
+        .btn-submit.blue:hover { background-color: #1d4ed8; }
+
+        .btn-submit.green { background-color: #059669; }
+        .btn-submit.green:hover { background-color: #047857; }
+
+        /* --- ESTADO VAZIO / HISTÓRICO --- */
+        .empty-history {
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .empty-history p.title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .empty-history p.subtitle {
+            font-size: 11px;
+            color: #94a3b8;
+            max-width: 200px;
+            margin-top: 4px;
+        }
+
+        /* BOTÃO AJUDA FLUTUANTE */
+        .btn-help {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            width: 28px;
+            height: 28px;
+            background-color: #1e293b;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA LATERAL -->
+    <div class="sidebar">
+        <div>
+            <!-- LOGO USANDO A TAG <img> -->
+            <div class="logo-area">
+                <img src="logo.png" alt="Logo VERF" class="logo-img">
+            </div>
+
+            <hr class="divisor">
+
+            <div class="menu-title">
+                <i class="fa-solid fa-table-cells-large"></i>
+                <span>Menu Principal</span>
+            </div>
+
+            <!-- OPÇÕES DO MENU -->
+            <div class="menu-list">
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-shapes"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Estoque</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Fornecedores</span>
+                </a>
+                <a href="#" class="menu-item active">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    <span>Movimentações</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-flask-vial"></i>
+                    <span>Mistura de Tintas</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span>Relatórios</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Financeiro</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Usuários</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- PERFIL DE USUÁRIO -->
+        <div class="sidebar-footer">
+            <div class="user-box">
+                <i class="fa-regular fa-user"></i>
+                <div class="user-info">
+                    <p class="user-name">Teste</p>
+                    <p class="user-role">Administrador</p>
+                </div>
+            </div>
+
+            <a href="#" class="btn-sair">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
+            </a>
+
+            <div class="copyright">
+                © 2026 Verf System
+            </div>
+        </div>
+    </div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="main-content">
+        
+        <header>
+            <h2>Movimentações de Estoque</h2>
+            <p>Registre entradas e saídas de tintas do estoque</p>
+        </header>
+
+        <div class="container">
+            
+            <!-- ABAS DE NAVEGAÇÃO -->
+            <div class="tabs-container">
+                <button id="btnSaida" class="tab-btn active-saida" onclick="mudarAba('saida')">
+                    <i class="fa-solid fa-arrow-trend-down"></i>
+                    <span>Saída</span>
+                </button>
+                <button id="btnEntrada" class="tab-btn" onclick="mudarAba('entrada')">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    <span>Entrada</span>
+                </button>
+            </div>
+
+            <!-- BLOCO DO FORMULÁRIO E LISTA -->
+            <div class="content-grid">
+                
+                <!-- FORMULÁRIO -->
+                <div class="card">
+                    <div class="card-title">
+                        <i id="iconeTitulo" class="fa-solid fa-arrow-trend-down red"></i>
+                        <span id="textoTitulo">Registrar Saída</span>
+                    </div>
+
+                    <form onsubmit="salvarFormulario(event)">
+                        
+                        <div class="form-group">
+                            <label>Tinta *</label>
+                            <select id="tinta" class="form-control" required>
+                                <option value="" disabled selected>Selecione uma tinta</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quantidade (litros) *</label>
+                            <input type="number" step="0.1" class="form-control" placeholder="Ex: 50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label id="labelMotivo">Motivo da Saída *</label>
+                            <select id="motivo" class="form-control" required>
+                                <option value="" disabled selected>Selecione o motivo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Data *</label>
+                            <input type="text" id="campoData" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Observação (opcional)</label>
+                            <textarea class="form-control" placeholder="Adicione detalhes sobre esta movimentação"></textarea>
+                        </div>
+
+                        <button type="submit" id="btnSalvar" class="btn-submit blue">
+                            Confirmar Saída
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- HISTÓRICO RECENTE -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Movimentações Recentes</span>
+                    </div>
+
+                    <div class="empty-history">
+                        <div class="empty-icon">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <p class="title">Nenhuma movimentação registrada</p>
+                        <p class="subtitle">As entradas e saídas de estoque confirmadas aparecerão aqui.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE -->
+    <button class="btn-help">
+        <i class="fa-solid fa-question"></i>
+    </button>
+
+    <!-- JAVASCRIPT INICIANTE -->
+    <script>
+        // Pega a data atual do computador e coloca no campo
+        var hoje = new Date();
+        var dia = String(hoje.getDate()).padStart(2, '0');
+        var mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        var ano = hoje.getFullYear();
+        
+        document.getElementById('campoData').value = dia + '/' + mes + '/' + ano;
+
+        // Função para trocar a aba de Entrada / Saída
+        function mudarAba(tipo) {
+            var btnSaida = document.getElementById('btnSaida');
+            var btnEntrada = document.getElementById('btnEntrada');
+            var iconeTitulo = document.getElementById('iconeTitulo');
+            var textoTitulo = document.getElementById('textoTitulo');
+            var labelMotivo = document.getElementById('labelMotivo');
+            var btnSalvar = document.getElementById('btnSalvar');
+
+            if (tipo === 'saida') {
+                btnSaida.className = 'tab-btn active-saida';
+                btnEntrada.className = 'tab-btn';
+
+                iconeTitulo.className = 'fa-solid fa-arrow-trend-down red';
+                textoTitulo.innerText = 'Registrar Saída';
+                labelMotivo.innerText = 'Motivo da Saída *';
+                
+                btnSalvar.className = 'btn-submit blue';
+                btnSalvar.innerText = 'Confirmar Saída';
+            } else {
+                btnEntrada.className = 'tab-btn active-entrada';
+                btnSaida.className = 'tab-btn';
+
+                iconeTitulo.className = 'fa-solid fa-arrow-trend-up green';
+                textoTitulo.innerText = 'Registrar Entrada';
+                labelMotivo.innerText = 'Motivo da Entrada *';
+                
+                btnSalvar.className = 'btn-submit green';
+                btnSalvar.innerText = 'Confirmar Entrada';
+            }
+        }
+
+        // Função do botão de enviar o formulário
+        function salvarFormulario(evento) {
+            evento.preventDefault();
+            alert("Formulário enviado com sucesso!");
+        }
+    </script>
+</body>
+</html>
