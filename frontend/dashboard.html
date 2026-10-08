@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Dashboard</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            padding-bottom: 40px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100%;
+            background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px 16px;
+            z-index: 10;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            margin-bottom: 24px;
+        }
+
+        .logo-box img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .logo-box .texto {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .label-menu {
+            font-size: 11px;
+            color: #94a3b8;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .menu-lista {
+            list-style: none;
+        }
+
+        .menu-lista li {
+            margin-bottom: 4px;
+        }
+
+        .menu-lista a {
+            padding: 9px 12px;
+            font-size: 13px;
+            color: #475569;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .menu-lista a:hover {
+            background-color: #f1f5f9;
+        }
+
+        .menu-lista a svg {
+            width: 16px;
+            height: 16px;
+            color: #64748b;
+        }
+
+        .menu-lista a.item-ativo {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .menu-lista a.item-ativo svg {
+            color: #2563eb;
+        }
+
+        .menu-inferior {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
+        }
+
+        .caixa-usuario {
+            background-color: #eff6ff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .caixa-usuario .user-icon {
+            width: 18px;
+            height: 18px;
+            color: #2563eb;
+        }
+
+        .caixa-usuario .user-nome {
+            font-size: 12px;
+            font-weight: bold;
+            color: #1e40af;
+            display: block;
+        }
+
+        .caixa-usuario .user-cargo {
+            font-size: 11px;
+            color: #3b82f6;
+            display: block;
+        }
+
+        .botao-sair {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
+            cursor: pointer;
+            padding: 4px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .botao-sair:hover {
+            color: #ef4444;
+        }
+
+        .botao-sair svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .texto-copyright {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .conteudo-direitai {
+            margin-left: 240px;
+            padding: 24px 32px;
+        }
+
+        .topo-pagina {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .topo-pagina h1 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .topo-pagina p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .btn-exportar {
+            background-color: #10b981;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .container-cards {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card-item {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-item .titulo-card {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .card-item .valor-card {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .icone-card {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icone-card svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .cor-azul { background-color: #eff6ff; color: #3b82f6; }
+        .cor-amarelo { background-color: #fefce8; color: #eab308; }
+        .cor-verde { background-color: #f0fdf4; color: #22c55e; }
+        .cor-vermelho { background-color: #fef2f2; color: #ef4444; }
+
+        .container-meio {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .caixa-grafico, .caixa-alerta {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .caixa-grafico h3, .caixa-alerta h3 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .area-canvas {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: 200px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .tooltip {
+            position: absolute;
+            display: none;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            padding: 8px 12px;
+            pointer-events: none;
+            z-index: 20;
+            font-size: 12px;
+        }
+
+        .tooltip .mes-txt {
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .tooltip .ent-txt {
+            color: #3b82f6;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .tooltip .sai-txt {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .sem-alertas {
+            margin: auto;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .titulo-secao-bottom {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .container-estrategicos {
+            display: flex;
+            gap: 16px;
+        }
+
+        .card-est {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-est .lbl {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .card-est .val {
+            font-size: 13px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .card-est .sub {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .cor-laranja { background-color: #fff7ed; color: #f97316; }
+        .cor-roxo { background-color: #faf5ff; color: #a855f7; }
+        .cor-azul-claro { background-color: #f0f9ff; color: #0284c7; }
+        .cor-indigo { background-color: #eef2ff; color: #6366f1; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <div class="logo-box">
+                <img src="sua-logo.png" alt="Logo VERF">
+                <span class="texto">VERF</span>
+            </div>
+
+            <div class="label-menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                Menu Principal
+            </div>
+
+            <ul class="menu-lista">
+                <li>
+                    <a href="index.html" class="item-ativo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="estoque.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+                        Estoque
+                    </a>
+                </li>
+                <li>
+                    <a href="fornecedores.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        Fornecedores
+                    </a>
+                </li>
+                <li>
+                    <a href="movimentacoes.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        Movimentações
+                    </a>
+                </li>
+                <li>
+                    <a href="mistura.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v2a2 2 0 0 1-2 2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2a2 2 0 0 1-2-2V2"/></svg>
+                        Mistura de Tintas
+                    </a>
+                </li>
+                <li>
+                    <a href="historico.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Histórico
+                    </a>
+                </li>
+                <li>
+                    <a href="relatorios.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                        Relatórios
+                    </a>
+                </li>
+                <li>
+                    <a href="financeiro.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                        Financeiro
+                    </a>
+                </li>
+                <li>
+                    <a href="usuarios.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 21a8 8 0 0 0-12 0"/><circle cx="12" cy="10" r="5"/></svg>
+                        Usuários
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-inferior">
+            <div class="caixa-usuario">
+                <div class="user-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+                </div>
+                <div>
+                    <span class="user-nome">Teste</span>
+                    <span class="user-cargo">Administrador</span>
+                </div>
+            </div>
+
+            <a href="login.html" class="botao-sair">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H8.25" /></svg>
+                <span>Sair</span>
+            </a>
+
+            <div class="texto-copyright">&copy; 2026 Verf System</div>
+        </div>
+    </div>
+
+    <div class="conteudo-direitai">
+        
+        <div class="topo-pagina">
+            <div>
+                <h1>Dashboard</h1>
+                <p>visão geral do estoque de tintas</p>
+            </div>
+            <button class="btn-exportar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                exportar estoque
+            </button>
+        </div>
+
+        <div class="container-cards">
+            <div class="card-item">
+                <div>
+                    <div class="titulo-card">Total de Tintas</div>
+                    <div class="valor-card" id="card-total-tintas">0</div>
+                </div>
+                <div class="icone-card cor-azul">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+                </div>
+            </div>
+
+            <div class="card-item">
+                <div>
+                    <div class="titulo-card">Alertas de Estoque</div>
+                    <div class="valor-card" id="card-alertas">0</div>
+                </div>
+                <div class="icone-card cor-amarelo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+            </div>
+
+            <div class="card-item">
+                <div>
+                    <div class="titulo-card">Entradas (Mês)</div>
+                    <div class="valor-card" id="card-entradas">0</div>
+                </div>
+                <div class="icone-card cor-verde">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                </div>
+            </div>
+
+            <div class="card-item">
+                <div>
+                    <div class="titulo-card">Saídas (Mês)</div>
+                    <div class="valor-card" id="card-saidas">0</div>
+                </div>
+                <div class="icone-card cor-vermelho">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-meio">
+            <div class="caixa-grafico">
+                <h3>Movimentação Mensal</h3>
+                <div class="area-canvas" id="containerGrafico">
+                    <canvas id="graficoMovimentacao"></canvas>
+                    <div class="tooltip" id="tooltipGrafico">
+                        <div class="mes-txt" id="tooltipMes">Jan</div>
+                        <div class="ent-txt">Entradas : <span id="tooltipEntrada">0</span></div>
+                        <div class="sai-txt">Saídas : <span id="tooltipSaida">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="caixa-alerta">
+                <h3>Alertas de Estoque Baixo</h3>
+                <div class="sem-alertas" id="alerta-mensagem">Nenhum alerta de estoque baixo</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="titulo-secao-bottom">Indicadores Estratégicos</div>
+
+            <div class="container-estrategicos">
+                <div class="card-est">
+                    <div>
+                        <div class="lbl">Tinta Mais Usada</div>
+                        <div class="val" id="ind-tinta-usada">N/A</div>
+                        <div class="sub" id="sub-tinta-usada">0L consumidos</div>
+                    </div>
+                    <div class="icone-card cor-laranja">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                    </div>
+                </div>
+
+                <div class="card-est">
+                    <div>
+                        <div class="lbl">Fornecedor Principal</div>
+                        <div class="val" id="ind-fornecedor">N/A</div>
+                        <div class="sub" id="sub-fornecedor">0 produtos</div>
+                    </div>
+                    <div class="icone-card cor-roxo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                </div>
+
+                <div class="card-est">
+                    <div>
+                        <div class="lbl">Receita Mais Usada</div>
+                        <div class="val" id="ind-receita">N/A</div>
+                        <div class="sub" id="sub-receita">Sem receitas</div>
+                    </div>
+                    <div class="icone-card cor-azul-claro">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v2a2 2 0 0 1-2 2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2a2 2 0 0 1-2-2V2"/></svg>
+                    </div>
+                </div>
+
+                <div class="card-est">
+                    <div>
+                        <div class="lbl">Mais Movimentado</div>
+                        <div class="val" id="ind-movimentado">N/A</div>
+                        <div class="sub" id="sub-movimentado">0 movimentações</div>
+                    </div>
+                    <div class="icone-card cor-indigo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var meucanvas = document.getElementById('graficoMovimentacao');
+        var ctx = meucanvas.getContext('2d');
+        var tooltip = document.getElementById('tooltipGrafico');
+        var tooltipMes = document.getElementById('tooltipMes');
+        var tooltipEntrada = document.getElementById('tooltipEntrada');
+        var tooltipSaida = document.getElementById('tooltipSaida');
+
+        var dadosMovimentacao = [
+            { mes: 'Jan', entradas: 0, saidas: 0 },
+            { mes: 'Fev', entradas: 0, saidas: 0 },
+            { mes: 'Mar', entradas: 0, saidas: 0 },
+            { mes: 'Abr', entradas: 0, saidas: 0 },
+            { mes: 'Mai', entradas: 0, saidas: 0 }
+        ];
+
+        var mesHoverIndex = -1;
+
+        function arrumarTamanho() {
+            var dpr = window.devicePixelRatio || 1;
+            var rect = meucanvas.getBoundingClientRect();
+            meucanvas.width = rect.width * dpr;
+            meucanvas.height = rect.height * dpr;
+        }
+
+        function desenharGrafico() {
+            var dpr = window.devicePixelRatio || 1;
+            var rect = meucanvas.getBoundingClientRect();
+            var largura = rect.width;
+            var altura = rect.height;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, largura, altura);
+
+            var marginTop = 10;
+            var marginBottom = 25;
+            var marginLeft = 35;
+            var marginRight = 10;
+
+            var areaWidth = largura - marginLeft - marginRight;
+            var areaHeight = altura - marginTop - marginBottom;
+
+            var valorMaximoBruto = 0;
+            for (var i = 0; i < dadosMovimentacao.length; i++) {
+                if (dadosMovimentacao[i].entradas > valorMaximoBruto) {
+                    valorMaximoBruto = dadosMovimentacao[i].entradas;
+                }
+                if (dadosMovimentacao[i].saidas > valorMaximoBruto) {
+                    valorMaximoBruto = dadosMovimentacao[i].saidas;
+                }
+            }
+
+            var valorMaximo = 360;
+            if (valorMaximoBruto > 0) {
+                valorMaximo = Math.ceil(valorMaximoBruto / 90) * 90;
+            }
+
+            var numBarras = dadosMovimentacao.length;
+            var espacoColuna = areaWidth / numBarras;
+
+            if (mesHoverIndex >= 0 && mesHoverIndex < numBarras) {
+                var xInicio = marginLeft + (espacoColuna * mesHoverIndex);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+                ctx.fillRect(xInicio, marginTop, espacoColuna, areaHeight);
+            }
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            var numLinhas = 4;
+            for (var j = 0; j <= numLinhas; j++) {
+                var y = marginTop + (areaHeight / numLinhas) * j;
+                var valorRotulo = Math.round(valorMaximo - (valorMaximo / numLinhas) * j);
+
+                ctx.fillText(valorRotulo.toString(), marginLeft - 6, y);
+
+                ctx.beginPath();
+                ctx.setLineDash([3, 3]);
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(largura - marginRight, y);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.beginPath();
+            ctx.moveTo(marginLeft, marginTop);
+            ctx.lineTo(marginLeft, altura - marginBottom);
+            ctx.lineTo(largura - marginRight, altura - marginBottom);
+            ctx.stroke();
+
+            var larguraBarra = espacoColuna * 0.28;
+            if (larguraBarra > 20) {
+                larguraBarra = 20;
+            }
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            for (var k = 0; k < dadosMovimentacao.length; k++) {
+                var item = dadosMovimentacao[k];
+                var xCentro = marginLeft + (espacoColuna * k) + (espacoColuna / 2);
+                var xEntrada = xCentro - larguraBarra - 1;
+                var xSaida = xCentro + 1;
+
+                if (item.entradas > 0) {
+                    var hEntrada = (item.entradas / valorMaximo) * areaHeight;
+                    var yEntrada = (altura - marginBottom) - hEntrada;
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.beginPath();
+                    ctx.roundRect(xEntrada, yEntrada, larguraBarra, hEntrada, [2, 2, 0, 0]);
+                    ctx.fill();
+                }
+
+                if (item.saidas > 0) {
+                    var hSaida = (item.saidas / valorMaximo) * areaHeight;
+                    var ySaida = (altura - marginBottom) - hSaida;
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.roundRect(xSaida, ySaida, larguraBarra, hSaida, [2, 2, 0, 0]);
+                    ctx.fill();
+                }
+
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(xCentro, marginTop);
+                ctx.lineTo(xCentro, altura - marginBottom);
+                ctx.stroke();
+
+                ctx.fillStyle = '#64748b';
+                ctx.fillText(item.mes, xCentro, altura - marginBottom + 6);
+            }
+        }
+
+        meucanvas.onmousemove = function(e) {
+            var rect = meucanvas.getBoundingClientRect();
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+
+            var marginLeft = 35;
+            var marginRight = 10;
+            var areaWidth = rect.width - marginLeft - marginRight;
+            var espacoColuna = areaWidth / dadosMovimentacao.length;
+
+            if (mouseX >= marginLeft && mouseX <= rect.width - marginRight) {
+                var novoIndex = Math.floor((mouseX - marginLeft) / espacoColuna);
+                
+                if (novoIndex >= 0 && novoIndex < dadosMovimentacao.length) {
+                    mesHoverIndex = novoIndex;
+                    desenharGrafico();
+
+                    var dadosMes = dadosMovimentacao[mesHoverIndex];
+                    tooltipMes.innerHTML = dadosMes.mes;
+                    tooltipEntrada.innerHTML = dadosMes.entradas;
+                    tooltipSaida.innerHTML = dadosMes.saidas;
+
+                    tooltip.style.display = 'block';
+                    var posX = mouseX + 15;
+                    var posY = mouseY - 20;
+
+                    if (posX + 120 > rect.width) {
+                        posX = mouseX - 130;
+                    }
+                    if (posY < 0) {
+                        posY = 10;
+                    }
+
+                    tooltip.style.left = posX + 'px';
+                    tooltip.style.top = posY + 'px';
+                    return;
+                }
+            }
+
+            esconderTooltip();
+        };
+
+        meucanvas.onmouseleave = function() {
+            esconderTooltip();
+        };
+
+        function esconderTooltip() {
+            mesHoverIndex = -1;
+            tooltip.style.display = 'none';
+            desenharGrafico();
+        }
+
+        function iniciar() {
+            arrumarTamanho();
+            desenharGrafico();
+        }
+
+        window.onload = iniciar;
+        window.onresize = function() {
+            arrumarTamanho();
+            desenharGrafico();
+        };
+    </script>
+</body>
+</html>
