@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERF - Gestão de Usuários</title>
+    <title>VERF - Gestão de Fornecedores</title>
     <!-- Ícones Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- CSS Principal -->
@@ -118,7 +118,7 @@
             background-color: #f8fafc;
         }
 
-        /* Badges de Status e Nível de Acesso */
+        /* Badges de Status */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -172,7 +172,7 @@
             color: #ef4444;
         }
 
-        /* Usuário Info na Tabela */
+        /* Fornecedor Info na Tabela */
         .user-cell {
             display: flex;
             align-items: center;
@@ -207,6 +207,112 @@
             font-size: 0.8rem;
             color: #64748b;
         }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        /* Modal de Cadastro */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+
+        .modal-overlay[hidden] {
+            display: none;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .modal-erro {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .modal-erro[hidden] {
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-secondary-action {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary-action:hover {
+            background-color: #f1f5f9;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group[hidden] {
+            display: none;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            accent-color: #154ec1;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body class="app-layout">
@@ -235,7 +341,7 @@
                 <i data-lucide="bar-chart-3"></i>
                 <span>Relatórios</span>
             </a>
-            <a href="usuarios.html" class="nav-item active">
+            <a href="usuarios.html" class="nav-item">
                 <i data-lucide="users"></i>
                 <span>Usuários</span>
             </a>
@@ -256,43 +362,105 @@
         <!-- Cabeçalho de Ações -->
         <div class="header-actions">
             <header class="content-header" style="margin-bottom: 0;">
-                <h1>Gestão de Usuários</h1>
-                <p style="margin-bottom: 0;">Gerencie os usuários cadastrados e os seus níveis de permissão.</p>
+                <h1>Gestão de Fornecedores</h1>
+                <p style="margin-bottom: 0;">Gerencie os fornecedores cadastrados e os seus dados de contato.</p>
             </header>
-            <a href="#" class="btn-primary-action">
-                <i data-lucide="user-plus"></i>
-                <span>Novo Usuário</span>
-            </a>
+            <button type="button" class="btn-primary-action" onclick="abrirModalFornecedor()">
+                <i data-lucide="plus"></i>
+                <span>Novo Fornecedor</span>
+            </button>
         </div>
 
         <!-- Barra de Pesquisa -->
         <div class="toolbar-card">
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="text" placeholder="Buscar por nome, e-mail ou cargo...">
+                <input type="text" placeholder="Buscar por nome, e-mail, CNPJ ou telefone...">
             </div>
         </div>
 
-        <!-- Tabela de Usuários -->
+        <!-- Tabela de Fornecedores -->
         <div class="table-card">
             <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>Usuário</th>
-                        <th>Cargo</th>
-                        <th>Nível de Acesso</th>
+                        <th>Fornecedor</th>
+                        <th>CNPJ</th>
+                        <th>Telefone</th>
                         <th>Status</th>
-                        <th>Último Acesso</th>
+                        <th>Cadastrado em</th>
                         <th style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tabela-usuarios-body">
+                <tbody id="tabela-fornecedores-body">
                     <!-- Os registros do banco de dados serão renderizados aqui dinamicamente -->
                 </tbody>
             </table>
         </div>
 
     </main>
+
+    <!-- Modal de Novo Fornecedor -->
+    <div id="modal-fornecedor" class="modal-overlay" hidden>
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="modal-fornecedor-titulo">Novo Fornecedor</h2>
+                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalFornecedor()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div id="modal-fornecedor-erro" class="modal-erro" hidden></div>
+
+            <form id="form-fornecedor" novalidate>
+                <div class="form-group">
+                    <label for="fornecedor-nome">Nome <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="building-2" class="input-icon"></i>
+                        <input type="text" id="fornecedor-nome" maxlength="150" placeholder="Razão social ou nome fantasia" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fornecedor-cnpj">CNPJ <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="file-text" class="input-icon"></i>
+                        <input type="text" id="fornecedor-cnpj" maxlength="18" placeholder="00.000.000/0000-00" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fornecedor-telefone">Telefone <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="phone" class="input-icon"></i>
+                        <input type="text" id="fornecedor-telefone" maxlength="20" placeholder="(00) 0000-0000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fornecedor-email">E-mail <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="mail" class="input-icon"></i>
+                        <input type="email" id="fornecedor-email" maxlength="150" placeholder="contato@fornecedor.com.br" required>
+                    </div>
+                </div>
+
+                <!-- Só aparece na edição -->
+                <div class="form-group checkbox-group" id="grupo-fornecedor-ativo" hidden>
+                    <input type="checkbox" id="fornecedor-ativo">
+                    <label for="fornecedor-ativo">Fornecedor ativo</label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary-action" onclick="fecharModalFornecedor()">Cancelar</button>
+                    <button type="submit" id="btn-salvar-fornecedor" class="btn-primary-action">
+                        <i data-lucide="check"></i>
+                        <span>Salvar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Inicialização de Ícones Lucide e Script Global -->
     <script>
