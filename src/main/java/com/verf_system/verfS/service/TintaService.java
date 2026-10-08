@@ -22,7 +22,7 @@ public class TintaService {
     private final ITintaRepository tintaRepository;
     private final IFornecedorRepository fornecedorRepository;
 
-    public void save(TintaDto tintaDto) {
+    public TintaResponseDto save(TintaDto tintaDto) {
 
 
         if (tintaRepository.existsByCodigo(tintaDto.getCodigo())) {
@@ -41,7 +41,7 @@ public class TintaService {
         }else if(tintaDto.getIdFornecedor() != null) {
             throw new RegraDeNegocioException("Tinta Produzida nao deve ter Fornecedor");
         }
-        tintaRepository.save(TintaEntity.builder()
+        TintaEntity tinta = tintaRepository.save(TintaEntity.builder()
                 .nome(tintaDto.getNome())
                 .numeroHexadecimal(tintaDto.getNumeroHexadecimal())
                 .codigo(tintaDto.getCodigo())
@@ -49,6 +49,7 @@ public class TintaService {
                 .fornecedorRef(fornecedor)
                 .build());
 
+        return new TintaResponseDto(tinta);
     }
     public List<TintaResponseDto> findAll() {
         List<TintaEntity> tintas = tintaRepository.findAll();
