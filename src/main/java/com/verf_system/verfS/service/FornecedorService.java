@@ -40,16 +40,17 @@ public class FornecedorService {
         return responseDto;
     }
 
-    public void save(FornecedorDto fornecedor) {
+    public FornecedorResponseDto save(FornecedorDto fornecedor) {
         if(fornecedorRepository.existsByCnpj(fornecedor.getCnpj())){
             throw new DadoDuplicadoException("Fornecedor com CNPJ " + fornecedor.getCnpj() + " já cadastrado");
         }
-        fornecedorRepository.save(FornecedorEntity.builder()
+        FornecedorEntity fornecedorCriado = fornecedorRepository.save(FornecedorEntity.builder()
                 .cnpj(fornecedor.getCnpj())
                 .nome(fornecedor.getNome())
                 .telefone(fornecedor.getTelefone())
                 .email(fornecedor.getEmail())
                 .build());
+        return new FornecedorResponseDto(fornecedorCriado);
     }
 
     public void atualizar(Long id, FornecedorDto dados) {

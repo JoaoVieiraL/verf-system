@@ -30,8 +30,8 @@ public class FornecedorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody FornecedorDto fornecedor) {
-        fornecedorService.save(fornecedor);
+    public FornecedorResponseDto save(@Valid @RequestBody FornecedorDto fornecedor) {
+        return fornecedorService.save(fornecedor);
     }
 
     @PutMapping(value = "/{id}")
