@@ -1,6 +1,7 @@
 package com.verf_system.verfS.controller;
 
 import com.verf_system.verfS.dto.request.EstoqueRequestDto;
+import com.verf_system.verfS.dto.request.EstoqueUpdateDto;
 import com.verf_system.verfS.dto.response.EstoqueResponseDto;
 import com.verf_system.verfS.service.EstoqueService;
 import jakarta.validation.Valid;
@@ -33,5 +34,17 @@ public class EstoqueController {
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@Valid  @RequestBody EstoqueRequestDto estoqueDto) {
         estoqueService.save(estoqueDto);
+    }
+
+    @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizar(@PathVariable Long id, @Valid @RequestBody EstoqueUpdateDto estoqueDto) {
+        estoqueService.atualizar(id, estoqueDto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void excluir(@PathVariable Long id) {
+        estoqueService.excluir(id);
     }
 }
