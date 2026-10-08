@@ -10,4 +10,5 @@ public interface IFuncionarioRepository extends JpaRepository<FuncionarioEntity,
     UserDetails findByEmail(String email);
 
     public boolean existsByEmail(String email);
+    public boolean existsByEmailAndIdNot(String email, Long id);
 }
