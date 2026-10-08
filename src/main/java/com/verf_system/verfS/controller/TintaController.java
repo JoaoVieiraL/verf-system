@@ -31,8 +31,8 @@ public class TintaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody TintaDto tintaDto) {
-        tintaService.save(tintaDto);
+    public TintaResponseDto save(@Valid @RequestBody TintaDto tintaDto) {
+       return tintaService.save(tintaDto);
     }
 
 
