@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface IFornecedorRepository extends JpaRepository<FornecedorEntity, Long> {
 
     public boolean existsByCnpj(String cnpj);
+    public boolean existsByCnpjAndIdNot(String cnpj, Long id);
 
 }

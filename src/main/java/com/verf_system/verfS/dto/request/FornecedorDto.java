@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.br.CNPJ;
 
 
 @Builder
@@ -16,7 +15,6 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @AllArgsConstructor
 @ToString
 public class FornecedorDto {
-    @CNPJ
     @NotBlank(message = "CNPJ do fornecedor é obrigatório.")
     String cnpj;
 
@@ -31,5 +29,8 @@ public class FornecedorDto {
     @Email(message = "Email é obrigatório")
     @Size(max = 150)
     String email;
+
+    // usado só na edição; no cadastro o fornecedor sempre começa ativo
+    Boolean ativo;
 
 }

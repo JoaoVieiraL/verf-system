@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +35,6 @@ public class FornecedorEntity {
     @Column(name ="Id")
     private Long id;
 
-    @CNPJ
     @NotBlank(message = "CNPJ do forncedor é obrigatório.")
     @Column( name = "Cnpj", nullable = false, unique = true)
     private String cnpj;

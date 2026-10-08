@@ -2,10 +2,12 @@ package com.verf_system.verfS.service;
 
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
+import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.FornecedorDto;
 import com.verf_system.verfS.dto.response.FornecedorResponseDto;
 import com.verf_system.verfS.exception.DadoDuplicadoException;
 import com.verf_system.verfS.exception.NaoEncontradoException;
+import com.verf_system.verfS.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FornecedorService {
     private final IFornecedorRepository fornecedorrepository;
+    private final ITintaRepository tintaRepository;
 
 
     public List<FornecedorResponseDto> findAll() {
@@ -47,6 +50,29 @@ public class FornecedorService {
                 .telefone(fornecedor.getTelefone())
                 .email(fornecedor.getEmail())
                 .build());
+    }
+
+    public void atualizar(Long id, FornecedorDto dados) {
+        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        if(fornecedorrepository.existsByCnpjAndIdNot(dados.getCnpj(), id)){
+            throw new DadoDuplicadoException("Fornecedor com CNPJ " + dados.getCnpj() + " já cadastrado");
+        }
+        fornecedor.setCnpj(dados.getCnpj());
+        fornecedor.setNome(dados.getNome());
+        fornecedor.setTelefone(dados.getTelefone());
+        fornecedor.setEmail(dados.getEmail());
+        if(dados.getAtivo() != null) {
+            fornecedor.setAtivo(dados.getAtivo());
+        }
+        fornecedorrepository.save(fornecedor);
+    }
+
+    public void excluir(Long id) {
+        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        if(tintaRepository.existsByFornecedorRefId(id)){
+            throw new RegraDeNegocioException("Este fornecedor possui tintas vinculadas e não pode ser excluído. Inative-o pela edição.");
+        }
+        fornecedorrepository.delete(fornecedor);
     }
 
     public void inativar(Long id) {

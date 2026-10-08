@@ -34,10 +34,16 @@ public class FornecedorController {
         fornecedorService.save(fornecedor);
     }
 
+    @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizar(@PathVariable Long id, @Valid @RequestBody FornecedorDto fornecedor) {
+        fornecedorService.atualizar(id, fornecedor);
+    }
+
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativar(@PathVariable Long id) {
-        fornecedorService.inativar(id);
+    public void excluir(@PathVariable Long id) {
+        fornecedorService.excluir(id);
 
     }
 
