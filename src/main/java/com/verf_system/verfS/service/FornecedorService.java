@@ -17,12 +17,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FornecedorService {
-    private final IFornecedorRepository fornecedorrepository;
+    private final IFornecedorRepository fornecedorRepository;
     private final ITintaRepository tintaRepository;
 
 
     public List<FornecedorResponseDto> findAll() {
-        List<FornecedorEntity> fornecedores = fornecedorrepository.findAll();
+        List<FornecedorEntity> fornecedores = fornecedorRepository.findAll();
         List<FornecedorResponseDto> fornecedorResponses = new ArrayList<>();
 
         for (FornecedorEntity fornecedor : fornecedores) {
@@ -35,16 +35,16 @@ public class FornecedorService {
     }
 
     public FornecedorResponseDto findById(Long id) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        FornecedorEntity fornecedor = fornecedorRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
         FornecedorResponseDto responseDto = new FornecedorResponseDto(fornecedor);
         return responseDto;
     }
 
     public void save(FornecedorDto fornecedor) {
-        if(fornecedorrepository.existsByCnpj(fornecedor.getCnpj())){
+        if(fornecedorRepository.existsByCnpj(fornecedor.getCnpj())){
             throw new DadoDuplicadoException("Fornecedor com CNPJ " + fornecedor.getCnpj() + " já cadastrado");
         }
-        fornecedorrepository.save(FornecedorEntity.builder()
+        fornecedorRepository.save(FornecedorEntity.builder()
                 .cnpj(fornecedor.getCnpj())
                 .nome(fornecedor.getNome())
                 .telefone(fornecedor.getTelefone())
@@ -53,8 +53,8 @@ public class FornecedorService {
     }
 
     public void atualizar(Long id, FornecedorDto dados) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
-        if(fornecedorrepository.existsByCnpjAndIdNot(dados.getCnpj(), id)){
+        FornecedorEntity fornecedor = fornecedorRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        if(fornecedorRepository.existsByCnpjAndIdNot(dados.getCnpj(), id)){
             throw new DadoDuplicadoException("Fornecedor com CNPJ " + dados.getCnpj() + " já cadastrado");
         }
         fornecedor.setCnpj(dados.getCnpj());
@@ -64,20 +64,20 @@ public class FornecedorService {
         if(dados.getAtivo() != null) {
             fornecedor.setAtivo(dados.getAtivo());
         }
-        fornecedorrepository.save(fornecedor);
+        fornecedorRepository.save(fornecedor);
     }
 
     public void excluir(Long id) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        FornecedorEntity fornecedor = fornecedorRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
         if(tintaRepository.existsByFornecedorRefId(id)){
             throw new RegraDeNegocioException("Este fornecedor possui tintas vinculadas e não pode ser excluído. Inative-o pela edição.");
         }
-        fornecedorrepository.delete(fornecedor);
+        fornecedorRepository.delete(fornecedor);
     }
 
     public void inativar(Long id) {
-        FornecedorEntity fornecedor = fornecedorrepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
+        FornecedorEntity fornecedor = fornecedorRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Fornecedor encontrado"));
         fornecedor.setAtivo(false);
-        fornecedorrepository.save(fornecedor);
+        fornecedorRepository.save(fornecedor);
     }
 }
