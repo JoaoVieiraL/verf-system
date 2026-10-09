@@ -4,6 +4,7 @@ import com.verf_system.verfS.configuration.TokenService;
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.dto.request.FuncionarioDto;
 import com.verf_system.verfS.dto.request.LoginDto;
+import com.verf_system.verfS.dto.response.FuncionarioResponseDto;
 import com.verf_system.verfS.dto.response.LoginResponseDto;
 import com.verf_system.verfS.service.FuncionarioService;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class AuthenticationController {
 
     @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registro(@RequestBody @Valid FuncionarioDto dados){
-         funcionarioService.save(dados);
+    public FuncionarioResponseDto registro(@RequestBody @Valid FuncionarioDto dados){
+        return funcionarioService.save(dados);
     }
 }

@@ -19,17 +19,19 @@ public class FuncionarioService {
     private final IFuncionarioRepository funcionarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void save(FuncionarioDto funcionarioDto) {
+    public FuncionarioResponseDto save(FuncionarioDto funcionarioDto) {
         if(funcionarioRepository.existsByEmail(funcionarioDto.getEmail())){
             throw new DadoDuplicadoException("Funcionario com email " + funcionarioDto.getEmail() + " já cadastrado");
         }
-        funcionarioRepository.save(FuncionarioEntity.builder()
+        FuncionarioEntity funcionario = funcionarioRepository.save(FuncionarioEntity.builder()
                 .nome(funcionarioDto.getNome())
                 .cargo(funcionarioDto.getCargo())
                 .email(funcionarioDto.getEmail())
                 .senhaHash(passwordEncoder.encode(funcionarioDto.getSenha()))
                 .nivelDeAcesso(funcionarioDto.getNivelDeAcesso())
                 .build());
+
+        return new FuncionarioResponseDto(funcionario);
     }
 
     public List<FuncionarioResponseDto> findAll() {
