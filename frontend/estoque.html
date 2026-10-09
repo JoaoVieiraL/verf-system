@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERF - Gestão de Usuários</title>
+    <title>VERF - Estoque de Tintas</title>
     <!-- Ícones Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- CSS Principal -->
@@ -118,7 +118,7 @@
             background-color: #f8fafc;
         }
 
-        /* Badges de Status e Nível de Acesso */
+        /* Badges de Status e Situação */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -136,6 +136,11 @@
         .badge-inactive {
             background-color: #fee2e2;
             color: #b91c1c;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #b45309;
         }
 
         .badge-role {
@@ -172,7 +177,7 @@
             color: #ef4444;
         }
 
-        /* Usuário Info na Tabela */
+        /* Tinta Info na Tabela */
         .user-cell {
             display: flex;
             align-items: center;
@@ -352,6 +357,14 @@
         .form-hint[hidden] {
             display: none;
         }
+        /* Amostra da cor da tinta */
+        .cor-tinta {
+            border: 1px solid #e2e8f0;
+        }
+
+        .quantidade {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="app-layout">
@@ -368,7 +381,7 @@
                 <i data-lucide="layout-grid"></i>
                 <span>Módulos</span>
             </a>
-            <a href="estoque.html" class="nav-item">
+            <a href="estoque.html" class="nav-item active">
                 <i data-lucide="box"></i>
                 <span>Estoque</span>
             </a>
@@ -380,7 +393,7 @@
                 <i data-lucide="bar-chart-3"></i>
                 <span>Relatórios</span>
             </a>
-            <a href="usuarios.html" class="nav-item active">
+            <a href="usuarios.html" class="nav-item">
                 <i data-lucide="users"></i>
                 <span>Usuários</span>
             </a>
@@ -401,12 +414,12 @@
         <!-- Cabeçalho de Ações -->
         <div class="header-actions">
             <header class="content-header" style="margin-bottom: 0;">
-                <h1>Gestão de Usuários</h1>
-                <p style="margin-bottom: 0;">Gerencie os usuários cadastrados e os seus níveis de permissão.</p>
+                <h1>Estoque de Tintas</h1>
+                <p style="margin-bottom: 0;">Acompanhe e ajuste a quantidade disponível de cada tinta.</p>
             </header>
-            <button type="button" class="btn-primary-action" onclick="abrirModalUsuario()">
-                <i data-lucide="user-plus"></i>
-                <span>Novo Usuário</span>
+            <button type="button" class="btn-primary-action" onclick="abrirModalEstoque()">
+                <i data-lucide="package-plus"></i>
+                <span>Novo Item</span>
             </button>
         </div>
 
@@ -414,24 +427,24 @@
         <div class="toolbar-card">
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="text" placeholder="Buscar por nome, e-mail ou cargo...">
+                <input type="text" placeholder="Buscar por tinta, código ou origem...">
             </div>
         </div>
 
-        <!-- Tabela de Usuários -->
+        <!-- Tabela de Estoque -->
         <div class="table-card">
             <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>Usuário</th>
-                        <th>Cargo</th>
-                        <th>Nível de Acesso</th>
-                        <th>Status</th>
-                        <th>Último Acesso</th>
+                        <th>Tinta</th>
+                        <th>Origem</th>
+                        <th>Quantidade</th>
+                        <th>Situação</th>
+                        <th>Atualizado em</th>
                         <th style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tabela-usuarios-body">
+                <tbody id="tabela-estoque-body">
                     <!-- Os registros do banco de dados serão renderizados aqui dinamicamente -->
                 </tbody>
             </table>
@@ -439,83 +452,41 @@
 
     </main>
 
-    <!-- Modal de Usuário (cadastro e edição) -->
-    <div id="modal-usuario" class="modal-overlay" hidden>
+    <!-- Modal de Estoque (cadastro e edição) -->
+    <div id="modal-estoque" class="modal-overlay" hidden>
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modal-usuario-titulo">Novo Usuário</h2>
-                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalUsuario()">
+                <h2 id="modal-estoque-titulo">Novo Item de Estoque</h2>
+                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalEstoque()">
                     <i data-lucide="x"></i>
                 </button>
             </div>
 
-            <div id="modal-usuario-erro" class="modal-erro" hidden></div>
+            <div id="modal-estoque-erro" class="modal-erro" hidden></div>
 
-            <form id="form-usuario" novalidate>
+            <form id="form-estoque" novalidate>
                 <div class="form-group">
-                    <label for="usuario-nome">Nome <span class="required">*</span></label>
+                    <label for="estoque-tinta">Tinta <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i data-lucide="user" class="input-icon"></i>
-                        <input type="text" id="usuario-nome" maxlength="150" placeholder="Nome completo" required>
+                        <i data-lucide="paint-bucket" class="input-icon"></i>
+                        <select id="estoque-tinta" required>
+                            <option value="">Selecione uma tinta</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="usuario-email">E-mail <span class="required">*</span></label>
-                    <div class="input-wrapper">
-                        <i data-lucide="mail" class="input-icon"></i>
-                        <input type="email" id="usuario-email" maxlength="150" placeholder="usuario@verf.com.br" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="usuario-cargo">Cargo <span class="required">*</span></label>
-                        <div class="input-wrapper">
-                            <i data-lucide="briefcase" class="input-icon"></i>
-                            <select id="usuario-cargo" required>
-                                <option value="">Selecione</option>
-                                <option value="TI">TI</option>
-                                <option value="DIRETOR">Diretor</option>
-                                <option value="OPERADOR">Operador</option>
-                                <option value="MANUTENCAO">Manutenção</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="usuario-nivel">Nível de Acesso <span class="required">*</span></label>
-                        <div class="input-wrapper">
-                            <i data-lucide="shield" class="input-icon"></i>
-                            <select id="usuario-nivel" required>
-                                <option value="">Selecione</option>
-                                <option value="ADMIN">Admin</option>
-                                <option value="GERENTE">Gerente</option>
-                                <option value="OPERADOR">Operador</option>
-                                <option value="VISUALIZADOR">Visualizador</option>
-                            </select>
-                        </div>
-                    </div>
+                    <p class="form-hint" id="estoque-tinta-dica" hidden>A tinta não pode ser trocada na edição.</p>
                 </div>
 
                 <div class="form-group">
-                    <label for="usuario-senha">Senha <span class="required" id="usuario-senha-obrigatoria">*</span></label>
+                    <label for="estoque-quantidade">Quantidade <span class="required">*</span></label>
                     <div class="input-wrapper">
-                        <i data-lucide="lock" class="input-icon"></i>
-                        <input type="password" id="usuario-senha" maxlength="100" placeholder="Mínimo de 8 caracteres" autocomplete="new-password">
+                        <i data-lucide="hash" class="input-icon"></i>
+                        <input type="number" id="estoque-quantidade" min="0" step="1" placeholder="0" required>
                     </div>
-                    <p class="form-hint" id="usuario-senha-dica" hidden>Deixe em branco para manter a senha atual.</p>
-                </div>
-
-                <!-- Só aparece na edição -->
-                <div class="form-group checkbox-group" id="grupo-usuario-ativo" hidden>
-                    <input type="checkbox" id="usuario-ativo">
-                    <label for="usuario-ativo">Usuário ativo</label>
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary-action" onclick="fecharModalUsuario()">Cancelar</button>
-                    <button type="submit" id="btn-salvar-usuario" class="btn-primary-action">
+                    <button type="button" class="btn-secondary-action" onclick="fecharModalEstoque()">Cancelar</button>
+                    <button type="submit" id="btn-salvar-estoque" class="btn-primary-action">
                         <i data-lucide="check"></i>
                         <span>Salvar</span>
                     </button>

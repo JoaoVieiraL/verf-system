@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/v1/fornecedores/**", "/v1/tintas", "/v1/receitas", "/v1/itens-receita").hasAuthority("NIVEL_GERENTE")
                         .requestMatchers(HttpMethod.PUT, "/v1/fornecedores/**").hasAuthority("NIVEL_GERENTE")
                         .requestMatchers(HttpMethod.DELETE, "/v1/fornecedores/**").hasAuthority("NIVEL_GERENTE")
+                        .requestMatchers(HttpMethod.POST, "/v1/estoques/**").hasAuthority("NIVEL_GERENTE")
+                        .requestMatchers(HttpMethod.PUT, "/v1/estoques/**").hasAuthority("NIVEL_GERENTE")
+                        .requestMatchers(HttpMethod.DELETE, "/v1/estoques/**").hasAuthority("NIVEL_GERENTE")
                         //! operador
                         .requestMatchers(HttpMethod.POST, "/v1/movimentacao-estoque", "/v1/producoes").hasAuthority("NIVEL_OPERADOR")
                         //! visualizador
