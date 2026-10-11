@@ -16,8 +16,6 @@ public class MovimentacaoEstoqueDto {
     @NotNull
     private Long idEstoque;
 
-    @NotNull
-    private Long idFuncionario;
 
     private Long idProducao;
 

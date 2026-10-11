@@ -11,6 +11,7 @@ import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +32,9 @@ public class MovimentacaoEstoqueService {
         }
 
         EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new NaoEncontradoException("Nenhum estoque encontrado"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(movimentacaoEstoqueDto.getIdFuncionario()).orElseThrow(() -> new NaoEncontradoException("Nenhum funcionario encontrado"));
+        FuncionarioEntity funcionario = (FuncionarioEntity)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         ProducoesEntity producoes = null;
         if (movimentacaoEstoqueDto.getIdProducao() != null) {
             producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new NaoEncontradoException("Nenhuma produção encontrada"));
