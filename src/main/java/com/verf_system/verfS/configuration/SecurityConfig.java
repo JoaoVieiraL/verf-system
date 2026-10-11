@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/v1/movimentacao-estoque", "/v1/producoes").hasAuthority("NIVEL_OPERADOR")
                         //! visualizador
                         .requestMatchers(HttpMethod.GET).hasAuthority("NIVEL_VISUALIZADOR")
-                        .anyRequest().authenticated())
+                        .anyRequest().denyAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
