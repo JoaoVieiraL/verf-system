@@ -36,11 +36,11 @@ public class EstoqueController {
 //        estoqueService.save(estoqueDto);
 //    }
 
-    @PutMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizar(@PathVariable Long id, @Valid @RequestBody EstoqueUpdateDto estoqueDto) {
-        estoqueService.atualizar(id, estoqueDto);
-    }
+//    @PutMapping(value = "/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void atualizar(@PathVariable Long id, @Valid @RequestBody EstoqueUpdateDto estoqueDto) {
+//        estoqueService.atualizar(id, estoqueDto);
+//    }
 
 //    @DeleteMapping(value = "/{id}")
 //    @ResponseStatus(HttpStatus.NO_CONTENT)

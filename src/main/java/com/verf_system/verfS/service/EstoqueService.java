@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EstoqueService {
     private final IEstoqueRepository estoqueRepository;
-    private final ITintaRepository tintaRepository;
+  //  private final ITintaRepository tintaRepository;
 
 //    public void save(EstoqueRequestDto estoqueDto) {
 //
@@ -47,20 +47,20 @@ public class EstoqueService {
         return estoqueResponses;
     }
 
-    public void atualizar(Long id, EstoqueUpdateDto dados) {
-        EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
-        estoque.setQuantidade(dados.getQuantidade());
-        estoqueRepository.save(estoque);
-    }
-
-    public void excluir(Long id) {
-        EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
-        try {
-            estoqueRepository.delete(estoque);
-        } catch (DataIntegrityViolationException e) {
-            throw new RegraDeNegocioException("Este estoque possui movimentações registradas e não pode ser excluído.");
-        }
-    }
+//    public void atualizar(Long id, EstoqueUpdateDto dados) {
+//        EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
+//        estoque.setQuantidade(dados.getQuantidade());
+//        estoqueRepository.save(estoque);
+//    }
+//
+//    public void excluir(Long id) {
+//        EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
+//        try {
+//            estoqueRepository.delete(estoque);
+//        } catch (DataIntegrityViolationException e) {
+//            throw new RegraDeNegocioException("Este estoque possui movimentações registradas e não pode ser excluído.");
+//        }
+//    }
 
     public EstoqueResponseDto findById(Long id) {
         EstoqueEntity estoque = estoqueRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Nenhum Estoque encontrado"));
