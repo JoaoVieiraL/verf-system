@@ -31,7 +31,7 @@ public class MovimentacaoEstoqueController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
-        movimentacaoEstoqueService.save(movimentacaoEstoqueDto);
+    public MovimentacaoEstoqueResponseDto save(@Valid @RequestBody MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
+        return movimentacaoEstoqueService.save(movimentacaoEstoqueDto);
     }
 }

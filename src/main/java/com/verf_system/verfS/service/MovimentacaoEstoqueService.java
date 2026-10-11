@@ -4,18 +4,20 @@ import com.verf_system.verfS.database.entity.*;
 import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IMovimentacaoEstoqueRepository;
-import com.verf_system.verfS.database.repository.IProducoesRepository;
 import com.verf_system.verfS.dto.request.MovimentacaoEstoqueDto;
 import com.verf_system.verfS.dto.response.MovimentacaoEstoqueResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,54 +25,40 @@ public class MovimentacaoEstoqueService {
     private final IMovimentacaoEstoqueRepository movimentacaoEstoqueRepository;
     private final IEstoqueRepository estoqueRepository;
     private final IFuncionarioRepository funcionarioRepository;
-    private final IProducoesRepository producoesRepository;
+    private static final Set<MotivoMovimentacao> MOTIVOS_DA_PRODUCAO =
+            EnumSet.of(MotivoMovimentacao.FABRICADA, MotivoMovimentacao.CONSUMIDA);
 
     @Transactional
-    public void save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
-        if(!movimentacaoEstoqueDto.getMotivo().aceita(movimentacaoEstoqueDto.getTipoMovimentacao())){
-            throw new RegraDeNegocioException("Motivo de movimentação não é compatível com o tipo de movimentação");
+    public MovimentacaoEstoqueResponseDto save(MovimentacaoEstoqueDto movimentacaoEstoqueDto) {
+        if (MOTIVOS_DA_PRODUCAO.contains(movimentacaoEstoqueDto.getMotivo())) {
+            throw new RegraDeNegocioException("Movimentações de produção são geradas automaticamente ao registrar uma produção");
         }
 
-        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new NaoEncontradoException("Nenhum estoque encontrado"));
         FuncionarioEntity funcionario = (FuncionarioEntity)
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ProducoesEntity producoes = null;
-        if (movimentacaoEstoqueDto.getIdProducao() != null) {
-            producoes = producoesRepository.findById(movimentacaoEstoqueDto.getIdProducao()).orElseThrow(() -> new NaoEncontradoException("Nenhuma produção encontrada"));
-        }
-        Integer qtdAnterior = estoque.getQuantidade();
-        Integer qtdPosterior;
-
-        switch (movimentacaoEstoqueDto.getTipoMovimentacao()) {
-            case ENTRADA:
-                qtdPosterior = qtdAnterior + movimentacaoEstoqueDto.getQuantidadeMovimentada();
-                estoque.setQuantidade(qtdPosterior);
-                break;
-            case SAIDA:
-                if (qtdAnterior <= 0) {
-                    throw new RegraDeNegocioException("Não é possível realizar movimentos SAIDA com a quantidade atual em estoque");
-                } else if (qtdAnterior < movimentacaoEstoqueDto.getQuantidadeMovimentada()) {
-                    throw new RegraDeNegocioException("Quantidade movimentada nao pode ser maior que a quantidade disponível no estoque");
-                }
-                qtdPosterior = qtdAnterior - movimentacaoEstoqueDto.getQuantidadeMovimentada();
-                estoque.setQuantidade(qtdPosterior);
-                break;
-
-
+        if (movimentacaoEstoqueDto.getMotivo() == MotivoMovimentacao.AJUSTE) {
+            boolean ehGerente = funcionario.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("NIVEL_GERENTE"));
+            if (!ehGerente) {
+                throw new AccessDeniedException("Ajuste de estoque exige nível GERENTE");
+            }
+            if (movimentacaoEstoqueDto.getObservacao() == null || movimentacaoEstoqueDto.getObservacao().isBlank()) {
+                throw new RegraDeNegocioException("Ajuste exige uma justificativa no campo observacao");
+            }
         }
 
-        movimentacaoEstoqueRepository.save(MovimentacaoEstoqueEntity.builder()
-                .estoque(estoque)
-                .funcionarioRef(funcionario)
-                .producaoRef(producoes)
-                .tipoMovimentacao(movimentacaoEstoqueDto.getTipoMovimentacao())
-                .quantidadeAnterior(qtdAnterior)
-                .quantidadePosterior(estoque.getQuantidade())
-                .quantidadeMovimentada(movimentacaoEstoqueDto.getQuantidadeMovimentada())
-                .observacao(movimentacaoEstoqueDto.getObservacao())
-                .motivo(movimentacaoEstoqueDto.getMotivo())
-                .build());
+        EstoqueEntity estoque = estoqueRepository.findById(movimentacaoEstoqueDto.getIdEstoque()).orElseThrow(() -> new NaoEncontradoException("Nenhum estoque encontrado"));
+
+        MovimentacaoEstoqueEntity movimentacao = registrar(
+                estoque,
+                movimentacaoEstoqueDto.getTipoMovimentacao(),
+                movimentacaoEstoqueDto.getMotivo(),
+                movimentacaoEstoqueDto.getQuantidadeMovimentada(),
+                movimentacaoEstoqueDto.getObservacao(),
+                null,
+                funcionario);
+
+        return new MovimentacaoEstoqueResponseDto(movimentacao);
     }
 
     public List<MovimentacaoEstoqueResponseDto> findAll() {
@@ -92,7 +80,7 @@ public class MovimentacaoEstoqueService {
     }
 
     @Transactional
-    public void registrar(
+    public MovimentacaoEstoqueEntity registrar(
             EstoqueEntity estoque,
             TipoMovimentacao tipo,
             MotivoMovimentacao motivo,
@@ -137,7 +125,7 @@ public class MovimentacaoEstoqueService {
                         .observacao(observacao)
                         .build();
 
-        movimentacaoEstoqueRepository.save(movimentacao);
+        return movimentacaoEstoqueRepository.save(movimentacao);
     }
 
 }
