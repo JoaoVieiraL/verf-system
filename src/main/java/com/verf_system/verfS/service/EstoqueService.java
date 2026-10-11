@@ -23,18 +23,18 @@ public class EstoqueService {
     private final IEstoqueRepository estoqueRepository;
     private final ITintaRepository tintaRepository;
 
-    public void save(EstoqueRequestDto estoqueDto) {
-
-        TintaEntity tinta = tintaRepository.findById(estoqueDto.getIdTinta()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta encontrada"));
-        if(estoqueRepository.findByTintaId(tinta.getId()).isPresent()){
-            throw new DadoDuplicadoException("A tinta " + tinta.getNome() + " já possui estoque cadastrado. Edite a quantidade existente.");
-        }
-
-        estoqueRepository.save(EstoqueEntity.builder()
-                .tinta(tinta)
-                .quantidade(estoqueDto.getQuantidade())
-                .build());
-    }
+//    public void save(EstoqueRequestDto estoqueDto) {
+//
+//        TintaEntity tinta = tintaRepository.findById(estoqueDto.getIdTinta()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta encontrada"));
+//        if(estoqueRepository.findByTintaId(tinta.getId()).isPresent()){
+//            throw new DadoDuplicadoException("A tinta " + tinta.getNome() + " já possui estoque cadastrado. Edite a quantidade existente.");
+//        }
+//
+//        estoqueRepository.save(EstoqueEntity.builder()
+//                .tinta(tinta)
+//                .quantidade(estoqueDto.getQuantidade())
+//                .build());
+//    }
 
     public List<EstoqueResponseDto> findAll() {
         List<EstoqueEntity> estoques = estoqueRepository.findAll();

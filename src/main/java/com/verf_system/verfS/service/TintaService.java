@@ -1,8 +1,10 @@
 package com.verf_system.verfS.service;
 
+import com.verf_system.verfS.database.entity.EstoqueEntity;
 import com.verf_system.verfS.database.entity.FornecedorEntity;
 import com.verf_system.verfS.database.entity.OrigemTinta;
 import com.verf_system.verfS.database.entity.TintaEntity;
+import com.verf_system.verfS.database.repository.IEstoqueRepository;
 import com.verf_system.verfS.database.repository.IFornecedorRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.TintaDto;
@@ -12,6 +14,7 @@ import com.verf_system.verfS.exception.NaoEncontradoException;
 import com.verf_system.verfS.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,9 @@ import java.util.List;
 public class TintaService {
     private final ITintaRepository tintaRepository;
     private final IFornecedorRepository fornecedorRepository;
+    private final IEstoqueRepository estoqueRepository;
 
+    @Transactional
     public TintaResponseDto save(TintaDto tintaDto) {
 
 
@@ -48,6 +53,11 @@ public class TintaService {
                 .origemTinta(tintaDto.getOrigem())
                 .fornecedorRef(fornecedor)
                 .build());
+
+        estoqueRepository.save(EstoqueEntity.builder()
+                .tinta(tinta).
+                quantidade(0).
+                build());
 
         return new TintaResponseDto(tinta);
     }

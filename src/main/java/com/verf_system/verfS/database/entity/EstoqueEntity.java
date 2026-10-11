@@ -29,8 +29,8 @@ public class EstoqueEntity {
     private Long id;
 
     //! Validar esse atributo
-    @OneToOne
-    @JoinColumn(name = "tb_tinta_id")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "tb_tinta_id", nullable = false, unique = true)
     private TintaEntity tinta;
 
     @NotNull(message = "Campo Quantidade nao pode ser nulo.")

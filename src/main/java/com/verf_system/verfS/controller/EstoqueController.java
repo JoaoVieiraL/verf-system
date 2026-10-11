@@ -30,11 +30,11 @@ public class EstoqueController {
         return estoqueService.findById(id);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid  @RequestBody EstoqueRequestDto estoqueDto) {
-        estoqueService.save(estoqueDto);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public void save(@Valid  @RequestBody EstoqueRequestDto estoqueDto) {
+//        estoqueService.save(estoqueDto);
+//    }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -42,9 +42,9 @@ public class EstoqueController {
         estoqueService.atualizar(id, estoqueDto);
     }
 
-    @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluir(@PathVariable Long id) {
-        estoqueService.excluir(id);
-    }
+//    @DeleteMapping(value = "/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void excluir(@PathVariable Long id) {
+//        estoqueService.excluir(id);
+//    }
 }
