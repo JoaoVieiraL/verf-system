@@ -24,6 +24,9 @@ public class MovimentacaoEstoqueResponseDto {
     private Integer quantidadePosterior;
     private String observacao;
     private LocalDateTime dataMovimentacao;
+    private String nomeTinta;
+    private String codigoTinta;
+    private String nomeFuncionario;
 
     public MovimentacaoEstoqueResponseDto(MovimentacaoEstoqueEntity movimentacao) {
         this.id = movimentacao.getId();
@@ -37,5 +40,8 @@ public class MovimentacaoEstoqueResponseDto {
         this.quantidadePosterior = movimentacao.getQuantidadePosterior();
         this.observacao = movimentacao.getObservacao();
         this.dataMovimentacao = movimentacao.getDataMovimentacao();
+        this.nomeTinta = movimentacao.getEstoque().getTinta().getNome();
+        this.codigoTinta = movimentacao.getEstoque().getTinta().getCodigo();
+        this.nomeFuncionario = movimentacao.getFuncionarioRef().getNome();
     }
 }

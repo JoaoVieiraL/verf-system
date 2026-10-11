@@ -62,7 +62,7 @@ public class MovimentacaoEstoqueService {
     }
 
     public List<MovimentacaoEstoqueResponseDto> findAll() {
-        List<MovimentacaoEstoqueEntity> movimentacoes = movimentacaoEstoqueRepository.findAll();
+        List<MovimentacaoEstoqueEntity> movimentacoes = movimentacaoEstoqueRepository.findAllByOrderByDataMovimentacaoDesc();
 
 
         List<MovimentacaoEstoqueResponseDto> movimentacaoResponses = new ArrayList<>();
