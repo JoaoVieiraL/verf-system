@@ -10,6 +10,7 @@ import com.verf_system.verfS.dto.request.ReceitaDto;
 import com.verf_system.verfS.dto.response.ReceitaResponseDto;
 import com.verf_system.verfS.exception.NaoEncontradoException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,12 +21,11 @@ import java.util.List;
 public class ReceitaService {
     private final IReceitaRepository receitaRepository;
     private final ITintaRepository tintaRepository;
-    private final IFuncionarioRepository funcionarioRepository;
 
     public void save(ReceitaDto receitaDto) {
         TintaEntity tinta = tintaRepository.findById(receitaDto.getIdTintaResultante()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta Encontrada"));
-        FuncionarioEntity funcionario = funcionarioRepository.findById(receitaDto.getIdCriadoPor()).orElseThrow(()-> new NaoEncontradoException("Nenhum funcionario Encontrado"));
 
+        FuncionarioEntity funcionario = (FuncionarioEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         receitaRepository.save(ReceitaEntity.builder()
                 .nome(receitaDto.getNome())
                 .tintaResultante(tinta)
