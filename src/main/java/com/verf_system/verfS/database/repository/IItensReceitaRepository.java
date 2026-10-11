@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface IItensReceitaRepository extends JpaRepository<ItensReceitaEntity, Long> {
     List<ItensReceitaEntity> findByReceitaRefId(Long idReceita);
+    boolean existsByReceitaRefIdAndTintaMateriaPrimaRefId(Long idReceita, Long idTinta);
 }
