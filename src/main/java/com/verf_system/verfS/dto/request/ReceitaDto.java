@@ -22,8 +22,6 @@ public class ReceitaDto {
     @NotNull
     private Long idTintaResultante;
     @NotNull
-    private Long idCriadoPor;
-    @NotNull
     @PositiveOrZero
     @Digits(integer = 8, fraction = 2)
     private BigDecimal valorPorLitro;
