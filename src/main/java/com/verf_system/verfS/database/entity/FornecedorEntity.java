@@ -35,7 +35,7 @@ public class FornecedorEntity {
     @Column(name ="Id")
     private Long id;
 
-    @NotBlank(message = "CNPJ do forncedor é obrigatório.")
+    @NotBlank(message = "CNPJ do fornecedor é obrigatório.")
     @Column( name = "Cnpj", nullable = false, unique = true)
     private String cnpj;
 

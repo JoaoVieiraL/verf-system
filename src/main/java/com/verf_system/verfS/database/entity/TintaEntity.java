@@ -42,8 +42,8 @@ public class TintaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Nome da tinta é obrigatótio.")
-    @Size(max = 100, message = "Não foi possivel cadastrar a tinta com esse nome.")
+    @NotBlank(message = "Nome da tinta é obrigatório.")
+    @Size(max = 100, message = "Não foi possível cadastrar a tinta com esse nome.")
     @Column(length = 100, nullable = false)
     private String nome;
 

@@ -24,7 +24,7 @@ public class ItensReceitaService {
 
     public void save(ItensReceitaDto itensReceitaDto) {
         ReceitaEntity receita = receitaRepository.findById(itensReceitaDto.getIdReceita()).orElseThrow(()-> new NaoEncontradoException("Nenhuma receita encontrada"));
-        TintaEntity tinta = tintaRepository.findById(itensReceitaDto.getIdTintaMateriaPrima()).orElseThrow(()-> new NaoEncontradoException("Nenhum tinta Encontrada"));
+        TintaEntity tinta = tintaRepository.findById(itensReceitaDto.getIdTintaMateriaPrima()).orElseThrow(()-> new NaoEncontradoException("Nenhuma tinta Encontrada"));
         itensReceitaRepository.save(ItensReceitaEntity.builder()
                 .receitaRef(receita)
                 .tintaMateriaPrimaRef(tinta)

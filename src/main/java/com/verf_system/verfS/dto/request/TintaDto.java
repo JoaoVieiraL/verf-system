@@ -17,8 +17,8 @@ import lombok.*;
 @AllArgsConstructor
 public class TintaDto {
 
-    @NotBlank(message = "Nome da tinta é obrigatótio.")
-    @Size(max = 100, message = "Não foi possivel cadastrar a tinta com esse nome.")
+    @NotBlank(message = "Nome da tinta é obrigatório.")
+    @Size(max = 100, message = "Não foi possível cadastrar a tinta com esse nome.")
     private String nome;
     @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Código hexadecimal deve seguir o formato #RRGGBB.")
     private String numeroHexadecimal;

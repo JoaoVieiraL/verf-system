@@ -46,9 +46,9 @@ public class MovimentacaoEstoqueService {
                 break;
             case SAIDA:
                 if (qtdAnterior <= 0) {
-                    throw new RegraDeNegocioException("Não é possivel realizar movimentos SAIDA com a quantidade atual em estoque");
+                    throw new RegraDeNegocioException("Não é possível realizar movimentos SAIDA com a quantidade atual em estoque");
                 } else if (qtdAnterior < movimentacaoEstoqueDto.getQuantidadeMovimentada()) {
-                    throw new RegraDeNegocioException("Quantidade movimentada nao pode ser maior que a quantidade disponivel no estoque");
+                    throw new RegraDeNegocioException("Quantidade movimentada nao pode ser maior que a quantidade disponível no estoque");
                 }
                 qtdPosterior = qtdAnterior - movimentacaoEstoqueDto.getQuantidadeMovimentada();
                 estoque.setQuantidade(qtdPosterior);
