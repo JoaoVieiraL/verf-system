@@ -30,9 +30,11 @@ public class AuthenticationController {
 
         var auth = this.authenticationManager.authenticate(senhaFuncionario);
 
-        var token = tokenService.generateToken((FuncionarioEntity)auth.getPrincipal());
+        var funcionario = (FuncionarioEntity) auth.getPrincipal();
 
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        var token = tokenService.generateToken(funcionario);
+
+        return ResponseEntity.ok(new LoginResponseDto(token, funcionario.getNome(), funcionario.getNivelDeAcesso().name()));
     }
 
 
