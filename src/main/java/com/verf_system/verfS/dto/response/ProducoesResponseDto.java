@@ -3,7 +3,6 @@ package com.verf_system.verfS.dto.response;
 import com.verf_system.verfS.database.entity.ProducoesEntity;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
