@@ -3,7 +3,6 @@ package com.verf_system.verfS.service;
 import com.verf_system.verfS.database.entity.FuncionarioEntity;
 import com.verf_system.verfS.database.entity.ReceitaEntity;
 import com.verf_system.verfS.database.entity.TintaEntity;
-import com.verf_system.verfS.database.repository.IFuncionarioRepository;
 import com.verf_system.verfS.database.repository.IReceitaRepository;
 import com.verf_system.verfS.database.repository.ITintaRepository;
 import com.verf_system.verfS.dto.request.ReceitaDto;
