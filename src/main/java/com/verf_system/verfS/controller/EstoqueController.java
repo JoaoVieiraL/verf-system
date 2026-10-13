@@ -1,10 +1,8 @@
 package com.verf_system.verfS.controller;
 
-import com.verf_system.verfS.dto.request.EstoqueRequestDto;
-import com.verf_system.verfS.dto.request.EstoqueUpdateDto;
+
 import com.verf_system.verfS.dto.response.EstoqueResponseDto;
 import com.verf_system.verfS.service.EstoqueService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
