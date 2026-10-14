@@ -1,12 +1,6 @@
 package com.verf_system.verfS.database.entity;
 //!essa tabela serve para guardar o saldo atual das tintas
 
-//CREATE TABLE estoque (
-//    id_estoque      SERIAL PRIMARY KEY,
-//    tintas_ref      INTEGER NOT NULL UNIQUE REFERENCES tintas(id_tinta),
-//    quantidade      INTEGER NOT NULL DEFAULT 0 CHECK (quantidade >= 0),
-//    updated_at      TIMESTAMP NOT NULL DEFAULT NOW()
-//);
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
