@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Dashboard</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Estilos Complementares para Cards e Gráfico (Harmonizados com o styles.css) -->
+    <style>
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn-primary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #154ec1;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #103da1;
+            transform: translateY(-1px);
+        }
+
+        /* Card base no padrão das tabelas das outras telas */
+        .dash-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Cards de resumo */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+
+        .stat-sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cor-azul { background-color: #e0e7ff; color: #154ec1; }
+        .cor-amarelo { background-color: #fef3c7; color: #b45309; }
+        .cor-verde { background-color: #dcfce7; color: #15803d; }
+        .cor-vermelho { background-color: #fee2e2; color: #b91c1c; }
+        .cor-laranja { background-color: #ffedd5; color: #c2410c; }
+        .cor-roxo { background-color: #f3e8ff; color: #7e22ce; }
+        .cor-ciano { background-color: #e0f2fe; color: #0369a1; }
+        .cor-indigo { background-color: #e0e7ff; color: #3730a3; }
+
+        /* Gráfico e alertas */
+        .middle-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .middle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            padding: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .panel-header h3,
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .section-title {
+            margin-bottom: 16px;
+        }
+
+        .legenda {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+
+        .legenda span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legenda i {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .area-canvas {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            min-height: 220px;
+        }
+
+        .area-canvas canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tooltip {
+            position: absolute;
+            display: none;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            pointer-events: none;
+            z-index: 20;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .tooltip .mes-txt {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .tooltip .ent-txt {
+            color: #154ec1;
+            font-weight: 600;
+        }
+
+        .tooltip .sai-txt {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .sem-alertas {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .sem-alertas[hidden],
+        .lista-alertas[hidden] {
+            display: none;
+        }
+
+        .lista-alertas {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+            max-height: 240px;
+        }
+
+        .lista-alertas li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 4px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .lista-alertas li:last-child {
+            border-bottom: none;
+        }
+
+        .alerta-cor {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            background-color: #154ec1;
+            flex-shrink: 0;
+        }
+
+        .alerta-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .alerta-info .nome {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.9rem;
+        }
+
+        .alerta-info .codigo {
+            font-size: 0.78rem;
+            color: #64748b;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-inactive {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .sem-alertas svg {
+            width: 32px;
+            height: 32px;
+            color: #15803d;
+        }
+
+        /* Últimas movimentações (tabela no padrão das outras telas) */
+        .movimentacoes-card {
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .movimentacoes-header {
+            padding: 20px 20px 0;
+        }
+
+        .link-ver-mais {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #154ec1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .link-ver-mais svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .link-ver-mais:hover {
+            text-decoration: underline;
+        }
+
+        .tabela-scroll {
+            overflow-x: auto;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table thead {
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .custom-table th {
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .custom-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .tinta-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tinta-cell .alerta-cor {
+            width: 24px;
+            height: 24px;
+        }
+
+        .badge-active {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .qtd-entrada {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .qtd-saida {
+            color: #b91c1c;
+            font-weight: 600;
+        }
+
+        .saldo {
+            color: #64748b;
+        }
+
+        /* Indicadores estratégicos */
+        .indicadores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .indicador-card {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .indicador-card .stat-label {
+            margin-bottom: 4px;
+        }
+
+        .indicador-valor {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body class="app-layout">
+
+    <!-- Barra Lateral (Sidebar Padrão) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="img_verf/Verf-azul.jpg" alt="VERF Logo" class="sidebar-logo">
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Navegação Principal</span>
+            <a href="modulos.html" class="nav-item">
+                <i data-lucide="layout-grid"></i>
+                <span>Módulos</span>
+            </a>
+            <a href="estoque.html" class="nav-item">
+                <i data-lucide="box"></i>
+                <span>Estoque</span>
+            </a>
+            <a href="mistura.html" class="nav-item">
+                <i data-lucide="flask-conical"></i>
+                <span>Mistura</span>
+            </a>
+            <a href="relatorios.html" class="nav-item">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Usuários</span>
+            </a>
+        </nav>
+
+        <!-- Botão de Sair Integrado com a Sessão -->
+        <div class="sidebar-footer" style="padding: 1rem; margin-top: auto;">
+            <button onclick="fazerLogout()" class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: inherit; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+
+        <!-- Cabeçalho de Ações -->
+        <div class="header-actions">
+            <header class="content-header" style="margin-bottom: 0;">
+                <h1>Dashboard</h1>
+                <p style="margin-bottom: 0;">Visão geral do estoque de tintas.</p>
+            </header>
+            <button type="button" class="btn-primary-action">
+                <i data-lucide="file-down"></i>
+                <span>Exportar Estoque</span>
+            </button>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="stats-grid">
+            <div class="dash-card stat-card">
+                <div>
+                    <div class="stat-label">Total de Tintas</div>
+                    <div class="stat-value" id="card-total-tintas">0</div>
+                </div>
+                <div class="stat-icon cor-azul"><i data-lucide="box"></i></div>
+            </div>
+
+            <div class="dash-card stat-card">
+                <div>
+                    <div class="stat-label">Alertas de Estoque</div>
+                    <div class="stat-value" id="card-alertas">0</div>
+                </div>
+                <div class="stat-icon cor-amarelo"><i data-lucide="triangle-alert"></i></div>
+            </div>
+
+            <div class="dash-card stat-card">
+                <div>
+                    <div class="stat-label">Entradas (Mês)</div>
+                    <div class="stat-value" id="card-entradas">0</div>
+                </div>
+                <div class="stat-icon cor-verde"><i data-lucide="trending-up"></i></div>
+            </div>
+
+            <div class="dash-card stat-card">
+                <div>
+                    <div class="stat-label">Saídas (Mês)</div>
+                    <div class="stat-value" id="card-saidas">0</div>
+                </div>
+                <div class="stat-icon cor-vermelho"><i data-lucide="trending-down"></i></div>
+            </div>
+        </div>
+
+        <!-- Gráfico e Alertas -->
+        <div class="middle-grid">
+            <div class="dash-card panel">
+                <div class="panel-header">
+                    <h3>Movimentação Mensal</h3>
+                    <div class="legenda">
+                        <span><i style="background-color: #154ec1;"></i>Entradas</span>
+                        <span><i style="background-color: #ef4444;"></i>Saídas</span>
+                    </div>
+                </div>
+                <div class="area-canvas" id="containerGrafico">
+                    <canvas id="graficoMovimentacao"></canvas>
+                    <div class="tooltip" id="tooltipGrafico">
+                        <div class="mes-txt" id="tooltipMes">Jan</div>
+                        <div class="ent-txt">Entradas: <span id="tooltipEntrada">0</span></div>
+                        <div class="sai-txt">Saídas: <span id="tooltipSaida">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card panel">
+                <div class="panel-header">
+                    <h3>Alertas de Estoque Baixo</h3>
+                </div>
+                <div class="sem-alertas" id="alerta-mensagem">
+                    <i data-lucide="circle-check"></i>
+                    <span>Nenhum alerta de estoque baixo</span>
+                </div>
+                <!-- Preenchida pelo app.js com as tintas abaixo do mínimo -->
+                <ul class="lista-alertas" id="lista-alertas" hidden></ul>
+            </div>
+        </div>
+
+        <!-- Últimas Movimentações do Estoque -->
+        <div class="dash-card movimentacoes-card">
+            <div class="panel-header movimentacoes-header">
+                <h3>Últimas Movimentações</h3>
+                <a href="estoque.html" class="link-ver-mais">
+                    <span>Ver estoque</span>
+                    <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+            <div class="tabela-scroll">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Tinta</th>
+                            <th>Tipo</th>
+                            <th>Motivo</th>
+                            <th>Quantidade</th>
+                            <th>Saldo</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-movimentacoes-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">Carregando movimentações...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Indicadores Estratégicos -->
+        <h3 class="section-title">Indicadores Estratégicos</h3>
+        <div class="indicadores-grid">
+            <div class="dash-card indicador-card">
+                <div>
+                    <div class="stat-label">Tinta Mais Usada</div>
+                    <div class="indicador-valor" id="ind-tinta-usada">N/A</div>
+                    <div class="stat-sub" id="sub-tinta-usada">0 un. consumidas</div>
+                </div>
+                <div class="stat-icon cor-laranja"><i data-lucide="flame"></i></div>
+            </div>
+
+            <div class="dash-card indicador-card">
+                <div>
+                    <div class="stat-label">Fornecedor Principal</div>
+                    <div class="indicador-valor" id="ind-fornecedor">N/A</div>
+                    <div class="stat-sub" id="sub-fornecedor">0 produtos</div>
+                </div>
+                <div class="stat-icon cor-roxo"><i data-lucide="truck"></i></div>
+            </div>
+
+            <div class="dash-card indicador-card">
+                <div>
+                    <div class="stat-label">Receita Mais Usada</div>
+                    <div class="indicador-valor" id="ind-receita">N/A</div>
+                    <div class="stat-sub" id="sub-receita">Sem receitas</div>
+                </div>
+                <div class="stat-icon cor-ciano"><i data-lucide="flask-conical"></i></div>
+            </div>
+
+            <div class="dash-card indicador-card">
+                <div>
+                    <div class="stat-label">Mais Movimentado</div>
+                    <div class="indicador-valor" id="ind-movimentado">N/A</div>
+                    <div class="stat-sub" id="sub-movimentado">0 movimentações</div>
+                </div>
+                <div class="stat-icon cor-indigo"><i data-lucide="star"></i></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Inicialização de Ícones Lucide e Script Global -->
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+
+    <!-- Gráfico de Movimentação Mensal (canvas puro, sem biblioteca) -->
+    <script>
+        var meucanvas = document.getElementById('graficoMovimentacao');
+        var ctx = meucanvas.getContext('2d');
+        var tooltip = document.getElementById('tooltipGrafico');
+        var tooltipMes = document.getElementById('tooltipMes');
+        var tooltipEntrada = document.getElementById('tooltipEntrada');
+        var tooltipSaida = document.getElementById('tooltipSaida');
+
+        var COR_ENTRADA = '#154ec1';
+        var COR_SAIDA = '#ef4444';
+        var MARGEM = { top: 10, bottom: 25, left: 35, right: 10 };
+
+        // Começa zerado nos últimos 6 meses; o app.js substitui pelos dados da API
+        var dadosMovimentacao = ultimosMeses(6).map(function (m) {
+            return { mes: m.rotulo, entradas: 0, saidas: 0 };
+        });
+
+        var mesHoverIndex = -1;
+
+        // Chamado pelo app.js quando as movimentações chegam da API
+        function atualizarGrafico(novosDados) {
+            dadosMovimentacao = novosDados;
+            iniciarGrafico();
+        }
+
+        function arrumarTamanho() {
+            var dpr = window.devicePixelRatio || 1;
+            var rect = meucanvas.getBoundingClientRect();
+            meucanvas.width = rect.width * dpr;
+            meucanvas.height = rect.height * dpr;
+        }
+
+        function desenharGrafico() {
+            var dpr = window.devicePixelRatio || 1;
+            var rect = meucanvas.getBoundingClientRect();
+            var largura = rect.width;
+            var altura = rect.height;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, largura, altura);
+
+            var areaWidth = largura - MARGEM.left - MARGEM.right;
+            var areaHeight = altura - MARGEM.top - MARGEM.bottom;
+
+            var valorMaximoBruto = 0;
+            for (var i = 0; i < dadosMovimentacao.length; i++) {
+                valorMaximoBruto = Math.max(valorMaximoBruto, dadosMovimentacao[i].entradas, dadosMovimentacao[i].saidas);
+            }
+
+            var valorMaximo = 360;
+            if (valorMaximoBruto > 0) {
+                valorMaximo = Math.ceil(valorMaximoBruto / 90) * 90;
+            }
+
+            var numBarras = dadosMovimentacao.length;
+            var espacoColuna = areaWidth / numBarras;
+
+            // Destaque da coluna sob o mouse
+            if (mesHoverIndex >= 0 && mesHoverIndex < numBarras) {
+                ctx.fillStyle = 'rgba(21, 78, 193, 0.06)';
+                ctx.fillRect(MARGEM.left + espacoColuna * mesHoverIndex, MARGEM.top, espacoColuna, areaHeight);
+            }
+
+            // Linhas de grade e rótulos do eixo Y
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            var numLinhas = 4;
+            for (var j = 0; j <= numLinhas; j++) {
+                var y = MARGEM.top + (areaHeight / numLinhas) * j;
+                var valorRotulo = Math.round(valorMaximo - (valorMaximo / numLinhas) * j);
+
+                ctx.fillText(valorRotulo.toString(), MARGEM.left - 6, y);
+
+                ctx.beginPath();
+                ctx.setLineDash([3, 3]);
+                ctx.moveTo(MARGEM.left, y);
+                ctx.lineTo(largura - MARGEM.right, y);
+                ctx.stroke();
+            }
+
+            // Eixos
+            ctx.setLineDash([]);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.moveTo(MARGEM.left, MARGEM.top);
+            ctx.lineTo(MARGEM.left, altura - MARGEM.bottom);
+            ctx.lineTo(largura - MARGEM.right, altura - MARGEM.bottom);
+            ctx.stroke();
+
+            var larguraBarra = Math.min(espacoColuna * 0.28, 20);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            for (var k = 0; k < dadosMovimentacao.length; k++) {
+                var item = dadosMovimentacao[k];
+                var xCentro = MARGEM.left + espacoColuna * k + espacoColuna / 2;
+
+                if (item.entradas > 0) {
+                    var hEntrada = (item.entradas / valorMaximo) * areaHeight;
+                    ctx.fillStyle = COR_ENTRADA;
+                    ctx.beginPath();
+                    ctx.roundRect(xCentro - larguraBarra - 1, altura - MARGEM.bottom - hEntrada, larguraBarra, hEntrada, [4, 4, 0, 0]);
+                    ctx.fill();
+                }
+
+                if (item.saidas > 0) {
+                    var hSaida = (item.saidas / valorMaximo) * areaHeight;
+                    ctx.fillStyle = COR_SAIDA;
+                    ctx.beginPath();
+                    ctx.roundRect(xCentro + 1, altura - MARGEM.bottom - hSaida, larguraBarra, hSaida, [4, 4, 0, 0]);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#64748b';
+                ctx.fillText(item.mes, xCentro, altura - MARGEM.bottom + 6);
+            }
+        }
+
+        meucanvas.onmousemove = function (e) {
+            var rect = meucanvas.getBoundingClientRect();
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+            var espacoColuna = (rect.width - MARGEM.left - MARGEM.right) / dadosMovimentacao.length;
+
+            if (mouseX >= MARGEM.left && mouseX <= rect.width - MARGEM.right) {
+                var novoIndex = Math.floor((mouseX - MARGEM.left) / espacoColuna);
+
+                if (novoIndex >= 0 && novoIndex < dadosMovimentacao.length) {
+                    mesHoverIndex = novoIndex;
+                    desenharGrafico();
+
+                    var dadosMes = dadosMovimentacao[mesHoverIndex];
+                    tooltipMes.textContent = dadosMes.mes;
+                    tooltipEntrada.textContent = dadosMes.entradas;
+                    tooltipSaida.textContent = dadosMes.saidas;
+
+                    tooltip.style.display = 'block';
+                    var posX = mouseX + 15;
+                    var posY = mouseY - 20;
+
+                    if (posX + 130 > rect.width) {
+                        posX = mouseX - 140;
+                    }
+                    if (posY < 0) {
+                        posY = 10;
+                    }
+
+                    tooltip.style.left = posX + 'px';
+                    tooltip.style.top = posY + 'px';
+                    return;
+                }
+            }
+
+            esconderTooltip();
+        };
+
+        meucanvas.onmouseleave = esconderTooltip;
+
+        function esconderTooltip() {
+            mesHoverIndex = -1;
+            tooltip.style.display = 'none';
+            desenharGrafico();
+        }
+
+        function iniciarGrafico() {
+            arrumarTamanho();
+            desenharGrafico();
+        }
+
+        window.addEventListener('load', iniciarGrafico);
+        window.addEventListener('resize', iniciarGrafico);
+    </script>
+</body>
+</html>

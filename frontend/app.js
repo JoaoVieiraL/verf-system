@@ -35,7 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('tabela-estoque-body')) {
         carregarEstoque();
         ativarBusca('tabela-estoque-body');
-        ativarFormularioEstoque();
+        ativarFormularioMovimentacao();
+    }
+
+    // Só carrega os indicadores se a página for o dashboard
+    if (document.getElementById('card-total-tintas')) {
+        carregarDashboard();
     }
 });
 
@@ -648,7 +653,7 @@ async function excluirFornecedor(id) {
 // Abaixo deste valor o item aparece como "Estoque baixo"
 const ESTOQUE_MINIMO = 10;
 
-// Última lista recebida da API, usada para preencher o modal de edição
+// Última lista recebida da API, usada para preencher o modal de movimentação
 let estoqueCarregado = [];
 
 // Só aceita cores no formato #RRGGBB para usar com segurança no style
@@ -728,11 +733,8 @@ async function carregarEstoque() {
                 <td>${escaparHtml(formatarData(item.atualizadoEm))}</td>
                 <td>
                     <div class="action-buttons" style="justify-content: flex-end;">
-                        <button class="btn-icon" title="Editar Quantidade" onclick="editarEstoque(${id})">
-                            <i data-lucide="pencil"></i>
-                        </button>
-                        <button class="btn-icon danger" title="Excluir do Estoque" onclick="excluirEstoque(${id})">
-                            <i data-lucide="trash-2"></i>
+                        <button class="btn-icon" title="Registrar Movimentação" onclick="abrirModalMovimentacao(${id})">
+                            <i data-lucide="arrow-left-right"></i>
                         </button>
                     </div>
                 </td>
@@ -755,131 +757,157 @@ async function carregarEstoque() {
     }
 }
 
-// Preenche o select com as tintas ativas que ainda não têm estoque
-async function carregarTintasDisponiveis() {
-    const select = document.getElementById('estoque-tinta');
-    select.innerHTML = '<option value="">Carregando tintas...</option>';
+// Modal de Movimentação: o saldo do estoque só muda registrando uma entrada ou saída
+// FABRICADA e CONSUMIDA não aparecem porque são geradas automaticamente pela produção
+const MOTIVOS_POR_TIPO = {
+    ENTRADA: ['COMPRA', 'AJUSTE'],
+    SAIDA: ['VENDA', 'PERDA', 'DANO', 'AJUSTE']
+};
 
-    const token = localStorage.getItem('userToken');
-    const response = await fetch('/v1/tintas', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-    }
+// Item do estoque que está aberto no modal
+let itemMovimentacao = null;
 
-    const tintas = await response.json();
-    const comEstoque = new Set(estoqueCarregado.map(item => Number(item.idTinta)));
-    const disponiveis = tintas.filter(t => t.ativo && !comEstoque.has(Number(t.id)));
-
-    select.innerHTML = disponiveis.length
-        ? '<option value="">Selecione uma tinta</option>'
-        : '<option value="">Todas as tintas já estão no estoque</option>';
-
-    disponiveis.forEach(t => {
-        const option = document.createElement('option');
-        option.value = t.id;
-        option.textContent = t.codigo ? `${t.nome} (${t.codigo})` : t.nome;
-        select.appendChild(option);
-    });
+function tipoMovimentacaoSelecionado() {
+    const marcado = document.querySelector('input[name="mov-tipo"]:checked');
+    return marcado ? marcado.value : 'ENTRADA';
 }
 
-// Modal de Estoque: sem parâmetro cadastra um novo item; com item, edita a quantidade
-async function abrirModalEstoque(item) {
-    const modal = document.getElementById('modal-estoque');
-    if (!modal) return;
-
-    const form = document.getElementById('form-estoque');
-    const select = document.getElementById('estoque-tinta');
-    form.reset();
-    mostrarErroEstoque('');
-
-    const editando = Boolean(item);
-    form.dataset.id = editando ? item.idEstoque : '';
-    document.getElementById('modal-estoque-titulo').textContent = editando ? 'Editar Quantidade' : 'Novo Item de Estoque';
-    document.getElementById('estoque-tinta-dica').hidden = !editando;
-    select.disabled = editando;
-
-    modal.hidden = false;
-
-    if (editando) {
-        // Na edição o select mostra só a tinta do item, sem permitir troca
-        select.innerHTML = '';
+// Recria as opções de motivo conforme o tipo (entrada ou saída)
+function preencherMotivos() {
+    const select = document.getElementById('mov-motivo');
+    select.innerHTML = '';
+    MOTIVOS_POR_TIPO[tipoMovimentacaoSelecionado()].forEach(motivo => {
         const option = document.createElement('option');
-        option.value = item.idTinta;
-        option.textContent = item.codigoTinta ? `${item.nomeTinta} (${item.codigoTinta})` : item.nomeTinta;
+        option.value = motivo;
+        option.textContent = NOMES_MOTIVOS[motivo] || motivo;
         select.appendChild(option);
-        document.getElementById('estoque-quantidade').value = item.quantidade;
-        document.getElementById('estoque-quantidade').focus();
+    });
+    atualizarObservacaoObrigatoria();
+}
+
+// Ajuste exige justificativa no campo observação
+function atualizarObservacaoObrigatoria() {
+    const ehAjuste = document.getElementById('mov-motivo').value === 'AJUSTE';
+    document.getElementById('mov-observacao-obrigatoria').hidden = !ehAjuste;
+    document.getElementById('mov-observacao-dica').hidden = !ehAjuste;
+    document.getElementById('mov-observacao').placeholder = ehAjuste ? 'Explique o motivo do ajuste' : 'Opcional';
+}
+
+// Mostra como o saldo vai ficar depois de registrar
+function atualizarPreviaSaldo() {
+    if (!itemMovimentacao) return;
+    const saldo = Number(itemMovimentacao.quantidade) || 0;
+    const qtd = Number(document.getElementById('mov-quantidade').value) || 0;
+    const depois = tipoMovimentacaoSelecionado() === 'ENTRADA' ? saldo + qtd : saldo - qtd;
+
+    document.getElementById('mov-saldo-depois').textContent = depois;
+    document.getElementById('mov-previa').classList.toggle('negativo', depois < 0);
+}
+
+function abrirModalMovimentacao(id) {
+    const item = estoqueCarregado.find(e => Number(e.idEstoque) === id);
+    const modal = document.getElementById('modal-movimentacao');
+    if (!item || !modal) {
+        alert('Item não encontrado. Recarregue a página e tente novamente.');
         return;
     }
 
-    try {
-        await carregarTintasDisponiveis();
-        select.focus();
-    } catch (error) {
-        console.error('Erro ao carregar tintas:', error);
-        select.innerHTML = '<option value="">Erro ao carregar tintas</option>';
-        mostrarErroEstoque('Não foi possível carregar a lista de tintas.');
-    }
+    itemMovimentacao = item;
+    document.getElementById('form-movimentacao').reset();
+    mostrarErroMovimentacao('');
+
+    const cor = corValida(item.corHexadecimal);
+    const amostra = document.getElementById('mov-cor');
+    amostra.style.backgroundColor = cor || '#154ec1';
+    document.getElementById('mov-tinta-nome').textContent = item.nomeTinta || 'Tinta sem nome';
+    document.getElementById('mov-tinta-codigo').textContent = item.codigoTinta || 'Sem código';
+    document.getElementById('mov-saldo-atual').textContent = item.quantidade;
+
+    preencherMotivos();
+    atualizarPreviaSaldo();
+
+    modal.hidden = false;
+    document.getElementById('mov-quantidade').focus();
 }
 
-function fecharModalEstoque() {
-    const modal = document.getElementById('modal-estoque');
+function fecharModalMovimentacao() {
+    const modal = document.getElementById('modal-movimentacao');
     if (modal) modal.hidden = true;
+    itemMovimentacao = null;
 }
 
-function mostrarErroEstoque(texto) {
-    const caixa = document.getElementById('modal-estoque-erro');
+function mostrarErroMovimentacao(texto) {
+    const caixa = document.getElementById('modal-movimentacao-erro');
     if (!caixa) return;
     caixa.textContent = texto;
     caixa.hidden = !texto;
 }
 
-function ativarFormularioEstoque() {
-    const form = document.getElementById('form-estoque');
-    const modal = document.getElementById('modal-estoque');
+function ativarFormularioMovimentacao() {
+    const form = document.getElementById('form-movimentacao');
+    const modal = document.getElementById('modal-movimentacao');
     if (!form || !modal) return;
+
+    document.querySelectorAll('input[name="mov-tipo"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            preencherMotivos();
+            atualizarPreviaSaldo();
+        });
+    });
+    document.getElementById('mov-motivo').addEventListener('change', atualizarObservacaoObrigatoria);
+    document.getElementById('mov-quantidade').addEventListener('input', atualizarPreviaSaldo);
 
     // Fecha ao clicar fora do card ou apertar Esc
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) fecharModalEstoque();
+        if (e.target === modal) fecharModalMovimentacao();
     });
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.hidden) fecharModalEstoque();
+        if (e.key === 'Escape' && !modal.hidden) fecharModalMovimentacao();
     });
 
-    form.addEventListener('submit', salvarEstoque);
+    form.addEventListener('submit', salvarMovimentacao);
 }
 
-async function salvarEstoque(event) {
+async function salvarMovimentacao(event) {
     event.preventDefault();
+    if (!itemMovimentacao) return;
 
-    // Com id no formulário é edição (PUT); sem id é cadastro (POST)
-    const id = event.target.dataset.id;
-    const idTinta = document.getElementById('estoque-tinta').value;
-    const textoQuantidade = document.getElementById('estoque-quantidade').value.trim();
+    const tipo = tipoMovimentacaoSelecionado();
+    const motivo = document.getElementById('mov-motivo').value;
+    const textoQuantidade = document.getElementById('mov-quantidade').value.trim();
     const quantidade = Number(textoQuantidade);
+    const observacao = document.getElementById('mov-observacao').value.trim();
+    const saldo = Number(itemMovimentacao.quantidade) || 0;
 
-    if ((!id && !idTinta) || textoQuantidade === '') {
-        mostrarErroEstoque('Preencha todos os campos obrigatórios.');
+    if (!textoQuantidade || !Number.isInteger(quantidade) || quantidade <= 0) {
+        mostrarErroMovimentacao('A quantidade precisa ser um número inteiro maior que zero.');
         return;
     }
-    if (!Number.isInteger(quantidade) || quantidade < 0) {
-        mostrarErroEstoque('A quantidade precisa ser um número inteiro igual ou maior que zero.');
+    if (tipo === 'SAIDA' && quantidade > saldo) {
+        mostrarErroMovimentacao(`A saída não pode ser maior que o saldo atual (${saldo}).`);
+        return;
+    }
+    if (motivo === 'AJUSTE' && !observacao) {
+        mostrarErroMovimentacao('Ajuste exige uma justificativa no campo observação.');
         return;
     }
 
-    const dados = id ? { quantidade } : { idTinta: Number(idTinta), quantidade };
+    const dados = {
+        idEstoque: Number(itemMovimentacao.idEstoque),
+        tipoMovimentacao: tipo,
+        motivo,
+        quantidadeMovimentada: quantidade,
+        observacao: observacao || null
+    };
 
-    const botao = document.getElementById('btn-salvar-estoque');
+    const botao = document.getElementById('btn-salvar-movimentacao');
     botao.disabled = true;
-    mostrarErroEstoque('');
+    mostrarErroMovimentacao('');
 
     try {
         const token = localStorage.getItem('userToken');
-        const response = await fetch(id ? `/v1/estoques/${id}` : '/v1/estoques', {
-            method: id ? 'PUT' : 'POST',
+        const response = await fetch('/v1/movimentacao-estoque', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -887,73 +915,270 @@ async function salvarEstoque(event) {
             body: JSON.stringify(dados)
         });
 
-        if (response.status === 401 || response.status === 403) {
-            mostrarErroEstoque('Você não tem permissão para alterar o estoque (é preciso nível GERENTE ou ADMIN).');
-            return;
-        }
-
-        // 409 = tinta já tem estoque; 400/404 = dados inválidos. A API explica no campo "mensagem"
-        if (response.status === 409 || response.status === 400 || response.status === 404) {
-            const erro = await response.json().catch(() => ({}));
-            mostrarErroEstoque(erro.mensagem || 'Dados inválidos. Confira os campos e tente novamente.');
-            return;
-        }
-
+        // A API explica o motivo no campo "mensagem" (sem permissão, saldo insuficiente, motivo inválido...)
         if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
+            const erro = await response.json().catch(() => ({}));
+            if (response.status === 401 || response.status === 403) {
+                mostrarErroMovimentacao(erro.mensagem || 'Você não tem permissão para registrar movimentações (é preciso nível OPERADOR ou superior).');
+            } else {
+                mostrarErroMovimentacao(erro.mensagem || 'Não foi possível registrar a movimentação.');
+            }
+            return;
         }
 
-        fecharModalEstoque();
+        fecharModalMovimentacao();
         carregarEstoque();
     } catch (error) {
-        console.error('Erro ao salvar estoque:', error);
-        mostrarErroEstoque('Não foi possível salvar o estoque.');
+        console.error('Erro ao registrar movimentação:', error);
+        mostrarErroMovimentacao('Não foi possível registrar a movimentação.');
     } finally {
         botao.disabled = false;
     }
 }
 
-function editarEstoque(id) {
-    const item = estoqueCarregado.find(e => Number(e.idEstoque) === id);
-    if (!item) {
-        alert('Item não encontrado. Recarregue a página e tente novamente.');
-        return;
+// Tela de Dashboard
+const NOMES_MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+// Lista os últimos N meses (do mais antigo ao atual) com chave "ano-mês" e rótulo curto
+function ultimosMeses(quantidade) {
+    const hoje = new Date();
+    const meses = [];
+    for (let i = quantidade - 1; i >= 0; i--) {
+        const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        meses.push({ chave: `${data.getFullYear()}-${data.getMonth()}`, rotulo: NOMES_MESES[data.getMonth()] });
     }
-    abrirModalEstoque(item);
+    return meses;
 }
 
-// O DELETE da API remove o item do estoque (bloqueado se houver movimentações)
-async function excluirEstoque(id) {
-    const item = estoqueCarregado.find(e => Number(e.idEstoque) === id);
-    const nome = item && item.nomeTinta ? `"${item.nomeTinta}"` : 'este item';
-    if (!confirm(`Deseja realmente excluir ${nome} do estoque? Essa ação não pode ser desfeita.`)) return;
+function chaveMes(valor) {
+    const data = new Date(valor);
+    return isNaN(data) ? null : `${data.getFullYear()}-${data.getMonth()}`;
+}
 
+// Faz um GET na API; se falhar (sem permissão, erro), devolve lista vazia para o dashboard não quebrar
+async function buscarLista(url) {
     try {
         const token = localStorage.getItem('userToken');
-        const response = await fetch(`/v1/estoques/${id}`, {
-            method: 'DELETE',
+        const response = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (response.status === 401 || response.status === 403) {
-            alert('Você não tem permissão para excluir do estoque (é preciso nível GERENTE ou ADMIN).');
-            return;
-        }
-
-        // 400 = item com movimentações; a API explica no campo "mensagem"
-        if (response.status === 400 || response.status === 404) {
-            const erro = await response.json().catch(() => ({}));
-            alert(erro.mensagem || 'Não foi possível excluir o item do estoque.');
-            return;
-        }
-
         if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
+            console.warn(`Dashboard: ${url} respondeu ${response.status}`);
+            return [];
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Dashboard: erro ao buscar ${url}`, error);
+        return [];
+    }
+}
+
+// Devolve a chave com o maior total em um Map (ou null se estiver vazio)
+function maiorDoMapa(mapa) {
+    let melhor = null;
+    mapa.forEach((total, chave) => {
+        if (melhor === null || total > melhor.total) melhor = { chave, total };
+    });
+    return melhor;
+}
+
+function somarNoMapa(mapa, chave, valor) {
+    if (chave === null || chave === undefined) return;
+    mapa.set(chave, (mapa.get(chave) || 0) + valor);
+}
+
+function preencherIndicador(idValor, idSub, valor, sub) {
+    document.getElementById(idValor).textContent = valor;
+    document.getElementById(idSub).textContent = sub;
+}
+
+async function carregarDashboard() {
+    const [tintas, estoques, movimentacoes, fornecedores, receitas, producoes] = await Promise.all([
+        buscarLista('/v1/tintas'),
+        buscarLista('/v1/estoques'),
+        buscarLista('/v1/movimentacao-estoque'),
+        buscarLista('/v1/fornecedores'),
+        buscarLista('/v1/receitas'),
+        buscarLista('/v1/producoes')
+    ]);
+
+    // Cards de resumo
+    document.getElementById('card-total-tintas').textContent = tintas.filter(t => t.ativo).length;
+
+    const alertas = estoques
+        .filter(e => Number(e.quantidade) < ESTOQUE_MINIMO)
+        .sort((a, b) => Number(a.quantidade) - Number(b.quantidade));
+    document.getElementById('card-alertas').textContent = alertas.length;
+
+    const mesAtual = chaveMes(new Date());
+    let entradasMes = 0;
+    let saidasMes = 0;
+
+    // Gráfico: soma entradas e saídas dos últimos 6 meses
+    const meses = ultimosMeses(6);
+    const porMes = new Map(meses.map(m => [m.chave, { mes: m.rotulo, entradas: 0, saidas: 0 }]));
+
+    // Indicadores: totais por estoque
+    const saidasPorEstoque = new Map();
+    const movimentacoesPorEstoque = new Map();
+
+    movimentacoes.forEach(mov => {
+        const qtd = Number(mov.quantidadeMovimentada) || 0;
+        const chave = chaveMes(mov.dataMovimentacao);
+        const ehEntrada = mov.tipoMovimentacao === 'ENTRADA';
+        const ehSaida = mov.tipoMovimentacao === 'SAIDA';
+
+        if (chave === mesAtual) {
+            if (ehEntrada) entradasMes += qtd;
+            if (ehSaida) saidasMes += qtd;
         }
 
-        carregarEstoque();
-    } catch (error) {
-        console.error('Erro ao excluir estoque:', error);
-        alert('Não foi possível excluir o item do estoque.');
+        const mes = porMes.get(chave);
+        if (mes) {
+            if (ehEntrada) mes.entradas += qtd;
+            if (ehSaida) mes.saidas += qtd;
+        }
+
+        if (ehSaida) somarNoMapa(saidasPorEstoque, mov.estoqueId, qtd);
+        somarNoMapa(movimentacoesPorEstoque, mov.estoqueId, 1);
+    });
+
+    document.getElementById('card-entradas').textContent = entradasMes;
+    document.getElementById('card-saidas').textContent = saidasMes;
+
+    if (typeof atualizarGrafico === 'function') {
+        atualizarGrafico(Array.from(porMes.values()));
     }
+
+    renderizarAlertas(alertas);
+    renderizarUltimasMovimentacoes(movimentacoes, estoques);
+
+    // Nome da tinta a partir do id do estoque
+    const nomePorEstoque = new Map(estoques.map(e => [e.idEstoque, e.nomeTinta || 'Tinta sem nome']));
+
+    const tintaMaisUsada = maiorDoMapa(saidasPorEstoque);
+    if (tintaMaisUsada) {
+        preencherIndicador('ind-tinta-usada', 'sub-tinta-usada',
+            nomePorEstoque.get(tintaMaisUsada.chave) || 'Tinta removida', `${tintaMaisUsada.total} un. consumidas`);
+    }
+
+    const maisMovimentado = maiorDoMapa(movimentacoesPorEstoque);
+    if (maisMovimentado) {
+        preencherIndicador('ind-movimentado', 'sub-movimentado',
+            nomePorEstoque.get(maisMovimentado.chave) || 'Tinta removida',
+            `${maisMovimentado.total} ${maisMovimentado.total === 1 ? 'movimentação' : 'movimentações'}`);
+    }
+
+    // Fornecedor com mais tintas cadastradas
+    const tintasPorFornecedor = new Map();
+    tintas.forEach(t => somarNoMapa(tintasPorFornecedor, t.fornecedorId, 1));
+    const fornecedorPrincipal = maiorDoMapa(tintasPorFornecedor);
+    if (fornecedorPrincipal) {
+        const fornecedor = fornecedores.find(f => Number(f.idFornecedor) === Number(fornecedorPrincipal.chave));
+        preencherIndicador('ind-fornecedor', 'sub-fornecedor',
+            fornecedor ? fornecedor.nome : 'Fornecedor removido',
+            `${fornecedorPrincipal.total} ${fornecedorPrincipal.total === 1 ? 'tinta' : 'tintas'}`);
+    }
+
+    // Receita com mais produções
+    const producoesPorReceita = new Map();
+    producoes.forEach(p => somarNoMapa(producoesPorReceita, p.receitaRefId, 1));
+    const receitaMaisUsada = maiorDoMapa(producoesPorReceita);
+    if (receitaMaisUsada) {
+        const receita = receitas.find(r => Number(r.id) === Number(receitaMaisUsada.chave));
+        preencherIndicador('ind-receita', 'sub-receita',
+            receita ? receita.nome : 'Receita removida',
+            `${receitaMaisUsada.total} ${receitaMaisUsada.total === 1 ? 'produção' : 'produções'}`);
+    }
+}
+
+// Quantas linhas mostrar na tabela de últimas movimentações
+const LIMITE_ULTIMAS_MOVIMENTACOES = 8;
+
+const NOMES_MOTIVOS = {
+    AJUSTE: 'Ajuste',
+    PERDA: 'Perda',
+    DANO: 'Dano',
+    VENDA: 'Venda',
+    COMPRA: 'Compra',
+    FABRICADA: 'Fabricada',
+    CONSUMIDA: 'Consumida'
+};
+
+function formatarDataHora(valor) {
+    if (!valor) return '-';
+    const data = new Date(valor);
+    if (isNaN(data)) return '-';
+    return data.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// Mostra as movimentações mais recentes, com a tinta de cada estoque
+function renderizarUltimasMovimentacoes(movimentacoes, estoques) {
+    const tbody = document.getElementById('tabela-movimentacoes-body');
+    if (!tbody) return;
+
+    if (movimentacoes.length === 0) {
+        mensagemNaTabela(tbody, 'Nenhuma movimentação registrada.', '#64748b');
+        return;
+    }
+
+    const estoquePorId = new Map(estoques.map(e => [e.idEstoque, e]));
+    const recentes = [...movimentacoes]
+        .sort((a, b) => new Date(b.dataMovimentacao) - new Date(a.dataMovimentacao))
+        .slice(0, LIMITE_ULTIMAS_MOVIMENTACOES);
+
+    tbody.innerHTML = '';
+
+    recentes.forEach(mov => {
+        const estoque = estoquePorId.get(mov.estoqueId);
+        const cor = estoque ? corValida(estoque.corHexadecimal) : null;
+        const ehEntrada = mov.tipoMovimentacao === 'ENTRADA';
+        const qtd = Number(mov.quantidadeMovimentada) || 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div class="tinta-cell">
+                    <div class="alerta-cor" ${cor ? `style="background-color: ${cor};"` : ''}></div>
+                    <div class="alerta-info">
+                        <span class="nome">${escaparHtml(estoque ? estoque.nomeTinta : 'Tinta removida')}</span>
+                        <span class="codigo">${escaparHtml(estoque ? estoque.codigoTinta : '-')}</span>
+                    </div>
+                </div>
+            </td>
+            <td><span class="badge ${ehEntrada ? 'badge-active' : 'badge-inactive'}">${ehEntrada ? 'Entrada' : 'Saída'}</span></td>
+            <td>${escaparHtml(NOMES_MOTIVOS[mov.motivo] || mov.motivo || '-')}</td>
+            <td class="${ehEntrada ? 'qtd-entrada' : 'qtd-saida'}">${ehEntrada ? '+' : '-'}${qtd}</td>
+            <td class="saldo">${escaparHtml(mov.quantidadeAnterior ?? '-')} → ${escaparHtml(mov.quantidadePosterior ?? '-')}</td>
+            <td>${escaparHtml(formatarDataHora(mov.dataMovimentacao))}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Mostra as tintas abaixo do mínimo no quadro de alertas
+function renderizarAlertas(alertas) {
+    const vazio = document.getElementById('alerta-mensagem');
+    const lista = document.getElementById('lista-alertas');
+    if (!vazio || !lista) return;
+
+    vazio.hidden = alertas.length > 0;
+    lista.hidden = alertas.length === 0;
+    lista.innerHTML = '';
+
+    alertas.forEach(item => {
+        const cor = corValida(item.corHexadecimal);
+        const situacao = situacaoEstoque(Number(item.quantidade));
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <div class="alerta-cor" ${cor ? `style="background-color: ${cor};"` : ''}></div>
+            <div class="alerta-info">
+                <span class="nome">${escaparHtml(item.nomeTinta || 'Tinta sem nome')}</span>
+                <span class="codigo">${escaparHtml(item.codigoTinta || 'Sem código')}</span>
+            </div>
+            <span class="badge ${situacao.classe}">${escaparHtml(item.quantidade)} un.</span>
+        `;
+        lista.appendChild(li);
+    });
 }

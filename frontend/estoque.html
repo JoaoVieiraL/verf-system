@@ -354,6 +354,104 @@
             margin-top: 4px;
         }
 
+        /* Resumo da tinta no modal de movimentação */
+        .mov-resumo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+        }
+
+        .mov-resumo .user-info-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mov-saldo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .mov-saldo-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mov-saldo-valor {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Botões de Entrada/Saída */
+        .tipo-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .tipo-toggle input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .tipo-opcao {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            margin: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #475569;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tipo-opcao svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        #mov-tipo-entrada:checked + .tipo-opcao.entrada {
+            background-color: #dcfce7;
+            border-color: #15803d;
+            color: #15803d;
+        }
+
+        #mov-tipo-saida:checked + .tipo-opcao.saida {
+            background-color: #fee2e2;
+            border-color: #b91c1c;
+            color: #b91c1c;
+        }
+
+        .tipo-toggle input[type="radio"]:focus-visible + .tipo-opcao {
+            box-shadow: 0 0 0 3px rgba(21, 78, 193, 0.15);
+        }
+
+        .mov-previa {
+            font-size: 0.85rem;
+            color: #475569;
+            margin: 0 0 8px;
+        }
+
+        .mov-previa.negativo strong {
+            color: #b91c1c;
+        }
+
         .form-hint[hidden] {
             display: none;
         }
@@ -415,12 +513,8 @@
         <div class="header-actions">
             <header class="content-header" style="margin-bottom: 0;">
                 <h1>Estoque de Tintas</h1>
-                <p style="margin-bottom: 0;">Acompanhe e ajuste a quantidade disponível de cada tinta.</p>
+                <p style="margin-bottom: 0;">Acompanhe o saldo de cada tinta e registre entradas e saídas.</p>
             </header>
-            <button type="button" class="btn-primary-action" onclick="abrirModalEstoque()">
-                <i data-lucide="package-plus"></i>
-                <span>Novo Item</span>
-            </button>
         </div>
 
         <!-- Barra de Pesquisa -->
@@ -452,43 +546,82 @@
 
     </main>
 
-    <!-- Modal de Estoque (cadastro e edição) -->
-    <div id="modal-estoque" class="modal-overlay" hidden>
+    <!-- Modal de Movimentação (entrada ou saída de estoque) -->
+    <div id="modal-movimentacao" class="modal-overlay" hidden>
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modal-estoque-titulo">Novo Item de Estoque</h2>
-                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalEstoque()">
+                <h2>Registrar Movimentação</h2>
+                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalMovimentacao()">
                     <i data-lucide="x"></i>
                 </button>
             </div>
 
-            <div id="modal-estoque-erro" class="modal-erro" hidden></div>
+            <!-- Tinta escolhida e saldo atual -->
+            <div class="mov-resumo">
+                <div class="user-avatar-table cor-tinta" id="mov-cor"></div>
+                <div class="user-info-text">
+                    <span class="name" id="mov-tinta-nome">-</span>
+                    <span class="email" id="mov-tinta-codigo">-</span>
+                </div>
+                <div class="mov-saldo">
+                    <span class="mov-saldo-label">Saldo atual</span>
+                    <span class="mov-saldo-valor" id="mov-saldo-atual">0</span>
+                </div>
+            </div>
 
-            <form id="form-estoque" novalidate>
+            <div id="modal-movimentacao-erro" class="modal-erro" hidden></div>
+
+            <form id="form-movimentacao" novalidate>
                 <div class="form-group">
-                    <label for="estoque-tinta">Tinta <span class="required">*</span></label>
-                    <div class="input-wrapper">
-                        <i data-lucide="paint-bucket" class="input-icon"></i>
-                        <select id="estoque-tinta" required>
-                            <option value="">Selecione uma tinta</option>
-                        </select>
+                    <label>Tipo <span class="required">*</span></label>
+                    <div class="tipo-toggle">
+                        <input type="radio" name="mov-tipo" id="mov-tipo-entrada" value="ENTRADA" checked>
+                        <label for="mov-tipo-entrada" class="tipo-opcao entrada">
+                            <i data-lucide="arrow-down-to-line"></i>
+                            <span>Entrada</span>
+                        </label>
+                        <input type="radio" name="mov-tipo" id="mov-tipo-saida" value="SAIDA">
+                        <label for="mov-tipo-saida" class="tipo-opcao saida">
+                            <i data-lucide="arrow-up-from-line"></i>
+                            <span>Saída</span>
+                        </label>
                     </div>
-                    <p class="form-hint" id="estoque-tinta-dica" hidden>A tinta não pode ser trocada na edição.</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mov-motivo">Motivo <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="tag" class="input-icon"></i>
+                            <select id="mov-motivo" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mov-quantidade">Quantidade <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="hash" class="input-icon"></i>
+                            <input type="number" id="mov-quantidade" min="1" step="1" placeholder="0" required>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="estoque-quantidade">Quantidade <span class="required">*</span></label>
+                    <label for="mov-observacao">Observação <span class="required" id="mov-observacao-obrigatoria" hidden>*</span></label>
                     <div class="input-wrapper">
-                        <i data-lucide="hash" class="input-icon"></i>
-                        <input type="number" id="estoque-quantidade" min="0" step="1" placeholder="0" required>
+                        <i data-lucide="message-square" class="input-icon"></i>
+                        <input type="text" id="mov-observacao" maxlength="255" placeholder="Opcional">
                     </div>
+                    <p class="form-hint" id="mov-observacao-dica" hidden>Ajuste exige uma justificativa e nível GERENTE ou ADMIN.</p>
                 </div>
+
+                <p class="mov-previa" id="mov-previa">Saldo após a movimentação: <strong id="mov-saldo-depois">0</strong></p>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary-action" onclick="fecharModalEstoque()">Cancelar</button>
-                    <button type="submit" id="btn-salvar-estoque" class="btn-primary-action">
+                    <button type="button" class="btn-secondary-action" onclick="fecharModalMovimentacao()">Cancelar</button>
+                    <button type="submit" id="btn-salvar-movimentacao" class="btn-primary-action">
                         <i data-lucide="check"></i>
-                        <span>Salvar</span>
+                        <span>Registrar</span>
                     </button>
                 </div>
             </form>
