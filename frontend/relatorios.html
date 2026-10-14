@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+</head>
+<style>
+  
+
+* {
+    margin: 0;
+    background-color: rgba(215, 214, 215, 0.516);
+}
+/*cabeçalho*/
+.header {
+    display: flex;
+   
+}
+
+.exportação {
+    text-align: end;
+    background-color: transparent;
+    margin-top: 0;
+}
+.exportação a {
+    background-color: #1f63ff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    
+}
+.exportação a:hover {
+    background-color: #133ea0;
+    cursor: pointer;
+}
+/*opçoes para filtrar*/
+
+.filtrar {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* duas colunas iguais */
+  gap: 12px;
+  padding: 20px 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.periodo,
+.relatorio {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff ;
+  gap: 6px;
+}
+
+/* modificando os p */
+.periodo p2,
+.relatorio p {
+  margin: 0;
+  font-weight: 500;
+  color: black;
+  background-color: #fff ;
+}
+/*modifica o tamanho da caixa*/
+.periodo select,
+.relatorio select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.periodo select:focus,
+.relatorio select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.informaçoes{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* três colunas iguais */
+    gap: 12px;
+    background-color: #fff;
+}
+.consumo,
+.mais,
+.movimentação {
+  padding: 20px 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.consumo p,
+.mais p,
+.movimentação p {
+  margin: 0;
+  background-color: #fff;
+  color: black;
+}
+
+
+
+
+
+
+
+
+</style>
+<body>
+    <header> 
+    <h1>Relatórios</h1> 
+    <p>Analises e estatisticas de estoque de tinta</p>
+    
+    <!--botao de exportaçao para pdf-->
+    <div class="exportação">
+        <a  href="#">Exportar PDF</a>
+    </div>
+    </header>
+    <!--caixa onde fica periodo e relatorios-->
+    <div class="filtrar">
+        <!--caixa de periodos-->
+        <div class="periodo">
+            <p2>Periodo</p2>
+            <select name="periodo" id="periodo">
+            <option value="Ultima semana">Ultima semana </option>
+            <option value="Ultimo mes">Utlimo mes</option>
+            <option value="Ultimo trimestre">Ultimo trimestre</option>
+            <option value="Ultimo ano">Ultimo semestre</option>
+            </select>
+        </div>
+        <!--caixa de relatorios-->
+        <div class="relatorio">
+            <p>tipo de relatorio</p>
+            <select name="relatorio" id="relatorio">
+            <option value="comsumo por periodo ">comsumo por periodo</option>
+            <option value="tintas mais usadas">tintas mais usadas</option>
+            <option value="relatorio completo">relatorio completo</option>
+            </select>
+
+        </div>
+    </div>
+
+    <!--caixa de consumo mensal -->
+    <div class="informaçoes">
+        <div class="consumo">
+            <p>Consumo Médio Mensal </p>
+             <p3>teste</p3>
+            <!--aqui falta colocar os dados que serao puxados do banco-->
+        </div>
+        <!--caixa onde ficara a informaçao de tinta mais usada -->
+        <div class="mais">
+            <p>Tinta mais usadas</p>
+             <p3>teste</p3>
+            <!--puxar informaçao de tinta mais usada -->
+        </div>
+        <div class="movimentação">
+            <p>Movimentações</p>
+            <p3>teste</p3>
+            <!--puxar movimentações do banco-->
+        </div>
+    </div>
+
+    <!--caixa do dashboard-->
+    <div class="dashboard">
+        <p>Consumo por Período</p>
+    </div>
+    <!--tabela das tintas mais utilizadas -->
+    <div class="tabela">
+        <table>
+            <!--cabelalho da tabela-->
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Tinta</th>
+                    <th>quantidade consumida</th>
+                    <th>porcentagem</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>
