@@ -84,7 +84,6 @@
 .periodo select:focus,
 .relatorio select:focus {
   outline: none;
-  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -112,9 +111,29 @@
   color: black;
 }
 
+/*dashboard*/
+.dashboard{
+    border: 1px solid #e5e7eb;
+    background-color: #fff;
+}
 
+/*tabela*/
 
+.tabela h1{
+    font-size: 20px;
+     border: 1px solid #e5e7eb;
+    background-color: #fff;
+}
+.tabela{
+    border: 1px solid #e5e7eb;
+    background-color: #fff;
+ }
 
+.tabela th{
+    padding: 5px;
+    background-color: #fff;
+    width: 10%;
+}
 
 
 
@@ -147,14 +166,14 @@
         <div class="relatorio">
             <p>tipo de relatorio</p>
             <select name="relatorio" id="relatorio">
-            <option value="comsumo por periodo ">comsumo por periodo</option>
+            <option value="comsumo por periodo ">consumo por periodo</option>
             <option value="tintas mais usadas">tintas mais usadas</option>
             <option value="relatorio completo">relatorio completo</option>
             </select>
 
         </div>
     </div>
-
+    <br>
     <!--caixa de consumo mensal -->
     <div class="informaçoes">
         <div class="consumo">
@@ -174,13 +193,14 @@
             <!--puxar movimentações do banco-->
         </div>
     </div>
-
+    <br>
     <!--caixa do dashboard-->
     <div class="dashboard">
         <p>Consumo por Período</p>
     </div>
     <!--tabela das tintas mais utilizadas -->
     <div class="tabela">
+        <h1>Tintas Mais Utilizadas</h1>
         <table>
             <!--cabelalho da tabela-->
             <thead>
