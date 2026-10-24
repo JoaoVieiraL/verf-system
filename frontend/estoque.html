@@ -452,6 +452,40 @@
             color: #b91c1c;
         }
 
+        /* Seletor de cor da tinta: quadrado + campo hex */
+        .cor-picker {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .cor-picker input[type="color"] {
+            width: 46px;
+            height: 46px;
+            padding: 2px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .cor-picker .input-wrapper {
+            flex: 1;
+        }
+
+        /* Origem da tinta usa os mesmos botões do tipo de movimentação, em azul */
+        #tinta-origem-comprada:checked + .tipo-opcao,
+        #tinta-origem-produzida:checked + .tipo-opcao {
+            background-color: #e0e7ff;
+            border-color: #154ec1;
+            color: #154ec1;
+        }
+
+        #grupo-tinta-fornecedor[hidden] {
+            display: none;
+        }
+
         .form-hint[hidden] {
             display: none;
         }
@@ -515,6 +549,10 @@
                 <h1>Estoque de Tintas</h1>
                 <p style="margin-bottom: 0;">Acompanhe o saldo de cada tinta e registre entradas e saídas.</p>
             </header>
+            <button type="button" class="btn-primary-action" onclick="abrirModalTinta()">
+                <i data-lucide="paint-bucket"></i>
+                <span>Nova Tinta</span>
+            </button>
         </div>
 
         <!-- Barra de Pesquisa -->
@@ -545,6 +583,85 @@
         </div>
 
     </main>
+
+    <!-- Modal de Nova Tinta (o backend cria o estoque dela com saldo 0) -->
+    <div id="modal-tinta" class="modal-overlay" hidden>
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Nova Tinta</h2>
+                <button type="button" class="btn-icon" title="Fechar" onclick="fecharModalTinta()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div id="modal-tinta-erro" class="modal-erro" hidden></div>
+
+            <form id="form-tinta" novalidate>
+                <div class="form-group">
+                    <label for="tinta-nome">Nome <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="paint-bucket" class="input-icon"></i>
+                        <input type="text" id="tinta-nome" maxlength="100" placeholder="Ex.: Azul Céu" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tinta-codigo">Código <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="hash" class="input-icon"></i>
+                            <input type="text" id="tinta-codigo" minlength="7" maxlength="20" placeholder="Ex.: TIN-0009" required>
+                        </div>
+                        <p class="form-hint">Entre 7 e 20 caracteres, sem repetir.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tinta-cor-hex">Cor <span class="required">*</span></label>
+                        <div class="cor-picker">
+                            <input type="color" id="tinta-cor" value="#154ec1" aria-label="Escolher a cor">
+                            <div class="input-wrapper">
+                                <i data-lucide="palette" class="input-icon"></i>
+                                <input type="text" id="tinta-cor-hex" maxlength="7" placeholder="#RRGGBB" value="#154EC1" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Origem <span class="required">*</span></label>
+                    <div class="tipo-toggle">
+                        <input type="radio" name="tinta-origem" id="tinta-origem-comprada" value="COMPRADA" checked>
+                        <label for="tinta-origem-comprada" class="tipo-opcao entrada">
+                            <i data-lucide="truck"></i>
+                            <span>Comprada</span>
+                        </label>
+                        <input type="radio" name="tinta-origem" id="tinta-origem-produzida" value="PRODUZIDA">
+                        <label for="tinta-origem-produzida" class="tipo-opcao saida">
+                            <i data-lucide="flask-conical"></i>
+                            <span>Produzida</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Só para tinta comprada -->
+                <div class="form-group" id="grupo-tinta-fornecedor">
+                    <label for="tinta-fornecedor">Fornecedor <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="building-2" class="input-icon"></i>
+                        <select id="tinta-fornecedor"></select>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary-action" onclick="fecharModalTinta()">Cancelar</button>
+                    <button type="submit" id="btn-salvar-tinta" class="btn-primary-action">
+                        <i data-lucide="check"></i>
+                        <span>Cadastrar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal de Movimentação (entrada ou saída de estoque) -->
     <div id="modal-movimentacao" class="modal-overlay" hidden>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERF - Histórico</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Estilos Complementares para Tabela, Busca e Botões (Harmonizados com o styles.css) -->
+    <style>
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn-primary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #154ec1;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #103da1;
+            transform: translateY(-1px);
+        }
+
+        /* Container de Filtros e Busca */
+        .toolbar-card {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .search-container input {
+            padding-left: 42px;
+            height: 42px;
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        /* Tabela Estilizada no Padrão Dashboard */
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table thead {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .custom-table th {
+            padding: 14px 20px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges de Status e Nível de Acesso */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-inactive {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-role {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /* Botões de Ação na Tabela */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background-color: #f1f5f9;
+            color: #154ec1;
+        }
+
+        .btn-icon.danger:hover {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Usuário Info na Tabela */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-table {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #154ec1;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info-text .name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-info-text .email {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        /* Modal de Cadastro */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+
+        .modal-overlay[hidden] {
+            display: none;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .modal-erro {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .modal-erro[hidden] {
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-secondary-action {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary-action:hover {
+            background-color: #f1f5f9;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group[hidden] {
+            display: none;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            accent-color: #154ec1;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        select {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #1e293b;
+            background-color: #ffffff;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus {
+            border-color: #154ec1;
+            box-shadow: 0 0 0 3px rgba(21, 78, 193, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 520px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-hint {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .form-hint[hidden] {
+            display: none;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .badge-info {
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-purple {
+            background-color: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .cor-tinta {
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar-table.pequeno {
+            width: 28px;
+            height: 28px;
+            font-size: 0.7rem;
+        }
+
+        .texto-secundario {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        .custom-table td.nowrap,
+        .custom-table th.nowrap {
+            white-space: nowrap;
+        }
+
+        /* Barra de busca com filtros ao lado */
+        .toolbar-flex {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar-flex .search-container {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .filtro-select {
+            position: relative;
+            min-width: 180px;
+        }
+
+        .filtro-select select {
+            height: 42px;
+            padding: 0 14px 0 40px;
+        }
+
+        .filtro-select .input-icon {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Cards de resumo (mesmo padrão do dashboard) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cor-azul { background-color: #e0e7ff; color: #154ec1; }
+        .cor-verde { background-color: #dcfce7; color: #15803d; }
+        .cor-vermelho { background-color: #fee2e2; color: #b91c1c; }
+        .cor-amarelo { background-color: #fef3c7; color: #b45309; }
+
+        .valor-positivo { color: #15803d; font-weight: 600; }
+        .valor-negativo { color: #b91c1c; font-weight: 600; }
+
+        /* Abas Atividades / Acessos */
+        .abas {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .aba {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: -1px;
+        }
+
+        .aba svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .aba.ativa {
+            color: #154ec1;
+            border-bottom-color: #154ec1;
+        }
+
+        .painel-aba[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+<body class="app-layout">
+
+    <!-- Barra Lateral (Sidebar Padrão) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="img_verf/Verf-azul.jpg" alt="VERF Logo" class="sidebar-logo">
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Navegação Principal</span>
+            <a href="modulos.html" class="nav-item">
+                <i data-lucide="layout-grid"></i>
+                <span>Módulos</span>
+            </a>
+            <a href="estoque.html" class="nav-item">
+                <i data-lucide="box"></i>
+                <span>Estoque</span>
+            </a>
+            <a href="mistura.html" class="nav-item">
+                <i data-lucide="flask-conical"></i>
+                <span>Mistura</span>
+            </a>
+            <a href="relatorios.html" class="nav-item">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Usuários</span>
+            </a>
+        </nav>
+
+        <!-- Botão de Sair Integrado com a Sessão -->
+        <div class="sidebar-footer" style="padding: 1rem; margin-top: auto;">
+            <button onclick="fazerLogout()" class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: inherit; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+
+        <!-- Cabeçalho de Ações -->
+        <div class="header-actions">
+            <header class="content-header" style="margin-bottom: 0;">
+                <h1>Histórico</h1>
+                <p style="margin-bottom: 0;">Logs de auditoria e rastreabilidade das ações executadas no sistema.</p>
+            </header>
+        </div>
+
+        <!-- Abas -->
+        <div class="abas" role="tablist">
+            <button type="button" class="aba ativa" data-aba="atividades" role="tab">
+                <i data-lucide="activity"></i>
+                <span>Atividades</span>
+            </button>
+            <button type="button" class="aba" data-aba="acessos" role="tab">
+                <i data-lucide="log-in"></i>
+                <span>Acessos</span>
+            </button>
+        </div>
+
+        <!-- Aba Atividades -->
+        <section class="painel-aba" id="painel-atividades">
+            <div class="toolbar-card">
+                <div class="toolbar-flex">
+                    <div class="search-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="busca-historico" placeholder="Buscar por descrição ou responsável...">
+                    </div>
+                    <div class="filtro-select">
+                        <i data-lucide="filter" class="input-icon"></i>
+                        <select id="filtro-tipo-atividade">
+                            <option value="">Todas as ações</option>
+                            <option value="ENTRADA">Entradas</option>
+                            <option value="SAIDA">Saídas</option>
+                            <option value="PRODUCAO">Produções</option>
+                            <option value="RECEITA">Receitas criadas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-card table-scroll">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Ação</th>
+                            <th>Descrição</th>
+                            <th>Responsável</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-atividades-body">
+                        <!-- Preenchido pelo app.js com movimentações, produções e receitas -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Aba Acessos (somente ADMIN) -->
+        <section class="painel-aba" id="painel-acessos" hidden>
+            <div class="table-card table-scroll">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>E-mail</th>
+                            <th>Resultado</th>
+                            <th>IP de Origem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-acessos-body">
+                        <!-- Preenchido pelo app.js a partir de /v1/log-acessos -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+
+
+    <!-- Inicialização de Ícones Lucide e Script Global -->
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

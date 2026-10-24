@@ -1,221 +1,804 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatórios</title>
+    <title>VERF - Relatórios</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Estilos Complementares para Tabela, Filtros, Gráfico e Impressão (Harmonizados com o styles.css) -->
+    <style>
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn-primary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #154ec1;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #103da1;
+            transform: translateY(-1px);
+        }
+
+        /* Container de Filtros e Busca */
+        .toolbar-card {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .search-container input {
+            padding-left: 42px;
+            height: 42px;
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        /* Tabela Estilizada no Padrão Dashboard */
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table thead {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .custom-table th {
+            padding: 14px 20px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges de Status e Nível de Acesso */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-inactive {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-role {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /* Botões de Ação na Tabela */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background-color: #f1f5f9;
+            color: #154ec1;
+        }
+
+        .btn-icon.danger:hover {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Usuário Info na Tabela */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-table {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #154ec1;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info-text .name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-info-text .email {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        /* Modal de Cadastro */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+
+        .modal-overlay[hidden] {
+            display: none;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .modal-erro {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .modal-erro[hidden] {
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-secondary-action {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary-action:hover {
+            background-color: #f1f5f9;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group[hidden] {
+            display: none;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            accent-color: #154ec1;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn-primary-action:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        select {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #1e293b;
+            background-color: #ffffff;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus {
+            border-color: #154ec1;
+            box-shadow: 0 0 0 3px rgba(21, 78, 193, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 520px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-hint {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .form-hint[hidden] {
+            display: none;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .cor-tinta {
+            border: 1px solid #e2e8f0;
+        }
+
+        .texto-secundario {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Filtros */
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .filtros-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        /* Cards de resumo (mesmo padrão do dashboard) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.15;
+            word-break: break-word;
+        }
+
+        .stat-sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cor-azul { background-color: #e0e7ff; color: #154ec1; }
+        .cor-verde { background-color: #dcfce7; color: #15803d; }
+        .cor-vermelho { background-color: #fee2e2; color: #b91c1c; }
+        .cor-laranja { background-color: #ffedd5; color: #c2410c; }
+
+        /* Painéis */
+        .painel {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .painel[hidden] {
+            display: none;
+        }
+
+        .painel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 20px 20px 0;
+        }
+
+        .painel-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        /* Gráfico de barras em HTML/CSS (imprime bem no PDF) */
+        .grafico-barras {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 240px;
+            padding: 24px 20px 0;
+            border-bottom: 1px solid #cbd5e1;
+            margin: 0 20px;
+        }
+
+        .barra-coluna {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .barra-valor {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .barra {
+            width: 100%;
+            max-width: 36px;
+            background-color: #154ec1;
+            border-radius: 6px 6px 0 0;
+            min-height: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .barra.vazia {
+            background-color: #e2e8f0;
+        }
+
+        .grafico-rotulos {
+            display: flex;
+            gap: 4px;
+            padding: 8px 20px 20px;
+            margin: 0 20px;
+            overflow-x: hidden;
+        }
+
+        .grafico-rotulos span {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            font-size: 0.72rem;
+            color: #64748b;
+            white-space: nowrap;
+            /* As datas ocultas deixam espaço vazio ao lado; o texto visível pode ocupá-lo */
+            overflow: visible;
+        }
+
+        .grafico-vazio {
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Coluna de porcentagem com barrinha */
+        .pct-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+        }
+
+        .pct-trilho {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .pct-preenchido {
+            height: 100%;
+            background-color: #154ec1;
+            border-radius: 4px;
+        }
+
+        .pct-texto {
+            font-weight: 600;
+            min-width: 48px;
+            text-align: right;
+        }
+
+        .posicao {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .posicao.top1 { background-color: #fef3c7; color: #b45309; }
+        .posicao.top2 { background-color: #e2e8f0; color: #334155; }
+        .posicao.top3 { background-color: #ffedd5; color: #c2410c; }
+
+        .relatorio-periodo {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: -12px 0 20px;
+        }
+
+        .so-impressao {
+            display: none;
+        }
+
+        /* Exportar PDF: imprime só o conteúdo do relatório */
+        @media print {
+            .sidebar,
+            .header-actions .btn-primary-action,
+            .toolbar-card {
+                display: none !important;
+            }
+
+            body.app-layout {
+                display: block;
+                background: #ffffff;
+            }
+
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .so-impressao {
+                display: block;
+            }
+
+            .painel,
+            .stat-card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+
+            .barra,
+            .pct-preenchido,
+            .stat-icon,
+            .posicao,
+            .user-avatar-table {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
 </head>
-<style>
-  
+<body class="app-layout">
 
-* {
-    margin: 0;
-    background-color: rgba(215, 214, 215, 0.516);
-}
-/*cabeçalho*/
-.header {
-    display: flex;
-   
-}
-
-.exportacao {
-    text-align: end;
-    background-color: transparent;
-    margin-top: 0;
-}
-.exportacao a {
-    background-color: #1f63ff;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    
-}
-.exportacao a:hover {
-    background-color: #133ea0;
-    cursor: pointer;
-}
-/*opçoes para filtrar*/
-
-.filtrar {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* duas colunas iguais */
-  gap: 12px;
-  padding: 20px 24px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.periodo,
-.relatorio {
-  display: flex;
-  flex-direction: column;
-  background-color: #fff ;
-  gap: 6px;
-}
-
-/* modificando os p */
-.periodo p2,
-.relatorio p {
-  margin: 0;
-  font-weight: 500;
-  color: black;
-  background-color: #fff ;
-}
-/*modifica o tamanho da caixa*/
-.periodo select,
-.relatorio select {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: #111827;
-  background: #fff;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.periodo select:focus,
-.relatorio select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.informaçoes{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* três colunas iguais */
-    gap: 12px;
-    background-color: #fff;
-}
-.consumo,
-.mais,
-.movimentacao {
-  padding: 20px 24px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.consumo p,
-.mais p,
-.movimentacao p {
-  margin: 0;
-  background-color: #fff;
-  color: black;
-}
-
-/*dashboard*/
-.dashboard{
-    border: 1px solid #e5e7eb;
-    background-color: #fff;
-}
-
-/*tabela*/
-
-.tabela h1{
-    font-size: 20px;
-     border: 1px solid #e5e7eb;
-    background-color: #fff;
-}
-.tabela{
-    border: 1px solid #e5e7eb;
-    background-color: #fff;
- }
-
-.tabela th{
-    padding: 5px;
-    background-color: #fff;
-    width: 10%;
-}
-
-
-
-
-</style>
-<body>
-    <header> 
-    <h1>Relatórios</h1> 
-    <!--botao de exportaçao para pdf-->
-    <div class="exportacao">
-        <a  href="#">Exportar PDF</a>
-    </div>
-    <p>Analises e estatisticas de estoque de tinta</p>
-    
-    
-    </header>
-    <!--caixa onde fica periodo e relatorios-->
-    <div class="filtrar">
-        <!--caixa de periodos-->
-        <div class="periodo">
-            <p2>Periodo</p2>
-            <select name="periodo" id="periodo">
-            <option value="Ultima semana">Ultima semana </option>
-            <option value="Ultimo mes">Utlimo mes</option>
-            <option value="Ultimo trimestre">Ultimo trimestre</option>
-            <option value="Ultimo ano">Ultimo semestre</option>
-            </select>
+    <!-- Barra Lateral (Sidebar Padrão) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="img_verf/Verf-azul.jpg" alt="VERF Logo" class="sidebar-logo">
         </div>
-        <!--caixa de relatorios-->
-        <div class="relatorio">
-            <p>tipo de relatorio</p>
-            <select name="relatorio" id="relatorio">
-            <option value="comsumo por periodo ">consumo por periodo</option>
-            <option value="tintas mais usadas">tintas mais usadas</option>
-            <option value="relatorio completo">relatorio completo</option>
-            </select>
 
-        </div>
-    </div>
-    <br>
-    <!--caixa de consumo mensal -->
-    <div class="informaçoes">
-        <div class="consumo">
-            <p>Consumo Médio Mensal </p>
-             <p3>teste</p3>
-            <!--aqui falta colocar os dados que serao puxados do banco-->
-        </div>
-        <!--caixa onde ficara a informaçao de tinta mais usada -->
-        <div class="mais">
-            <p>Tinta mais usadas</p>
-             <p3>teste</p3>
-            <!--puxar informaçao de tinta mais usada -->
-        </div>
-        <div class="movimentacao">
-            <p>Movimentações</p>
-            <p3>teste</p3>
-            <!--puxar movimentações do banco-->
-        </div>
-    </div>
-    <br>
-    <!--caixa do dashboard-->
-    <div class="dashboard">
-        <p>Consumo por Período</p>
-    </div>
-    <!--tabela das tintas mais utilizadas -->
-    <div class="tabela">
-        <h1>Tintas Mais Utilizadas</h1>
-        <table>
-            <!--cabelalho da tabela-->
-            <thead>
-                <tr>
-                    <th>Posição</th>
-                    <th>Tinta</th>
-                    <th>quantidade consumida</th>
-                    <th>porcentagem</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-            </tbody>
-        </table>
+        <nav class="sidebar-nav">
+            <span class="nav-label">Navegação Principal</span>
+            <a href="modulos.html" class="nav-item">
+                <i data-lucide="layout-grid"></i>
+                <span>Módulos</span>
+            </a>
+            <a href="estoque.html" class="nav-item">
+                <i data-lucide="box"></i>
+                <span>Estoque</span>
+            </a>
+            <a href="mistura.html" class="nav-item">
+                <i data-lucide="flask-conical"></i>
+                <span>Mistura</span>
+            </a>
+            <a href="relatorios.html" class="nav-item active">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="nav-item">
+                <i data-lucide="users"></i>
+                <span>Usuários</span>
+            </a>
+        </nav>
 
-    </div>
+        <!-- Botão de Sair Integrado com a Sessão -->
+        <div class="sidebar-footer" style="padding: 1rem; margin-top: auto;">
+            <button onclick="fazerLogout()" class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: inherit; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+
+        <!-- Cabeçalho de Ações -->
+        <div class="header-actions">
+            <header class="content-header" style="margin-bottom: 0;">
+                <h1>Relatórios</h1>
+                <p style="margin-bottom: 0;">Análises e estatísticas do estoque de tintas.</p>
+            </header>
+            <!-- Botão de exportação para PDF (usa a impressão do navegador) -->
+            <button type="button" class="btn-primary-action" onclick="exportarRelatorioPdf()">
+                <i data-lucide="file-down"></i>
+                <span>Exportar PDF</span>
+            </button>
+        </div>
+
+        <!-- Período do relatório (aparece no PDF) -->
+        <p class="relatorio-periodo" id="relatorio-periodo-texto"></p>
+
+        <!-- Filtros: período e tipo de relatório -->
+        <div class="toolbar-card">
+            <div class="filtros-grid">
+                <div class="form-group">
+                    <label for="relatorio-periodo">Período</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="calendar" class="input-icon"></i>
+                        <select id="relatorio-periodo">
+                            <option value="7">Última semana</option>
+                            <option value="30" selected>Último mês</option>
+                            <option value="90">Último trimestre</option>
+                            <option value="180">Último semestre</option>
+                            <option value="365">Último ano</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="relatorio-tipo">Tipo de relatório</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="file-bar-chart" class="input-icon"></i>
+                        <select id="relatorio-tipo">
+                            <option value="consumo">Consumo por período</option>
+                            <option value="tintas">Tintas mais usadas</option>
+                            <option value="completo" selected>Relatório completo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards de resumo -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Consumo no Período</div>
+                    <div class="stat-value" id="rel-consumo-total">0</div>
+                    <div class="stat-sub">unidades que saíram do estoque</div>
+                </div>
+                <div class="stat-icon cor-vermelho"><i data-lucide="trending-down"></i></div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Consumo Médio Mensal</div>
+                    <div class="stat-value" id="rel-consumo-medio">0</div>
+                    <div class="stat-sub" id="rel-consumo-medio-sub">por mês no período</div>
+                </div>
+                <div class="stat-icon cor-azul"><i data-lucide="calendar-range"></i></div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Tinta Mais Usada</div>
+                    <div class="stat-value" id="rel-tinta-mais-usada">N/A</div>
+                    <div class="stat-sub" id="rel-tinta-mais-usada-sub">sem consumo</div>
+                </div>
+                <div class="stat-icon cor-laranja"><i data-lucide="flame"></i></div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Movimentações</div>
+                    <div class="stat-value" id="rel-movimentacoes">0</div>
+                    <div class="stat-sub" id="rel-movimentacoes-sub">0 entradas · 0 saídas</div>
+                </div>
+                <div class="stat-icon cor-verde"><i data-lucide="arrow-left-right"></i></div>
+            </div>
+        </div>
+
+        <!-- Consumo por Período (gráfico) -->
+        <section class="painel" id="secao-consumo">
+            <div class="painel-header">
+                <h3>Consumo por Período</h3>
+                <span class="texto-secundario" id="rel-agrupamento">Por dia</span>
+            </div>
+            <div id="rel-grafico">
+                <!-- Barras geradas pelo app.js -->
+            </div>
+        </section>
+
+        <!-- Tintas Mais Utilizadas (tabela) -->
+        <section class="painel" id="secao-tintas">
+            <div class="painel-header" style="padding-bottom: 16px;">
+                <h3>Tintas Mais Utilizadas</h3>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Tinta</th>
+                            <th>Quantidade Consumida</th>
+                            <th>Porcentagem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-relatorio-tintas-body">
+                        <!-- Preenchido pelo app.js -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="so-impressao texto-secundario" id="relatorio-gerado-em"></p>
+
+    </main>
+
+    <!-- Inicialização de Ícones Lucide e Script Global -->
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
 </body>
 </html>
