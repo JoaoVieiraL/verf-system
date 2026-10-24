@@ -34,6 +34,20 @@ public class LogAcessosService {
                 .build());
     }
 
+    // Grava uma tentativa de login (com ou sem sucesso). Os limites seguem as colunas da tabela.
+    public void registrarLogin(String email, boolean sucesso, String ip) {
+        logAcessosRepository.save(LogAcessosEntity.builder()
+                .emailUsado(limitar(email == null ? "" : email, 120))
+                .sucesso(sucesso)
+                .ipOrigem(limitar(ip == null ? "desconhecido" : ip, 40))
+                .datahora(LocalDateTime.now())
+                .build());
+    }
+
+    private String limitar(String texto, int tamanho) {
+        return texto.length() > tamanho ? texto.substring(0, tamanho) : texto;
+    }
+
     public List<LogAcessosResponseDto> findAll() {
         List<LogAcessosEntity> logs = logAcessosRepository.findAll();
 
