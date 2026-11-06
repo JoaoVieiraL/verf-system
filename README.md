@@ -2,28 +2,29 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.8-brightgreen)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue)
+![Status](https://img.shields.io/badge/status-projeto%20acad%C3%AAmico-blue)
 
-API REST para controle de estoque, receitas e produção de tintas, com rastreabilidade das movimentações.
+Sistema web para controle de estoque, receitas e produção de tintas, com rastreabilidade das movimentações.
 
-Projeto acadêmico em desenvolvimento (Projeto Integrador). Este README descreve o que existe hoje no código — o planejamento completo está no [ROADMAP.md](ROADMAP.md).
+Projeto acadêmico (Projeto Integrador), composto por uma API REST em Spring Boot e um frontend em HTML, CSS e JavaScript puro, servido pela própria API. Este README descreve o que existe hoje no código.
 
 ---
 
 ## Sumário
 
 - [O problema](#o-problema)
-- [Domínios do sistema](#domínios-do-sistema)
-- [Funcionalidades disponíveis](#funcionalidades-disponíveis)
+- [Funcionalidades](#funcionalidades)
 - [Como executar](#como-executar)
+- [Telas](#telas)
+- [Regras de negócio](#regras-de-negócio)
+- [Segurança e níveis de acesso](#segurança-e-níveis-de-acesso)
 - [API](#api)
 - [Arquitetura](#arquitetura)
 - [Banco de dados](#banco-de-dados)
-- [Estado do projeto](#estado-do-projeto)
 - [Testes](#testes)
-- [Frontend](#frontend)
-- [Roadmap](#roadmap)
+- [Limitações conhecidas](#limitações-conhecidas)
+- [Próximos passos](#próximos-passos)
 - [Equipe](#equipe)
 - [Convenções do repositório](#convenções-do-repositório)
 - [Licença](#licença)
@@ -34,49 +35,30 @@ Projeto acadêmico em desenvolvimento (Projeto Integrador). Este README descreve
 
 Em uma fábrica ou distribuidora de tintas, o controle costuma ser feito em planilha ou no papel. O resultado é sempre o mesmo: ninguém sabe ao certo quanto existe de cada tinta, quem movimentou o quê, qual receita gerou determinada produção, nem quanto se perdeu no caminho.
 
-O VERF centraliza esses registros em um banco único e guarda o histórico de cada operação. A regra de negócio prevista é que **o saldo de estoque não seja editado diretamente**: ele deve existir como consequência das movimentações registradas, e cada movimentação sabe quem a fez, quando, por quê e de qual produção veio.
+O VERF centraliza esses registros em um banco único e guarda o histórico de cada operação. A regra central é que **o saldo de estoque não é editado diretamente**: ele muda apenas como consequência de uma movimentação, e cada movimentação registra quem a fez, quando, por quê e de qual produção veio.
 
 ---
 
-## Domínios do sistema
+## Funcionalidades
 
-| Domínio | Responsabilidade |
-|---|---|
-| Fornecedor | Empresas que fornecem as tintas compradas |
-| Tinta | Cadastro de tintas, compradas ou produzidas, com código e cor hexadecimal |
-| Estoque | Saldo atual de cada tinta |
-| Movimentação | Entradas, saídas e ajustes de estoque |
-| Receita | Fórmula que define qual tinta é produzida e seu valor por litro |
-| Itens da receita | Tintas usadas como matéria-prima e sua proporção percentual |
-| Produção | Registro de fabricação a partir de uma receita |
-| Funcionário | Pessoas que operam o sistema, com nível de acesso |
-| Usuário | Vínculo de acesso de um funcionário ao sistema |
-| Log de acessos | Registro de tentativas de acesso |
-| Financeiro | Receita, compras, perdas e saldo informados por data de referência |
-
----
-
-## Funcionalidades disponíveis
-
-Operações que a API atende hoje:
-
-- Cadastro, listagem, consulta por ID e inativação lógica de **fornecedores**, **funcionários** e **usuários**
-- Cadastro, listagem e consulta de **tintas**, vinculadas a um fornecedor
-- Cadastro, listagem e consulta de **saldos de estoque**, vinculados a uma tinta
-- Registro, listagem e consulta de **movimentações** (entrada, saída, ajuste), vinculadas a estoque, funcionário e, opcionalmente, a uma produção
-- Cadastro, listagem e consulta de **receitas** e de seus **itens**, com proporção percentual
-- Registro, listagem e consulta de **produções**, vinculadas a receita e funcionário
-- Registro, listagem e consulta de **lançamentos financeiros** e de **logs de acesso**
-
-A inativação é lógica (`ativo = false`): nenhum registro é removido do banco, preservando o histórico.
-
-> **Importante:** o registro de movimentação ainda não recalcula o saldo em `tb_estoque`, e a produção ainda não consome matéria-prima automaticamente. Essas regras são o foco atual do desenvolvimento. Veja [Estado do projeto](#estado-do-projeto).
+- **Autenticação** com JWT e senhas criptografadas com BCrypt, com quatro níveis de acesso
+- **Fornecedores:** cadastro, edição, exclusão e busca
+- **Usuários (funcionários):** cadastro, edição, exclusão e busca
+- **Tintas:** cadastro de tintas compradas ou produzidas; o estoque de cada tinta é criado junto com ela
+- **Estoque:** saldo e situação de cada tinta (normal, baixo ou sem estoque)
+- **Movimentações:** entradas e saídas com motivo, saldo anterior e posterior e responsável
+- **Mistura de tintas:** simulador de cores com prévia ao vivo, receitas e dosador de produção
+- **Produção:** consome os ingredientes do estoque e dá entrada na tinta produzida, em uma única transação
+- **Dashboard:** indicadores, gráfico mensal, alertas de estoque baixo e exportação do estoque em CSV
+- **Relatórios:** consumo por período, ranking de tintas e exportação em PDF
+- **Financeiro:** fechamentos com faturamento, compras, perdas e saldo líquido
+- **Histórico:** linha do tempo das ações e log das tentativas de login
 
 ---
 
 ## Como executar
 
-**Pré-requisitos:** Java 21, PostgreSQL e Git. O Maven não precisa estar instalado — use o wrapper.
+**Pré-requisitos:** Java 21, PostgreSQL e Git. O Maven não precisa estar instalado, pois o projeto usa o wrapper.
 
 **1. Clone o repositório**
 
@@ -91,252 +73,206 @@ cd verf-system
 CREATE DATABASE "dbVerf";
 ```
 
-A URL está fixa no `application.yaml` como `jdbc:postgresql://localhost:5432/dbVerf`. Para usar outro host, porta ou nome de banco, é preciso alterar o arquivo.
+Só o banco precisa ser criado: as tabelas são geradas pelo Hibernate na primeira execução (`ddl-auto: update`). A URL está fixa no `application.yaml` como `jdbc:postgresql://localhost:5432/dbVerf`. Para usar outro host, porta ou nome de banco, é preciso alterar o arquivo.
 
-**3. Defina as variáveis de ambiente**
+**3. Defina as variáveis de ambiente e execute**
 
-O projeto **não possui biblioteca de leitura de arquivo `.env`**. O `.env.example` serve apenas como referência dos nomes: as variáveis precisam ser exportadas no terminal ou configuradas na run configuration da IDE.
-
-Linux e macOS:
-
-```bash
-export DATABASE_USERNAME=postgres
-export DATABASE_PASSWORD=sua_senha
-```
-
-Windows (PowerShell):
-
-```powershell
-$env:DATABASE_USERNAME="postgres"
-$env:DATABASE_PASSWORD="sua_senha"
-```
-
-IntelliJ IDEA: *Edit Configurations* → `VerfSApplication` → campo **Environment variables** → `DATABASE_USERNAME=postgres;DATABASE_PASSWORD=sua_senha`
-
-**4. Execute**
-
-```bash
-./mvnw spring-boot:run
-```
-
-A API sobe em `http://localhost:8090`. Na primeira execução o Hibernate cria as tabelas (`ddl-auto: update`).
-
-**5. Abra a documentação interativa**
-
-- Swagger UI: `http://localhost:8090/swagger-ui/index.html`
-- Especificação OpenAPI: `http://localhost:8090/v3/api-docs`
-
-### Configuração
+O projeto **não lê arquivo `.env`**. O `.env.example` serve apenas como referência dos nomes: as variáveis precisam ser definidas no terminal ou na run configuration da IDE.
 
 | Variável | Descrição |
 |---|---|
 | `DATABASE_USERNAME` | Usuário do PostgreSQL |
 | `DATABASE_PASSWORD` | Senha do PostgreSQL |
+| `JWT_SECRET` | Chave usada para assinar os tokens de login (use um texto longo e aleatório) |
 
-Nenhuma credencial real está versionada: o `.env` está no `.gitignore`.
+Windows (PowerShell):
 
-Outras configurações do `application.yaml`: `server.port: 8090`, `ddl-auto: update`, `show-sql: true` e `format_sql: true`.
+```powershell
+$env:DATABASE_USERNAME="postgres"; $env:DATABASE_PASSWORD="sua_senha"; $env:JWT_SECRET="uma_chave_aleatoria_longa"; .\mvnw.cmd spring-boot:run
+```
+
+Linux e macOS:
+
+```bash
+export DATABASE_USERNAME=postgres DATABASE_PASSWORD=sua_senha JWT_SECRET=uma_chave_aleatoria_longa
+./mvnw spring-boot:run
+```
+
+O sistema sobe em `http://localhost:8090`.
+
+**4. Crie o primeiro usuário**
+
+O banco começa vazio, sem nenhum usuário. Com a API rodando, crie um administrador pela rota de registro:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8090/auth/registro -ContentType "application/json; charset=utf-8" -Body '{"nome":"Administrador","email":"admin@verf.com","senha":"troque-esta-senha","cargo":"TI","nivelDeAcesso":"ADMIN"}'
+```
+
+- `senha`: mínimo de 8 caracteres
+- `cargo`: `TI`, `DIRETOR`, `OPERADOR` ou `MANUTENCAO`
+- `nivelDeAcesso`: `ADMIN`, `GERENTE`, `OPERADOR` ou `VISUALIZADOR`
+
+**5. Acesse**
+
+- Sistema: `http://localhost:8090/index.html`
+- Swagger UI: `http://localhost:8090/swagger-ui/index.html`
+- Especificação OpenAPI: `http://localhost:8090/v3/api-docs`
+
+---
+
+## Telas
+
+O frontend fica em `frontend/` e é servido pela própria API, sem servidor separado. Depois do login, o token é guardado no navegador e enviado em cada requisição. As páginas restritas redirecionam para o login quando não há sessão.
+
+| Tela | Arquivo | O que faz |
+|---|---|---|
+| Login | `index.html` | Autenticação |
+| Módulos | `modulos.html` | Menu com todos os módulos |
+| Dashboard | `dashboard.html` | Cards, gráfico mensal, alertas, últimas movimentações, indicadores e exportação do estoque em CSV |
+| Estoque | `estoque.html` | Saldo de cada tinta, cadastro de nova tinta e registro de movimentação |
+| Fornecedores | `fornecedores.html` | Cadastro, edição e exclusão |
+| Movimentações | `movimentacoes.html` | Histórico completo com filtros e registro de nova movimentação |
+| Mistura de Tintas | `mistura.html` | Simulador de cores, receitas e dosador de produção |
+| Histórico | `historico.html` | Linha do tempo das ações e log de acessos |
+| Relatórios | `relatorios.html` | Consumo por período, ranking de tintas e exportação em PDF |
+| Financeiro | `financeiro.html` | Fechamentos e totais |
+| Usuários | `usuarios.html` | Cadastro, edição e exclusão |
+
+**Simulador de mistura.** O usuário escolhe de 2 a 5 tintas, ajusta a quantidade de cada uma e vê a cor resultante na hora. Um clique em "Salvar receita" cria a tinta com essa cor, a receita e os ingredientes. A cor é uma aproximação feita no navegador (média geométrica ponderada dos canais combinada com a média simples, para imitar pigmento), não um cálculo espectral.
+
+**Exportar PDF.** O botão da tela de Relatórios abre a impressão do navegador com um layout próprio, onde é possível escolher "Salvar como PDF".
+
+![Tela de módulos](docs/tela-modulos.png)
+
+---
+
+## Regras de negócio
+
+**Estoque e movimentações**
+
+- O estoque de uma tinta é criado automaticamente, com saldo 0, quando a tinta é cadastrada
+- Não existem rotas para criar, editar ou excluir estoque: o saldo só muda por movimentação
+- O saldo anterior e o posterior são calculados pelo servidor, e o responsável é o usuário logado
+- Uma saída não pode ser maior que o saldo disponível
+- `AJUSTE` exige nível GERENTE e uma justificativa no campo `observacao`
+- `FABRICADA` e `CONSUMIDA` são geradas apenas pela produção, nunca manualmente
+- O motivo precisa ser compatível com o tipo: `COMPRA` e `FABRICADA` são entradas; `VENDA`, `PERDA`, `DANO` e `CONSUMIDA` são saídas; `AJUSTE` aceita os dois
+
+**Receitas e produção**
+
+- A soma das proporções dos ingredientes não pode passar de 100%, e a produção exige exatamente 100%
+- A tinta resultante não pode ser ingrediente da própria receita, e o mesmo ingrediente não pode se repetir
+- Uma receita já usada em produção não pode ter ingredientes adicionados
+- A produção calcula o consumo como `proporção × volume ÷ 100` (em mL), confere o estoque de cada ingrediente e registra as movimentações na mesma transação
+
+**Tintas**
+
+- Código e cor hexadecimal são únicos
+- Tinta comprada exige fornecedor, e tinta produzida não pode ter fornecedor
+
+**Exclusões**
+
+- Fornecedor com tintas vinculadas não pode ser excluído
+- Funcionário com registros vinculados não pode ser excluído
+- Um usuário não pode excluir ou inativar a si mesmo, nem alterar o próprio nível de acesso
+
+---
+
+## Segurança e níveis de acesso
+
+O login (`POST /auth/login`) devolve um token JWT válido por 2 horas, que deve ser enviado no cabeçalho `Authorization: Bearer <token>`. Rotas sem regra definida são negadas por padrão. Cada tentativa de login, com ou sem sucesso, é gravada em `tb_log_acessos` com e-mail, IP e data/hora.
+
+Os níveis são cumulativos: cada um inclui as permissões dos níveis abaixo.
+
+| Nível | Pode |
+|---|---|
+| `VISUALIZADOR` | Consultar (`GET`) os dados, exceto os restritos abaixo |
+| `OPERADOR` | Também registrar movimentações e produções |
+| `GERENTE` | Também gerenciar fornecedores, tintas, receitas e financeiro (inclusive a consulta), e fazer ajustes de estoque |
+| `ADMIN` | Também gerenciar funcionários e usuários, e consultar o log de acessos |
 
 ---
 
 ## API
 
-Base: `http://localhost:8090`
+Base: `http://localhost:8090`. As respostas de erro seguem o formato `{ "mensagem": "...", "status": 400 }`.
 
-Observações sobre o padrão atual, mantido aqui como está no código:
-
-- Não há prefixo `/api` e todos os endpoints estão abertos
-- Os recursos usam nome no singular com inicial maiúscula
-- `Tinta` está em `/v2`; os demais estão em `/v1`
-- O POST retorna `201 Created` com corpo vazio — não devolve o recurso criado nem o header `Location`
-- Registro inexistente retorna `500`, não `404` (veja [Estado do projeto](#estado-do-projeto))
-
-A padronização das rotas para `/api/v1`, com recursos no plural, é um item do roadmap.
-
-### Fornecedor
-
-| Método | Endpoint | Descrição |
+| Recurso | Rota | Métodos |
 |---|---|---|
-| GET | `/v1/Fornecedor` | Lista fornecedores |
-| GET | `/v1/Fornecedor/{id}` | Busca por ID |
-| POST | `/v1/Fornecedor` | Cadastra |
-| DELETE | `/v1/Fornecedor/{id}` | Inativa (`ativo = false`) |
+| Autenticação | `/auth/login`, `/auth/registro` | `POST` |
+| Fornecedores | `/v1/fornecedores` | `GET`, `POST`, `PUT /{id}`, `DELETE /{id}` |
+| Funcionários | `/v1/funcionarios` | `GET`, `POST`, `PUT /{id}`, `DELETE /{id}` |
+| Usuários | `/v1/usuarios` | `GET`, `POST`, `DELETE /{id}` (inativa) |
+| Tintas | `/v1/tintas` | `GET`, `POST` |
+| Estoque | `/v1/estoques` | `GET` |
+| Movimentações | `/v1/movimentacao-estoque` | `GET`, `POST` |
+| Receitas | `/v1/receitas` | `GET`, `POST` |
+| Itens de receita | `/v1/itens-receita` | `GET`, `POST` |
+| Produções | `/v1/producoes` | `GET`, `POST` |
+| Financeiro | `/v1/financeiro` | `GET`, `POST` |
+| Log de acessos | `/v1/log-acessos` | `GET`, `POST` |
 
-POST /v1/Fornecedor
-```json
-{
-  "cnpj": "00000000000191",
-  "nome": "Química Exemplo Ltda",
-  "telefone": "11999999999",
-  "email": "contato@exemplo.com",
-  "ativo": true
-}
-```
+Todos os recursos com `GET` também aceitam `GET /{id}`. Os detalhes de cada rota e os corpos das requisições estão no Swagger.
 
-O CNPJ é validado com `@CNPJ` do Hibernate Validator e é único.
+**Exemplo:** registrar uma movimentação (`POST /v1/movimentacao-estoque`)
 
-### Funcionário
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Funcionario` | Lista funcionários |
-| GET | `/v1/Funcionario/{id}` | Busca por ID |
-| POST | `/v1/Funcionario` | Cadastra |
-| DELETE | `/v1/Funcionario/{id}` | Inativa |
-
-`nivelDeAcesso` aceita `ADMIN`, `USER_N1` ou `USER_N2`.
-
-### Usuário
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Usuario` | Lista usuários |
-| GET | `/v1/Usuario/{id}` | Busca por ID |
-| POST | `/v1/Usuario` | Vincula um funcionário como usuário (`idFuncionario`) |
-| DELETE | `/v1/Usuario/{id}` | Inativa |
-
-### Tinta
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v2/Tinta` | Lista tintas |
-| GET | `/v2/Tinta/{id}` | Busca por ID |
-| POST | `/v2/Tinta` | Cadastra |
-
-
-POST "/v2/Tinta"
-```json
-{
-  "nome": "Azul Royal",
-  "numeroHexadecimal": "#1E3A8A",
-  "codigo": "TNT-0001",
-  "origem": "COMPRADA",
-  "ativo": true,
-  "idFornecedor": 1
-}
-```
-
-`origem` aceita `COMPRADA` ou `PRODUZIDA`. O `TintaService` possui o método `inativar`, mas ele ainda não está exposto em nenhum endpoint.
-
-### Estoque
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Estoque` | Lista saldos |
-| GET | `/v1/Estoque/{id}` | Busca por ID |
-| POST | `/v1/Estoque` | Cria o saldo de uma tinta |
-
-POST /v1/Estoque
-```json
-{ "idTinta": 1, "quantidade": 100 }
-```
-
-Este POST existe em caráter temporário, para permitir os testes enquanto a regra de movimentação não está implementada. A intenção é removê-lo: o saldo deve mudar apenas como consequência de uma movimentação.
-
-### Movimentação de estoque
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/MovimentacaoEstoque` | Lista movimentações |
-| GET | `/v1/MovimentacaoEstoque/{id}` | Busca por ID |
-| POST | `/v1/MovimentacaoEstoque` | Registra uma movimentação |
-
-POST /v1/MovimentacaoEstoque
 ```json
 {
   "idEstoque": 1,
-  "idFuncionario": 1,
-  "idProducao": null,
   "tipoMovimentacao": "ENTRADA",
-  "quantidadeAnterior": 0,
+  "motivo": "COMPRA",
   "quantidadeMovimentada": 100,
-  "quantidadePosterior": 100,
-  "observacao": "Compra inicial",
-  "dataMovimentacao": "2026-09-14"
+  "observacao": "Compra inicial"
 }
 ```
-
-`tipoMovimentacao` aceita `ENTRADA`, `SAIDA` ou `AJUSTE`. `idProducao` é opcional.
-
-As três quantidades são gravadas exatamente como enviadas e o saldo em estoque **não** é alterado pela aplicação. A implementação prevista remove `quantidadeAnterior` e `quantidadePosterior` do corpo da requisição e passa a calculá-las no service.
-
-### Receita e itens da receita
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Receita` | Lista receitas |
-| GET | `/v1/Receita/{id}` | Busca por ID |
-| POST | `/v1/Receita` | Cadastra (`idTintaResultante`, `idCriadoPor`) |
-| GET | `/v1/ItensReceita` | Lista itens |
-| GET | `/v1/ItensReceita/{id}` | Busca por ID |
-| POST | `/v1/ItensReceita` | Cadastra (`idReceita`, `idTintaMateriaPrima`, `proporcaoPercentual`) |
-
-A soma das proporções de uma receita ainda não é validada.
-
-### Produção
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Producoes` | Lista produções |
-| GET | `/v1/Producoes/{id}` | Busca por ID |
-| POST | `/v1/Producoes` | Registra (`idReceita`, `idFuncionario`, `volumeProduzido`, `dataProducao`) |
-
-### Financeiro e log de acessos
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/v1/Financeiro` | Lista lançamentos |
-| GET | `/v1/Financeiro/{id}` | Busca por ID |
-| POST | `/v1/Financeiro` | Registra lançamento |
-| GET | `/v1/LogAcessos` | Lista logs |
-| GET | `/v1/LogAcessos/{id}` | Busca por ID |
-| POST | `/v1/LogAcessos` | Registra log (data/hora preenchida pelo servidor) |
-
-O `LogAcessosDto` é o único DTO que ainda recebe a entidade `UsuarioEntity` aninhada em vez do ID. Ele será refeito junto com a geração automática do log a partir do evento de autenticação.
 
 ---
 
 ## Arquitetura
 
 ```text
-Controller  →  recebe a requisição HTTP e delega
+Frontend (HTML/CSS/JS)  →  chama a API com fetch e o token JWT
     ↓
-Service     →  resolve as entidades relacionadas pelo ID e monta a entidade
+SecurityFilter          →  valida o token e carrega o usuário
     ↓
-Repository  →  Spring Data JPA (JpaRepository)
+Controller              →  recebe a requisição e valida o DTO (@Valid)
+    ↓
+Service                 →  aplica as regras de negócio
+    ↓
+Repository              →  Spring Data JPA
     ↓
 PostgreSQL
 ```
 
-Decisões da implementação atual:
-
 - **Injeção por construtor**, com `@RequiredArgsConstructor` do Lombok
-- **DTOs de entrada por recurso.** Relacionamentos chegam como ID (`idTinta`, `idFornecedor`, `idReceita`) e são resolvidos no service com `findById`, o que garante que o registro referenciado existe antes de gravar. A única exceção é o `LogAcessosDto`
-- **Auditoria automática.** `criadoEm` e `atualizadoEm` são preenchidos por `@PrePersist` e `@PreUpdate`, nunca pelo cliente
-- **Chaves primárias padronizadas** como `Long` em todas as entidades
-- **Sem DTO de saída.** As respostas serializam as entidades JPA diretamente, o que expõe campos internos — inclusive o `senha_hash` do funcionário
-- **Sem tratamento de erro.** Os services lançam `RuntimeException` quando não encontram o registro; sem handler global, isso vira HTTP 500
+- **DTOs de entrada e de saída**: as entidades JPA não são expostas e a senha nunca é devolvida
+- **Erros centralizados** no `GlobalExceptionHandler` (`@RestControllerAdvice`)
+- **Transações** (`@Transactional`) nas operações que alteram mais de um registro, como movimentação e produção
+- **Auditoria automática**: `criadoEm` e `atualizadoEm` são preenchidos por `@PrePersist` e `@PreUpdate`
 
 ### Estrutura de pastas
 
 ```text
 verf-system/
-├── frontend/                       # páginas estáticas, ainda não integradas
+├── frontend/                       # telas, app.js, styles.css e imagens
 ├── src/
 │   ├── main/
 │   │   ├── java/com/verf_system/verfS/
 │   │   │   ├── VerfSApplication.java
-│   │   │   ├── configuration/      # SecurityConfig
-│   │   │   ├── controller/         # 11 REST controllers
+│   │   │   ├── configuration/      # SecurityConfig, SecurityFilter e TokenService
+│   │   │   ├── controller/         # REST controllers
 │   │   │   ├── database/
 │   │   │   │   ├── entity/         # entidades JPA e enums
 │   │   │   │   └── repository/     # interfaces JpaRepository
-│   │   │   ├── dto/                # DTOs de entrada
-│   │   │   └── service/            # regras de aplicação
+│   │   │   ├── dto/
+│   │   │   │   ├── request/        # DTOs de entrada
+│   │   │   │   └── response/       # DTOs de saída
+│   │   │   ├── exception/          # exceções de domínio
+│   │   │   ├── handler/            # GlobalExceptionHandler
+│   │   │   └── service/            # regras de negócio
 │   │   └── resources/
 │   │       └── application.yaml
 │   └── test/
-│       └── java/com/verf_system/verfS/VerfSApplicationTests.java
 ├── .env.example
 ├── pom.xml
 ├── README.md
@@ -345,32 +281,27 @@ verf-system/
 
 ### Tecnologias
 
-Confirmadas no `pom.xml`:
-
 | | |
 |---|---|
 | Linguagem | Java 21 |
 | Framework | Spring Boot 4.0.8 |
-| Web | Spring Web MVC (`spring-boot-starter-webmvc`) |
+| Web | Spring Web MVC |
 | Persistência | Spring Data JPA / Hibernate |
 | Banco | PostgreSQL |
-| Validação | Bean Validation (`spring-boot-starter-validation`) |
-| Segurança | Spring Security (presente, sem autenticação implementada) |
+| Validação | Bean Validation |
+| Segurança | Spring Security, JWT (`java-jwt`) e BCrypt |
 | Documentação | springdoc-openapi 3.1.0 |
+| Frontend | HTML, CSS e JavaScript puro, com ícones Lucide |
 | Utilitários | Lombok, Spring Boot DevTools |
 | Build | Maven, com wrapper `mvnw` |
-
-O `spring-boot-starter-batch` está declarado no `pom.xml` mas **não possui nenhum job implementado**. A remoção da dependência está no roadmap.
 
 ---
 
 ## Banco de dados
 
-PostgreSQL, acessado via Spring Data JPA. O schema é gerado pelo Hibernate com `ddl-auto: update` — **não há migrations** (Flyway ou Liquibase) no projeto. A adoção do Flyway está no roadmap.
+PostgreSQL, com o schema gerado pelo Hibernate (`ddl-auto: update`). Não há migrations (Flyway ou Liquibase).
 
 Tabelas: `tb_fornecedor`, `tb_tinta`, `tb_estoque`, `tb_movimentacao`, `tb_receita`, `tb_itens_receita`, `tb_producoes`, `tb_funcionario`, `tb_usuario`, `tb_log_acessos`, `tb_financeiro`.
-
-### Relacionamentos
 
 ```text
 Fornecedor   1 ──── N  Tinta
@@ -387,95 +318,71 @@ Funcionario  1 ──── 1  Usuario
 Usuario      1 ──── N  LogAcessos
 ```
 
-`tb_itens_receita` possui constraint de unicidade em (`id_receita`, `id_tinta`), impedindo a mesma matéria-prima repetida na mesma receita.
+### Atualizando um banco antigo
 
+O `ddl-auto: update` só adiciona tabelas e colunas: ele não altera tipos nem remove colunas e regras antigas. **Um banco novo não precisa de nada disso.** Em um banco criado com versões anteriores do código, estes erros podem aparecer:
 
----
-
-## Estado do projeto
-
-Esta seção existe para que ninguém precise ler o código para saber o que funciona.
-
-### Implementado
-
-- Estrutura em camadas Controller → Service → Repository para os 11 domínios
-- Entidades JPA com relacionamentos, enums e auditoria automática de datas
-- Listagem, busca por ID e cadastro em todos os recursos
-- Resolução das entidades relacionadas pelo ID enviado no DTO
-- Inativação lógica de fornecedor, funcionário e usuário
-- Persistência em PostgreSQL com schema gerado pelo Hibernate
-- springdoc-openapi disponível nos caminhos padrão
-
-### Parcialmente implementado
-
-| Item | Situação |
+| Erro | Correção |
 |---|---|
-| Validação | As anotações (`@NotBlank`, `@Size`, `@Email`, `@CNPJ`) estão nas entidades, não nos DTOs, e os controllers não usam `@Valid`. A validação só ocorre no flush do Hibernate e a falha retorna erro genérico |
-| Spring Security | O `SecurityConfig` existe, mas libera todas as rotas com `permitAll()`. Não há autenticação |
-| Inativação de tintas | O método existe no service, sem endpoint que o exponha |
-| DTOs por ID | Dez dos onze DTOs recebem ID; o `LogAcessosDto` ainda recebe a entidade |
-| Frontend | Existe, não integrado à API |
+| `invalid input syntax for type smallint: "COMPRADA"` | Converter a coluna `origem_tinta` |
+| `operator does not exist: character varying >= integer` no log, ao subir a API | Converter a coluna `tipo_movimentacao` |
+| `null value in column "atualizado" of relation "tb_estoque"` | Remover as colunas antigas de `tb_estoque` |
+| `duplicate key` em `proporcao_percentual` | Remover a regra única antiga de `tb_itens_receita` |
 
-### Não implementado
+```sql
+-- Coluna origem_tinta (número para texto)
+ALTER TABLE tb_tinta DROP CONSTRAINT IF EXISTS tb_tinta_origem_tinta_check;
+ALTER TABLE tb_tinta
+  ALTER COLUMN origem_tinta TYPE varchar(30)
+  USING (CASE origem_tinta WHEN 0 THEN 'COMPRADA' WHEN 1 THEN 'PRODUZIDA' END);
 
-- **Regra de negócio de estoque.** A movimentação é apenas registrada: ela não recalcula nem atualiza a quantidade em `tb_estoque`, e as quantidades anterior e posterior são informadas pelo cliente
-- **Regra de negócio de produção.** A produção não consome matéria-prima nem gera movimentações automaticamente
-- **Atualização de registros.** Não existe nenhum `PUT` ou `PATCH` na aplicação
-- **Tratamento global de exceções.** Sem `@RestControllerAdvice`, exceções de domínio ou respostas de erro padronizadas
-- **DTOs de resposta.** Os controllers retornam as entidades JPA
-- **Hash de senha.** O campo `senha_hash` é gravado exatamente como recebido
-- **Autenticação e autorização** por nível de acesso, e registro automático de log de acesso
-- **Controle transacional explícito** (`@Transactional`)
-- **Paginação e filtros** nas listagens
-- **Testes** além do `contextLoads`
+-- Coluna tipo_movimentacao (número para texto)
+ALTER TABLE tb_movimentacao DROP CONSTRAINT IF EXISTS tb_movimentacao_tipo_movimentacao_check;
+ALTER TABLE tb_movimentacao
+  ALTER COLUMN tipo_movimentacao TYPE varchar(30)
+  USING (CASE tipo_movimentacao WHEN 0 THEN 'ENTRADA' WHEN 1 THEN 'SAIDA' END);
 
-### Aviso de segurança
+-- Colunas antigas de tb_estoque (confira os nomes no seu banco antes de remover)
+ALTER TABLE tb_estoque DROP COLUMN IF EXISTS atualizado;
+ALTER TABLE tb_estoque DROP COLUMN IF EXISTS criado;
 
-**A API não está protegida e não deve ser exposta na internet no estado atual.** O `SecurityConfig` desabilita CSRF e aplica `permitAll()` a todas as rotas, de forma intencional e temporária, para permitir os testes dos CRUDs durante o desenvolvimento. Não há `PasswordEncoder`, e como as respostas serializam as entidades, o `GET /v1/Funcionario` devolve o campo `senha_hash`.
+-- Regra única antiga na proporção
+ALTER TABLE tb_itens_receita DROP CONSTRAINT IF EXISTS uksg66js0s1fua7galxgabpuav0;
+```
+
+Rode cada bloco apenas se o erro correspondente aparecer: as conversões falham se a coluna já for texto.
 
 ---
 
 ## Testes
 
-Existe apenas a classe `VerfSApplicationTests`, com o teste `contextLoads`, que verifica se o contexto do Spring sobe. Ele exige um PostgreSQL disponível e as variáveis de ambiente definidas, já que o datasource é o mesmo da aplicação — ou seja, `./mvnw test` falha em uma máquina sem banco local.
-
-As dependências de teste (`spring-boot-starter-webmvc-test`, `spring-boot-starter-data-jpa-test`, `spring-boot-starter-security-test`) já estão no `pom.xml`. A adoção de Testcontainers e a escrita dos testes de service e controller estão no roadmap.
+Existe apenas a classe `VerfSApplicationTests`, com o teste `contextLoads`, que verifica se a aplicação sobe. Ele exige um PostgreSQL disponível e as variáveis de ambiente definidas, já que usa o mesmo banco da aplicação. As regras de negócio ainda não têm testes automatizados.
 
 ---
 
-## Frontend
+## Limitações conhecidas
 
-A pasta `frontend/` contém páginas estáticas em HTML, CSS e JavaScript puro — login, recuperação de senha e um menu de módulos — além das imagens da interface.
-
-Ela ainda **não funciona com a API**. O `app.js` chama `http://localhost:8080/v2/Usuario/login` e a página de recuperação chama `/api/auth/esqueci-senha`; nenhum desses endpoints existe no backend, e a API roda na porta 8090. A integração depende de três coisas: implementar a autenticação, configurar CORS e alinhar o contrato das rotas.
-
-![Tela de módulos](docs/tela-modulos.png)
+- **`/auth/registro` é pública:** qualquer pessoa pode criar um usuário, inclusive ADMIN. A rota é temporária e hoje é ela que cria o primeiro usuário. Não exponha o sistema na internet neste estado
+- **"Esqueci a senha" não funciona:** a tela chama `/api/auth/esqueci-senha`, rota que não existe no backend
+- **Endereço fixo no login:** o `login.js` usa `http://localhost:8090/auth/login`, e precisa ser ajustado para rodar em outro endereço
+- **Testes:** só existe o teste de inicialização
+- **Listagens sem paginação:** as telas carregam todos os registros de uma vez
+- **`frontend/app.js` concentra a lógica de quase todas as telas** em um único arquivo
+- **Sem migrations:** alterações de schema em bancos existentes são manuais (veja [Atualizando um banco antigo](#atualizando-um-banco-antigo))
+- **Salvar a mesma mistura duas vezes** no simulador cria uma receita repetida
 
 ---
 
-## Roadmap
+## Próximos passos
 
-O [ROADMAP.md](ROADMAP.md) traz o planejamento técnico completo, em 12 blocos priorizados. Resumo da ordem de execução:
+1. Proteger o `/auth/registro` e criar o primeiro administrador de outra forma
+2. Implementar a recuperação de senha
+3. Escrever testes de service e controller, principalmente de estoque e produção
+4. Adotar Flyway para controlar as alterações no banco
+5. Adicionar paginação às listagens
+6. Dividir o `app.js` em um arquivo por tela
 
-**Em andamento**
-
-1. Correções de modelagem e persistência que impedem operações básicas
-2. Exceções de domínio, `@RestControllerAdvice` e `@Valid` nos DTOs
-
-**Próximos**
-
-3. Regra de estoque: movimentação como única via de alteração de saldo, com `@Transactional` e bloqueio de saída maior que o saldo
-4. Produção consumindo matéria-prima e gerando movimentações, em transação única
-5. DTOs de resposta, retirando `senha_hash` e as entidades JPA do contrato
-6. Padronização REST: prefixo `/api/v1`, recursos no plural, e endpoints de atualização
-
-**Depois**
-
-7. Autenticação, autorização por nível de acesso e hash de senha
-8. Flyway, índices e correção dos N+1
-9. Testes automatizados de service e controller
-10. Docker, CI/CD e observabilidade
-11. Integração do frontend com a API
+O [ROADMAP.md](ROADMAP.md) registra o planejamento técnico original do projeto; parte dos itens já foi concluída.
 
 ---
 
@@ -484,11 +391,10 @@ O [ROADMAP.md](ROADMAP.md) traz o planejamento técnico completo, em 12 blocos p
 | Integrante                                                 | Responsabilidade                             |
 |------------------------------------------------------------|----------------------------------------------|
 | [João Antonio Vieira Lima](https://github.com/JoaoVieiraL) | Backend — modelagem, API e regras de negócio |
-| *Alison Mariano*                                           | *Backend — modelagem, API e regras de negócio*                                           |
+| *Alison Mariano*                                           | *Backend — modelagem, API e regras de negócio* |
 | Renan Miranda                                              | Frontend — interface e integração            |
 | *Daniel Caitano*                                           | *Frontend — interface e integração*          |
 | *Ricardo Jhony*                                            | *Frontend — interface e integração*          |
-
 
 ---
 
@@ -505,7 +411,7 @@ chore(backend): remover código morto da classe principal
 
 Tipos em uso: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`.
 
-O trabalho acontece diretamente na branch `main`, com os dois integrantes sincronizando por `pull` antes de cada sessão. A adoção de branches por feature e Pull Requests está prevista junto com o CI.
+O trabalho acontece diretamente na branch `main`, com os integrantes sincronizando por `pull` antes de cada sessão.
 
 O acompanhamento das tarefas é feito no Jira, com um épico por bloco do roadmap.
 
@@ -516,4 +422,3 @@ O acompanhamento das tarefas é feito no Jira, com um épico por bloco do roadma
 Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
 
 Projeto desenvolvido para fins acadêmicos, como Projeto Integrador.
-
